@@ -1,7 +1,7 @@
 {
   "name": "FC 27 UT App",
-  "description": "",
-  "requestFramePermissions": [],
+  "description": "EA Sports FC 27 Ultimate Team Console Assistant — T=0 Grounded MENUS & GAMEPLAY Engine with Dual-Mode SBC Solver, FUT Gallery Optimizer, Additive Stat/PlayStyle+/Role++ Synthesis, and Antigravity v2.25 MCP Orchestration.",
+  "requestFramePermissions": ["microphone"],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]

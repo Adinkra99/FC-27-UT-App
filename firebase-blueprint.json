@@ -1,0 +1,175 @@
+{
+  "entities": {
+    "UserClubState": {
+      "title": "UserClubState",
+      "description": "Stores the user's synced EA Sports FC 27 Ultimate Team club wallet, Season 2 SP progress, FUT Gallery level, and T=0 temporal firmware anchor.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the club owner.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "clubName": {
+          "type": "string",
+          "description": "Display name of the user's FC 27 Ultimate Team club.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "coins": {
+          "type": "integer",
+          "description": "Current synced FC 27 Console Coin balance."
+        },
+        "fifaPoints": {
+          "type": "integer",
+          "description": "Current synced FC/FIFA Points balance."
+        },
+        "dailySp": {
+          "type": "integer",
+          "description": "Match-earned Season Points today (capped at 850 SP/day in FC 27)."
+        },
+        "galleryLevel": {
+          "type": "integer",
+          "description": "Overall FUT Gallery collection level (1-100)."
+        },
+        "activeFormation": {
+          "type": "string",
+          "description": "Currently selected tactical formation.",
+          "minLength": 3,
+          "maxLength": 32
+        },
+        "antigravityVersion": {
+          "type": "string",
+          "description": "Resolved Antigravity 2.0 Desktop App firmware version at T=0.",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "fc27PatchVersion": {
+          "type": "string",
+          "description": "Resolved EA Sports FC 27 Title Update / Live Tuning version at T=0.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "lastT0Anchor": {
+          "type": "string",
+          "description": "British Time (Europe/London) ISO timestamp of last sync.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of initial club creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest sync mutation."
+        }
+      },
+      "required": [
+        "ownerId",
+        "clubName",
+        "coins",
+        "fifaPoints",
+        "dailySp",
+        "galleryLevel",
+        "activeFormation",
+        "antigravityVersion",
+        "fc27PatchVersion",
+        "lastT0Anchor",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "TrackedInvestment": {
+      "title": "TrackedInvestment",
+      "description": "Stores a user's tracked FC 27 console market flip, Holographic arbitrage position, or Gallery Rent-and-Flip target.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the investor.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "playerId": {
+          "type": "string",
+          "description": "Unique FC 27 console player identifier.",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "playerName": {
+          "type": "string",
+          "description": "Player display name.",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "rating": {
+          "type": "integer",
+          "description": "Player OVR rating (45-99)."
+        },
+        "rarity": {
+          "type": "string",
+          "description": "Card rarity including Regular/Pristine Holographic.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "buyPrice": {
+          "type": "integer",
+          "description": "Console purchase or target bid price in coins."
+        },
+        "targetSellPrice": {
+          "type": "integer",
+          "description": "Target sale price on console before 5% EA tax."
+        },
+        "quantity": {
+          "type": "integer",
+          "description": "Number of cards tracked (1-100)."
+        },
+        "status": {
+          "type": "string",
+          "description": "Lifecycle status of the trade.",
+          "enum": ["active", "target_hit", "sold"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "playerId",
+        "playerName",
+        "rating",
+        "rarity",
+        "buyPrice",
+        "targetSellPrice",
+        "quantity",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserClubState" },
+      "description": "Root user club document keyed by the authenticated user's UID."
+    },
+    "/users/{userId}/investments/{investmentId}": {
+      "schema": { "$ref": "#/entities/TrackedInvestment" },
+      "description": "Subcollection of tracked FC 27 console market investments and price alerts owned by the parent user."
+    }
+  }
+}

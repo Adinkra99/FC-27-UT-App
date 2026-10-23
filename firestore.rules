@@ -1,0 +1,169 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 3. Entity Blueprints (Anti-Update-Gap)
+    function isValidUserClubState(data) {
+      return data.keys().hasAll([
+        'ownerId', 'clubName', 'coins', 'fifaPoints', 'dailySp',
+        'galleryLevel', 'activeFormation', 'antigravityVersion',
+        'fc27PatchVersion', 'lastT0Anchor', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'clubName', 'coins', 'fifaPoints', 'dailySp',
+        'galleryLevel', 'activeFormation', 'antigravityVersion',
+        'fc27PatchVersion', 'lastT0Anchor', 'createdAt', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.clubName is string && data.clubName.size() >= 1 && data.clubName.size() <= 64 &&
+      data.coins is int && data.coins >= 0 && data.coins <= 100000000 &&
+      data.fifaPoints is int && data.fifaPoints >= 0 && data.fifaPoints <= 1000000 &&
+      data.dailySp is int && data.dailySp >= 0 && data.dailySp <= 850 &&
+      data.galleryLevel is int && data.galleryLevel >= 1 && data.galleryLevel <= 100 &&
+      data.activeFormation is string && data.activeFormation.size() >= 3 && data.activeFormation.size() <= 32 &&
+      data.antigravityVersion is string && data.antigravityVersion.size() >= 1 && data.antigravityVersion.size() <= 32 &&
+      data.fc27PatchVersion is string && data.fc27PatchVersion.size() >= 1 && data.fc27PatchVersion.size() <= 64 &&
+      data.lastT0Anchor is string && data.lastT0Anchor.size() >= 1 && data.lastT0Anchor.size() <= 64 &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    function isValidTrackedInvestment(data) {
+      return data.keys().hasAll([
+        'ownerId', 'playerId', 'playerName', 'rating', 'rarity',
+        'buyPrice', 'targetSellPrice', 'quantity', 'status',
+        'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'playerId', 'playerName', 'rating', 'rarity',
+        'buyPrice', 'targetSellPrice', 'quantity', 'status',
+        'createdAt', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.playerId is string && data.playerId.size() >= 1 && data.playerId.size() <= 64 &&
+      data.playerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.playerName is string && data.playerName.size() >= 1 && data.playerName.size() <= 80 &&
+      data.rating is int && data.rating >= 45 && data.rating <= 99 &&
+      data.rarity is string && data.rarity.size() >= 1 && data.rarity.size() <= 40 &&
+      data.buyPrice is int && data.buyPrice >= 150 && data.buyPrice <= 15000000 &&
+      data.targetSellPrice is int && data.targetSellPrice >= 150 && data.targetSellPrice <= 15000000 &&
+      data.quantity is int && data.quantity >= 1 && data.quantity <= 100 &&
+      data.status is string && data.status.size() <= 20 &&
+      data.status in ['active', 'target_hit', 'sold'] &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    // 4. Root User Club Collection
+    match /users/{userId} {
+      allow get: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser() &&
+        isValidId(userId) &&
+        request.auth.uid == userId &&
+        isValidUserClubState(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser() &&
+        isValidId(userId) &&
+        request.auth.uid == userId &&
+        isValidUserClubState(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          // Action 1: Sync Wallet, SP & Gallery Progress
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'clubName', 'coins', 'fifaPoints', 'dailySp', 'galleryLevel',
+            'activeFormation', 'antigravityVersion', 'fc27PatchVersion',
+            'lastT0Anchor', 'updatedAt'
+          ])
+        );
+
+      allow delete: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && existing().ownerId == request.auth.uid;
+
+      // 5. Subcollection: Tracked Investments (Master Gate Enforced)
+      match /investments/{investmentId} {
+        function isParentClubOwner() {
+          return exists(/databases/$(database)/documents/users/$(userId)) &&
+            get(/databases/$(database)/documents/users/$(userId)).data.ownerId == request.auth.uid;
+        }
+
+        allow get: if isVerifiedUser() &&
+          isValidId(userId) &&
+          isValidId(investmentId) &&
+          request.auth.uid == userId &&
+          existing().ownerId == request.auth.uid &&
+          isParentClubOwner();
+
+        allow list: if isVerifiedUser() &&
+          request.auth.uid == userId &&
+          existing().ownerId == request.auth.uid;
+
+        allow create: if isVerifiedUser() &&
+          isValidId(userId) &&
+          isValidId(investmentId) &&
+          request.auth.uid == userId &&
+          isValidTrackedInvestment(incoming()) &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time &&
+          isParentClubOwner();
+
+        allow update: if isVerifiedUser() &&
+          isValidId(userId) &&
+          isValidId(investmentId) &&
+          request.auth.uid == userId &&
+          isValidTrackedInvestment(incoming()) &&
+          existing().ownerId == request.auth.uid &&
+          incoming().ownerId == existing().ownerId &&
+          incoming().playerId == existing().playerId &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          existing().status != 'sold' &&
+          isParentClubOwner() && (
+            // Action 1: Update Trade Status or Target Price
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'buyPrice', 'targetSellPrice', 'quantity', 'status', 'updatedAt'
+            ])
+          );
+
+        allow delete: if isVerifiedUser() &&
+          isValidId(userId) &&
+          isValidId(investmentId) &&
+          request.auth.uid == userId &&
+          existing().ownerId == request.auth.uid &&
+          isParentClubOwner();
+      }
+    }
+  }
+}

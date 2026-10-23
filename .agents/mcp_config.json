@@ -1,0 +1,51 @@
+{
+  "$schema": "https://antigravity.google/schemas/v2.25/mcp_config.schema.json",
+  "antigravityFirmwareTarget": "2.25",
+  "temporalAnchoringMode": "DYNAMIC_T0_BRITISH_TIME",
+  "mcpServers": {
+    "chrome-devtools-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-chrome-devtools", "--port", "9222"],
+      "description": "Antigravity v2.25 native /browser subagent bridge for live EA FC 27 Companion Web App DOM sync and FUTBIN hourly chart inspection."
+    },
+    "playwright-futbin-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-playwright"],
+      "description": "Scrapes JS-rendered FUTBIN FC 27 Console endpoints (Market Index 100, Gallery Sets & Tags, PGP, Evolutions) and FotMob 2026-27 squad transfers."
+    },
+    "fetch-patch-sbc-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "High-speed ingestion of futbin.com/27/cheapest-by-rating, active SBC requirements, and EA Sports FC 27 Title Update Pitch Notes at 18:00 BST."
+    },
+    "sqlite-fc27-cache-mcp": {
+      "command": "uvx",
+      "args": ["mcp-server-sqlite", "--db-path", "./fc27_futbin_mirror.db"],
+      "description": "Local Asus ZenBook UX482 SQLite cache serving <2ms queries for Streamlined SBC Item Score math, Holographic multipliers, and 31 Roles++ synthesis."
+    },
+    "memory-transfer-graph-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Anti-autoregressive 2026-27 Season Transfer Knowledge Graph (verifying e.g. Rodri at FC Barcelona) and active Evolution Chain locks."
+    },
+    "google-drive-workspace-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-drive"],
+      "description": "Auto-syncs Paletools/FUTClubAnalyzer Web App JSON club exports, SBC solutions, and 18:00 BST market digests with Google Drive."
+    },
+    "github-ut-tools-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "description": "Monitors FUTClubAnalyzer, AutoSBC, and FC-Tracker repositories for Web App schema changes."
+    }
+  },
+  "scheduledHooks": [
+    {
+      "id": "daily-1800-bst-content-drop",
+      "cron": "0 18 * * *",
+      "timezone": "Europe/London",
+      "action": "spawn_subagents",
+      "subagents": ["Subagent-FUTBIN-Prices", "Subagent-FotMob-Transfers", "Subagent-Evo-Sim"]
+    }
+  ]
+}

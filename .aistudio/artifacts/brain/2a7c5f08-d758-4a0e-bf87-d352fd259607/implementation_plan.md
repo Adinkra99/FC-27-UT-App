@@ -1,128 +1,109 @@
-# FC 27 UT App — Ultimate Team Assistant & Market Terminal
+# FC 27 UT App — Dual-Domain Terminal (`MENUS` & `GAMEPLAY`) with $T=0$ Temporal Firmware & Capability Discovery Engine
 
-An all-in-one EA Sports FC 27 Ultimate Team console companion and market intelligence platform inspired by FUTBIN. Built with a responsive sidebar and mobile bottom-bar layout covering **Club Sync**, **Console Market**, **AI SBC Solver**, **Automated Investments**, **Squad Builder**, and a **Multi-Turn Gemini Voice & Search Assistant** with **Google Drive** cloud backup.
+An EA Sports FC 27 Ultimate Team (Console) strategic platform built around a **Dynamic $T=0$ Temporal Anchoring & Version Discovery Engine**. Every user prompt, UI interaction, and runtime task first resolves the exact **British Time (`Europe/London` BST/GMT) timestamp at $T=0$** (e.g., `Friday, 23 October 2026, 07:37 BST`) and uses that anchor to **dynamically discover the latest software/firmware version and capabilities** of the **Google Antigravity 2.0 Desktop App** (currently **`v2.25`** at $T=0$), the **active EA Sports FC 27 Title Update / Live Tuning Patch**, **FUTBIN FC 27 Console Market/Content**, and **FotMob `2026–27` Squad Transfers**—automatically adapting and unlocking new features in the app as software updates roll out.
 
 ---
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> This unified plan synthesizes all your requirements and feature integrations:
+> This plan institutionalizes the **$T=0$ Temporal Version & Capability Discovery Loop** across every runtime layer:
 
-- **Navigation & Responsive Dashboard**: Dedicated sidebar navigation on desktop/ZenBook (**Club**, **Market**, **SBCs**, **Investments**, **Squad Builder**, **AI Coach**) paired with a thumb-friendly bottom navigation bar for mobile viewports.
-- **Real-Time Game Data Synchronization (`Club`)**: Live synchronization of Coin balance, FC/FIFA Points, active in-game promotions, newly released console players, active Evolution pathways, club player inventory, and Gallery Grind upgrade loops.
-- **AI-Driven SBC Recommendation Engine (`SBCs`)**: Analyzes your synced player inventory (prioritizing untradeables), live FC 27 console market prices, and SBC requirements to generate the lowest-cost 11-player combinations optimized for mobile and desktop viewing.
-- **Automated Investment Tracking (`Investments` & `Market`)**: Uses `gemini-4-argon` (`ThinkingLevel.HIGH`) to analyze console market trends, recommend high-margin player flips, calculate 5% EA tax net profit, and trigger real-time buy/sell price alerts.
-- **Google Drive Integration**: Authenticated via Google OAuth to save, browse, and sync Club Inventory snapshots, SBC solution dossiers, and Investment ledgers directly to your Google Drive (with explicit user confirmation dialogs prior to any file overwrite or deletion).
-- **Gemini Multi-Turn Chatbot, Search Grounding & Voice Transcription**:
-  - **High-Thinking Mode**: `gemini-4-argon` with `ThinkingLevel.HIGH` for complex SBC math and investment strategy.
-  - **Google Search Grounding**: `gemini-3.8-flash` with `googleSearch` for up-to-date EA FC promo news, TOTW predictions, and content drops.
-  - **Fast Responses**: `gemini-3.1-flash-lite` for instant player price checks and EA tax calculations.
-  - **Microphone Audio Transcription**: `gemini-3.5-transcribe` allowing hands-free voice queries while gaming on your console.
-- **Firebase Auth & Firestore Persistence**: Cloud persistence for your club state, squads, price alerts, and investment portfolio across mobile and desktop.
-
----
-
-## 1. Overview & Core Concept
-
-### What It Does
-**FC 27 UT App** provides console Ultimate Team players with a unified command center:
-1. **Club & Live Game Sync**: Real-time dashboard tracking your Coins, FIFA Points, untradeable/tradeable club roster, active Evolutions progress, active promos, and Google Drive cloud backups.
-2. **Console Market & Price Radar**: Real-time PlayStation/Xbox/PC player database with 24h/7d price graphs, fodder index tickers, and custom price alert triggers.
-3. **AI SBC Solver**: Evaluates active Squad Building Challenges against your club's existing player inventory and live market prices to minimize coin expenditure.
-4. **Automated Investment Tracker**: Generates AI-backed buy/sell calls, tracks active flips in your portfolio, deducts 5% EA tax automatically, and fires alerts when target prices hit.
-5. **33/33 Squad Builder & Voice AI Assistant**: Full formation pitch builder plus a multi-turn Gemini chat drawer with microphone transcription (`gemini-3.5-transcribe`) and live Google Search grounding.
+1. **Dynamic $T=0$ Temporal Firmware & Feature Discovery (Never Static)**:
+   - Every time you open the app, click a tool, or send a prompt, the runtime executes `resolveTemporalEnvironment(new Date())` anchored to `Europe/London` ($T=0$).
+   - Instead of hardcoding a fixed version forever, the app uses the **$T=0$ Timestamp + Live Search Grounding (`gemini-3.8-flash` + `googleSearch` / MCP Fetch)** to resolve the **current software/firmware release and newly added capabilities** as of that exact moment:
+     - **At current $T=0$ (`23 Oct 2026, 07:37 BST`)**: Resolves **Antigravity Desktop App `v2.25`** as the latest release and automatically enables `v2.25`-specific app capabilities (Native `/browser` Subagent + Chrome DevTools MCP bridge, `/schedule` autonomous cron hooks, Dynamic Parallel Subagents, `.agents/mcp_config.json` workspace scaling, and Jetski CoT verification).
+     - **At any future $T=0$ (`t > 23 Oct 2026`)**: Automatically queries release channels as of the new $T=0$ date/time to detect if Antigravity (`v2.26+`) or EA Sports FC 27 (`Title Update #4+`) has shipped new features, dynamically adding those capabilities and patch weights to the app's orchestrator and Gameplay Synthesis Lab without manual rewrites.
+2. **Four-Pillar $T=0$ Live State Resolution on Every Runtime**:
+   - **Pillar A — Antigravity 2.0 Desktop App Firmware Resolver**: Checks latest version & changelog as of $T=0$ (`v2.25` today) and configures the active MCP & Subagent orchestration bar.
+   - **Pillar B — EA Sports FC 27 Title Update & Live Tuning Patch Resolver**: Checks the latest FC 27 game patch as of $T=0$ and updates **Domain 2 (`GAMEPLAY`)** formation meta, PlayStyle+ multipliers, and AcceleRATE sprint curves.
+   - **Pillar C — FUTBIN FC 27 Console Content & Market Resolver**: Checks active UT Season (`Season 2` as of 23 Oct 2026), 18:00 BST daily drop countdown, newly added promo/TOTW/Holographic cards, SBC expiries, and Gallery Sets in **Domain 1 (`MENUS`)**.
+   - **Pillar D — FotMob `2026–27` Anti-Autoregressive Transfer Resolver**: Computes the active football season from $T=0$ (Aug–Dec 2026 = **1st Half of `2026–27` Season**) and verifies real-world club registrations (e.g., Rodri at **FC Barcelona**) to defeat LLM historical frequency bias.
 
 ---
 
-## 2. User Experience & Visual Design
-
-### Layout & Navigation Architecture
-- **Desktop / Asus ZenBook UX482 Layout**:
-  - **Left Sidebar (`256px` width)**: Clean navigation links for **Club & Sync**, **Market**, **SBCs**, **Investments**, **Squad Builder**, and **AI Chat & Drive**, plus live sync status and quick coin/points summary.
-  - **Top Header Bar**: Strictly follows the 3-zone contract — Brand Wordmark (`FC 27 UT App`), contextual view breadcrumbs/quick stats, and Google Sign-In / Sync primary CTA.
-  - **Main Content Area**: High-density FUTBIN-inspired data tables, interactive pitch grids, and real-time charts.
-- **Mobile Viewport Optimization (`375px–430px`)**:
-  - Collapses the desktop sidebar into a fixed **Bottom Tab Bar** (`Club`, `Market`, `SBCs`, `Investments`, `Squad/AI`) with $\ge 44\text{px}$ touch targets and $\le 15\%$ sticky viewport height.
-  - Responsive cards and swipeable filter bars for one-handed thumb usage while playing on console.
-
-### Visual Identity & Theme
-- **Aesthetic Direction**: Sleek EA Sports FC 27 dark broadcast terminal paired with FUTBIN's high-contrast financial precision.
-- **Color Tokens**:
-  - Canvas Background: Deep Pitch Obsidian (`#090d16`)
-  - Structural Surface: Dark Slate Card (`#111827` / `#161f33`) with `1px` border (`#23304c`)
-  - Primary Accent: FC Hyper Emerald (`#00ff87`) for chemistry links, profit margins, and active states
-  - Secondary Accent: Ultimate Gold (`#f59e0b`) for Icons, TOTW, and FIFA Points
-  - Semantic Alert: Crimson (`#ef4444`) for market drops and 5% EA tax deductions
-- **Typography**: Crisp geometric sans display headings paired with `font-mono tabular-nums` for all coin values, ratings, chemistry counters, and ROI percentages.
-
----
-
-## 3. Key Product Decisions & Trade-Offs
-
-- **Decision 1: Multi-Model Gemini Routing (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.1-flash-lite`, `gemini-3.5-transcribe`)**:
-  - *Chosen Approach*: Route complex SBC optimization and deep portfolio strategy to `gemini-4-argon` (`ThinkingLevel.HIGH`), live web/promo queries to `gemini-3.8-flash` with `googleSearch`, rapid UI lookups to `gemini-3.1-flash-lite`, and microphone voice recordings to `gemini-3.5-transcribe`.
-  - *Why*: Balances deep analytical accuracy with low-latency interaction and hands-free voice control during console matches.
-- **Decision 2: Client-Side Google Drive Sync with Safety Confirmation**:
-  - *Chosen Approach*: Use Firebase Google Auth with Drive OAuth scopes (`drive.file`, `drive`) and in-memory access token caching to export/import JSON & CSV spreadsheets of club data and SBC solutions, guarded by a confirmation modal before any mutating/delete action.
-  - *Why*: Complies with Workspace security rules and enables effortless documentation and cross-device pipeline management.
-
----
-
-## 4. Technical Architecture & Data Strategy
+## 1. How the $T=0$ Temporal Version & Capability Discovery Engine Works
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                        CLIENT FRONTEND (React 19 + Tailwind)                 │
-│                                                                              │
-│  ┌────────────────────┐  ┌────────────────────────────────────────────────┐  │
-│  │ Responsive Sidebar │  │               Main Content Area                │  │
-│  │ (Desktop) / Bottom │  │  • Club View (Live Sync, Coins/Points, Evos,   │  │
-│  │  Tab Bar (Mobile)  │  │    Promos, Gallery Grind, Google Drive Sync)   │  │
-│  │                    │  │  • Market View (Console Prices, 24h Trends,    │  │
-│  │  - Club & Sync     │  │    Fodder Index, Squad Builder 33/33 Chem)     │  │
-│  │  - Market & Squad  │──┼─►• SBCs View (AI Recommendation Engine, Club   │  │
-│  │  - SBCs (AI Solver)│  │    Inventory Matcher, Lowest Coin Solver)      │  │
-│  │  - Investments     │  │  • Investments View (Gemini High-Thinking      │  │
-│  │  - AI Chat Drawer  │  │    Trade Signals, Portfolio ROI, Price Alerts) │  │
-│  └────────────────────┘  └───────────────────────┬────────────────────────┘  │
-│                                                  │                           │
-│  ┌───────────────────────────────────────────────▼────────────────────────┐  │
-│  │       Multi-Turn Gemini Chat & Microphone Voice Recorder (Web Audio)   │  │
-│  └───────────────┬────────────────────────────────────────────┬───────────┘  │
-└──────────────────┼────────────────────────────────────────────┼──────────────┘
-                   │                                            │
-                   ▼                                            ▼
-┌─────────────────────────────────────────┐  ┌─────────────────────────────────┐
-│       EXPRESS BACKEND (server.ts)       │  │   FIREBASE & GOOGLE WORKSPACE   │
-│                                         │  │                                 │
-│ • POST /api/gemini/sbc-solve            │  │ • Firebase Auth (Google Popup   │
-│   (gemini-4-argon, ThinkingLevel.HIGH)  │  │   + In-Memory OAuth Token)      │
-│ • POST /api/gemini/investments          │  │ • Firestore Collections:        │
-│   (gemini-4-argon, ThinkingLevel.HIGH)  │  │   - /users/{uid}/profile        │
-│ • POST /api/gemini/chat                 │  │   - /users/{uid}/clubPlayers    │
-│   (gemini-4-argon / gemini-3.8-flash    │  │   - /users/{uid}/investments    │
-│    with googleSearch / 3.1-flash-lite)  │  │   - /users/{uid}/squads         │
-│ • POST /api/gemini/transcribe           │  │   - /users/{uid}/sbcSolutions   │
-│   (gemini-3.5-transcribe)               │  │ • Google Drive REST API v3      │
-└─────────────────────────────────────────┘  └─────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────┐
+│        1. RUNTIME INITIATION / USER PROMPT / UI INTERACTION (T = 0)            │
+│        Evaluates Live UK Clock: e.g., Friday, 23 October 2026 · 07:37 BST      │
+└───────────────────────────────────────┬────────────────────────────────────────┘
+                                        │
+                                        ▼
+┌────────────────────────────────────────────────────────────────────────────────┐
+│        2. T=0 TEMPORAL VERSION & CAPABILITY DISCOVERY ENGINE                   │
+│                                                                                │
+│  ┌────────────────────────────────────┐  ┌──────────────────────────────────┐  │
+│  │ A. Antigravity 2.0 Firmware Probe  │  │ B. EA FC 27 Patch & Meta Probe   │  │
+│  │ • Queries latest release @ T=0     │  │ • Queries latest Title Update &  │  │
+│  │ • Current @ 23 Oct 2026: v2.25     │  │   Live Tuning Pitch Notes @ T=0  │  │
+│  │ • Unlocks v2.25 Capabilities:      │  │ • Dynamically recalibrates       │  │
+│  │   - /browser + Chrome DevTools MCP │  │   PlayStyle+, Role++ & AcceleRATE│  │
+│  │   - /schedule 18:00 BST Cron Hook  │  │   weights in Gameplay Lab        │  │
+│  │   - Dynamic Parallel Subagents     │  └──────────────────────────────────┘  │
+│  │   - Jetski CoT Safety Verification │                                        │
+│  └────────────────────────────────────┘  ┌──────────────────────────────────┐  │
+│                                          │ C. FUTBIN 27 + FotMob 26-27 Probe│  │
+│                                          │ • Season Math: 2026-27 (1st Half)│  │
+│                                          │ • Verifies 26-27 Transfers       │  │
+│                                          │   (Rodri -> FC Barcelona)        │  │
+│                                          │ • Pulls Live Console Prices,     │  │
+│                                          │   New Items, SBCs & Gallery Sets │  │
+│                                          └──────────────────────────────────┘  │
+└───────────────────────────────────────┬────────────────────────────────────────┘
+                                        │
+                                        ▼
+┌────────────────────────────────────────────────────────────────────────────────┐
+│        3. DYNAMICALLY ADAPTED DUAL-DOMAIN APP (`MENUS` & `GAMEPLAY`)           │
+│  • Header Badge: [T=0: 23 Oct 2026 07:37 BST | Antigravity v2.25 | FC 27 TU]   │
+│  • Domain 1 (MENUS): Live Console Price Charts, Dual-Mode SBC, FUT Gallery     │
+│  • Domain 2 (GAMEPLAY): Additive Synthesis Calculator (Stats + Chem + PS+ +    │
+│    AcceleRATE + Body Type + 31 Roles++ weighted by active T=0 Patch)           │
+└────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 5. Execution Sequence
+## 2. Dual-Domain Feature Breakdown (`MENUS` & `GAMEPLAY`)
 
-1. **Step 1: OAuth, Firebase & Paid Model Setup**:
-   - Finalize Google Workspace OAuth scopes via `set_up_oauth` (`userConfirmedInUI: true`).
-   - Verify Firebase ToS via `GetFirebaseTos` and provision Firestore via `ProvisionFirebase` RPC.
-   - Prompt paid API key flow via `show_aistudio_ui` (`paid_model_flow`) for `gemini-4-argon` support.
-   - Create `firebase-blueprint.json` and hardened `firestore.rules` and deploy rules.
-2. **Step 2: Full-Stack Express + Gemini API Server (`server.ts`)**:
-   - Build server-side routes for High-Thinking SBC Solver (`gemini-4-argon` + `ThinkingLevel.HIGH`), Investment Analyzer (`gemini-4-argon` + `ThinkingLevel.HIGH`), Multi-Turn Chatbot with Model Selector & Google Search Grounding (`gemini-3.8-flash` + `googleSearch` and `gemini-3.1-flash-lite`), and Audio Transcription (`gemini-3.5-transcribe`).
-3. **Step 3: FC 27 Console Database, Sync Engine & Google Drive Service**:
-   - Create authentic FC 27 console player dataset, active promos, evolutions, and SBC challenges.
-   - Build client-side Google Drive backup/restore service with mandatory confirmation modals for destructive/overwrite actions.
-4. **Step 4: Responsive Sidebar Dashboard & Feature Views**:
-   - Build the responsive Sidebar + Mobile Bottom Navigation shell and implement the **Club**, **Market & Squad Builder**, **SBCs**, **Investments**, and **AI Voice/Search Chatbot** views.
-5. **Step 5: Build & Lint Verification**:
-   - Run `compile_applet` and verify zero TypeScript or build errors.
+### Domain 1: `MENUS` (Market Visualization, SBCs, FUT Gallery, Club Sync & Antigravity `v2.25` MCP Hub)
+1. **Instantaneous Price & New Item Tracker + Interactive Mobile Charts**:
+   - Interactive SVG/Canvas charts for **24h Hourly Console Prices**, **7d Trends**, **FUTBIN Market Index 100**, **Cheapest by Rating (81–91)**, and **Regular ($\le 87$) / Pristine ($\ge 88$) Holographic Arbitrage**, stamped with the exact $T=0$ fetch millisecond.
+2. **Dual-Mode SBC Recommendation Engine**:
+   - **Streamlined SBC Mode**: Deterministic `<2ms` calculation of Cheapest **Item Score** per coin using Rating, Rarity, Holographic 1.25x/1.50x multipliers, and SBC Duplicate Storage.
+   - **11-Player Puzzle SBC Mode**: Deterministic rating + 33/33 chemistry solver prioritizing your synced club untradeables, paired with `gemini-4-argon` (`ThinkingLevel.HIGH`) link advice.
+3. **Authentic FUT Gallery Set, Tag & "Rent-and-Flip" Optimizer**:
+   - Tracks 100+ permanent Gallery Sets, Set Grades, Tag Bonuses, and calculates discard-floor "Buy, Register in Set, Resell" flips after the 5% EA tax.
+4. **Frictionless Club Sync & 850 SP Match Stacker**:
+   - Syncs Coins, FIFA Points, untradeables, Evolutions, and SBCs via **Antigravity `v2.25` `/browser` Chrome DevTools MCP**, **1-Click Web App JSON**, **Google Drive**, or **Voice (`gemini-3.5-transcribe`)**.
+
+### Domain 2: `GAMEPLAY` (Patch-Grounded Tactics, 31 Roles++ & Additive Synthesis Engine)
+1. **Stats in Isolation vs. Synthesized Additive Calculator**:
+   - Computes and visualizes how **Base Sub-Attributes** combine additively and multiplicatively with **Chemistry Styles (0–3 Diamonds)**, **AcceleRATE 2.0 Sprint Archetypes**, **PlayStyles & PlayStyles+ (3 PS+ Cap)**, **Player Body Type**, and **31 Player Roles (`Role`, `Role+`, `Role++`)**.
+2. **Live $T=0$ Patch & Firmware Meta Tracker**:
+   - Queries and displays the active EA Sports FC 27 Title Update & Live Tuning changes as of $T=0$, showing which formations, Roles++, and PlayStyles+ were buffed or nerfed in the latest patch.
+3. **33/33 Squad Builder & Branching Evolution Simulator**:
+   - Full pitch builder verifying `2026–27` club chemistry links via FotMob + FUTBIN 27 (e.g., Rodri at FC Barcelona) and simulating Branch A vs. Branch B of active Evolutions.
+
+---
+
+## 3. Execution Sequence
+
+1. **Step 1: OAuth, Firebase & Paid Model Provisioning**:
+   - Finalize Google Drive OAuth via `set_up_oauth` (`userConfirmedInUI: true`).
+   - Verify Firebase ToS (`GetFirebaseTos`) and provision Firestore (`ProvisionFirebase`).
+   - Trigger `show_aistudio_ui` (`paid_model_flow`) for `gemini-4-argon`.
+   - Create `firebase-blueprint.json` and hardened `firestore.rules`.
+2. **Step 2: $T=0$ Temporal Anchor & Firmware Discovery Utility + Deterministic Engine**:
+   - Build `src/utils/timeGrounding.ts` with `createTemporalAnchor()` (`Europe/London` live clock, `2026–27` season math, 18:00 UK drop timer, and $T=0$ Antigravity & FC 27 patch version resolver).
+   - Build `src/utils/fc27DeterministicEngine.ts` covering both **Menus Math** (Streamlined SBC Item Score + Holographics, 11-player puzzle solver, 5% tax, Gallery Rent-and-Flip) and **Gameplay Synthesis Math** (Stats in Isolation vs. Synthesized with Chemistry Styles, AcceleRATE 2.0, PlayStyles+ 3-cap, Body Type, and 31 Roles++).
+   - Build `src/data/fc27ConsoleData.ts` with `2026–27` verified console players, 24h/7d interactive price series, active SBCs, Branching Evolutions, FUT Gallery Sets, Live Patch Meta formations, and the **Antigravity `v2.25` `.agents/mcp_config.json` & Firmware Capability Registry**.
+3. **Step 3: Express Backend with Dynamic $T=0$ Firmware & Patch Discovery (`server.ts`)**:
+   - Attach server middleware that binds a live $T=0$ `TemporalAnchor` to every request.
+   - Implement `/api/gemini/discover-t0-versions` (`gemini-3.8-flash` + `googleSearch` grounded at $T=0$ to check the latest Antigravity Desktop App firmware version & capabilities and latest EA FC 27 Title Update patch notes), `/api/gemini/market-trend-analysis` (`gemini-4-argon` + `ThinkingLevel.HIGH`), `/api/gemini/gameplay-synthesis` (`gemini-4-argon` + `ThinkingLevel.HIGH`), `/api/gemini/sbc-And-evo-advisor`, and `/api/gemini/transcribe` (`gemini-3.5-transcribe`).
+4. **Step 4: Dual-Domain Responsive Dashboard (`MENUS` & `GAMEPLAY`)**:
+   - Build the Header with the live $T=0$ British Time clock, active **Antigravity Firmware Badge (`v2.25` @ $T=0$)** with 1-click **"Check for New Firmware/Patch Capabilities at $T=0$"**, Domain Switcher (`MENUS` vs. `GAMEPLAY`), and ZenBook ScreenPad Plus Ticker toggle.
+   - Build all interactive views across both domains and verify responsive mobile (`375px–430px`) and desktop layouts.
+5. **Step 5: Compilation & Verification**:
+   - Run `compile_applet` and verify zero errors.
