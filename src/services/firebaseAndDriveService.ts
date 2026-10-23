@@ -160,11 +160,12 @@ export const logoutUser = async () => {
  * adhering strictly to firebase-blueprint.json & firestore.rules.
  */
 export async function syncClubStateToFirestore(payload: {
-  clubName: string;
-  coins: number;
-  fifaPoints: number;
-  dailySp: number;
-  galleryLevel: number;
+  clubName: string | null;
+  coins: number | null;
+  fifaPoints: number | null;
+  rivalsDivision: string | null;
+  dailySp: number | null;
+  galleryLevel: number | null;
   activeFormation: string;
   antigravityVersion: string;
   fc27PatchVersion: string;
@@ -178,11 +179,31 @@ export async function syncClubStateToFirestore(payload: {
 
   const sanitized = {
     ownerId: user.uid.slice(0, 128),
-    clubName: (payload.clubName || 'Blaugrana 26-27 FC').slice(0, 64),
-    coins: Math.max(0, Math.min(100000000, Math.round(payload.coins))),
-    fifaPoints: Math.max(0, Math.min(1000000, Math.round(payload.fifaPoints))),
-    dailySp: Math.max(0, Math.min(850, Math.round(payload.dailySp))),
-    galleryLevel: Math.max(1, Math.min(100, Math.round(payload.galleryLevel))),
+    consolePlatform: 'Xbox Series S' as const,
+    clubName:
+      payload.clubName && payload.clubName.trim().length > 0
+        ? payload.clubName.trim().slice(0, 64)
+        : null,
+    coins:
+      typeof payload.coins === 'number' && !Number.isNaN(payload.coins)
+        ? Math.max(0, Math.min(100000000, Math.round(payload.coins)))
+        : null,
+    fifaPoints:
+      typeof payload.fifaPoints === 'number' && !Number.isNaN(payload.fifaPoints)
+        ? Math.max(0, Math.min(1000000, Math.round(payload.fifaPoints)))
+        : null,
+    rivalsDivision:
+      payload.rivalsDivision && payload.rivalsDivision.trim().length > 0
+        ? payload.rivalsDivision.trim().slice(0, 32)
+        : null,
+    dailySp:
+      typeof payload.dailySp === 'number' && !Number.isNaN(payload.dailySp)
+        ? Math.max(0, Math.min(850, Math.round(payload.dailySp)))
+        : null,
+    galleryLevel:
+      typeof payload.galleryLevel === 'number' && !Number.isNaN(payload.galleryLevel)
+        ? Math.max(1, Math.min(100, Math.round(payload.galleryLevel)))
+        : null,
     activeFormation: (payload.activeFormation || '4-2-1-3').slice(0, 32),
     antigravityVersion: (payload.antigravityVersion || '2.25').slice(0, 32),
     fc27PatchVersion: (payload.fc27PatchVersion || 'TU #3.1').slice(0, 64),
@@ -199,9 +220,11 @@ export async function syncClubStateToFirestore(payload: {
       });
     } else {
       await updateDoc(userRef, {
+        consolePlatform: sanitized.consolePlatform,
         clubName: sanitized.clubName,
         coins: sanitized.coins,
         fifaPoints: sanitized.fifaPoints,
+        rivalsDivision: sanitized.rivalsDivision,
         dailySp: sanitized.dailySp,
         galleryLevel: sanitized.galleryLevel,
         activeFormation: sanitized.activeFormation,

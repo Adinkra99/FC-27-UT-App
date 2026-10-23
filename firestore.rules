@@ -27,26 +27,30 @@ service cloud.firestore {
       return resource.data;
     }
 
-    // 3. Entity Blueprints (Anti-Update-Gap)
+    // 3. Entity Blueprints (Anti-Update-Gap & Nullable Blank-Safe Club State)
     function isValidUserClubState(data) {
       return data.keys().hasAll([
-        'ownerId', 'clubName', 'coins', 'fifaPoints', 'dailySp',
-        'galleryLevel', 'activeFormation', 'antigravityVersion',
-        'fc27PatchVersion', 'lastT0Anchor', 'createdAt', 'updatedAt'
+        'ownerId', 'consolePlatform', 'clubName', 'coins', 'fifaPoints',
+        'rivalsDivision', 'dailySp', 'galleryLevel', 'activeFormation',
+        'antigravityVersion', 'fc27PatchVersion', 'lastT0Anchor',
+        'createdAt', 'updatedAt'
       ]) &&
       data.keys().hasOnly([
-        'ownerId', 'clubName', 'coins', 'fifaPoints', 'dailySp',
-        'galleryLevel', 'activeFormation', 'antigravityVersion',
-        'fc27PatchVersion', 'lastT0Anchor', 'createdAt', 'updatedAt'
+        'ownerId', 'consolePlatform', 'clubName', 'coins', 'fifaPoints',
+        'rivalsDivision', 'dailySp', 'galleryLevel', 'activeFormation',
+        'antigravityVersion', 'fc27PatchVersion', 'lastT0Anchor',
+        'createdAt', 'updatedAt'
       ]) &&
       data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
       data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
       data.ownerId == request.auth.uid &&
-      data.clubName is string && data.clubName.size() >= 1 && data.clubName.size() <= 64 &&
-      data.coins is int && data.coins >= 0 && data.coins <= 100000000 &&
-      data.fifaPoints is int && data.fifaPoints >= 0 && data.fifaPoints <= 1000000 &&
-      data.dailySp is int && data.dailySp >= 0 && data.dailySp <= 850 &&
-      data.galleryLevel is int && data.galleryLevel >= 1 && data.galleryLevel <= 100 &&
+      data.consolePlatform == 'Xbox Series S' &&
+      (data.clubName == null || (data.clubName is string && data.clubName.size() >= 1 && data.clubName.size() <= 64)) &&
+      (data.coins == null || (data.coins is int && data.coins >= 0 && data.coins <= 100000000)) &&
+      (data.fifaPoints == null || (data.fifaPoints is int && data.fifaPoints >= 0 && data.fifaPoints <= 1000000)) &&
+      (data.rivalsDivision == null || (data.rivalsDivision is string && data.rivalsDivision.size() >= 1 && data.rivalsDivision.size() <= 32)) &&
+      (data.dailySp == null || (data.dailySp is int && data.dailySp >= 0 && data.dailySp <= 850)) &&
+      (data.galleryLevel == null || (data.galleryLevel is int && data.galleryLevel >= 1 && data.galleryLevel <= 100)) &&
       data.activeFormation is string && data.activeFormation.size() >= 3 && data.activeFormation.size() <= 32 &&
       data.antigravityVersion is string && data.antigravityVersion.size() >= 1 && data.antigravityVersion.size() <= 32 &&
       data.fc27PatchVersion is string && data.fc27PatchVersion.size() >= 1 && data.fc27PatchVersion.size() <= 64 &&
@@ -102,9 +106,10 @@ service cloud.firestore {
         incoming().ownerId == existing().ownerId &&
         incoming().createdAt == existing().createdAt &&
         incoming().updatedAt == request.time && (
-          // Action 1: Sync Wallet, SP & Gallery Progress
+          // Action 1: Sync Nullable Xbox Series S Wallet, Division, SP & Gallery Progress
           incoming().diff(existing()).affectedKeys().hasOnly([
-            'clubName', 'coins', 'fifaPoints', 'dailySp', 'galleryLevel',
+            'consolePlatform', 'clubName', 'coins', 'fifaPoints',
+            'rivalsDivision', 'dailySp', 'galleryLevel',
             'activeFormation', 'antigravityVersion', 'fc27PatchVersion',
             'lastT0Anchor', 'updatedAt'
           ])

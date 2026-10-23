@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { TemporalAnchor } from '../utils/timeGrounding';
+import { calculateEaTaxMetrics } from '../utils/fc27DeterministicEngine';
 import {
   Cpu,
   Mic,
@@ -11,30 +12,71 @@ import {
   RefreshCw,
   Globe,
   Terminal,
+  Sliders,
+  Zap,
+  Search,
 } from 'lucide-react';
+
+export type ClientRoutingMode =
+  | 'AUTO'
+  | 'TIER_1_LITE'
+  | 'TIER_2_FLASH_SEARCH'
+  | 'TIER_3_ARGON_HIGH';
+
+export interface RoutingTelemetryReceipt {
+  tierLabel: string;
+  modelUsed: string;
+  latencyMs: number;
+  routingReason: string;
+  costBenchmarkSummary?: string;
+}
+
+export interface GenUiWidgetSpec {
+  widgetType:
+    | 'SBC_SCORE_SIMULATOR'
+    | 'HOLO_ARBITRAGE_CALCULATOR'
+    | 'ROLE_SYNTHESIS_COMPARATOR'
+    | 'TACTICAL_PITCH_BOARD';
+  title: string;
+  subtitle: string;
+  executiveSummary: string;
+  defaultTargetScore: number;
+  recommendedBuyPriceXbox: number;
+  recommendedSellPriceXbox: number;
+  featuredPlayerName: string;
+  featuredPlayerClub2627: string;
+  featuredRolePlusPlus: string;
+  actionItems: string[];
+}
 
 interface ChatMessage {
   role: 'user' | 'model';
   text: string;
-  modelBadge?: string;
   t0Stamp?: string;
+  telemetry?: RoutingTelemetryReceipt;
+  genUiWidget?: GenUiWidgetSpec | null;
 }
 
 interface AntigravityMcpAndChatDrawerProps {
   t0Anchor: TemporalAnchor;
+  clubContextForAi: Record<string, unknown>;
   onVoiceClubCommand: (transcript: string) => void;
 }
 
 const MCP_CONFIG_JSON_STRING = `{
   "$schema": "https://antigravity.google/schemas/v2.25/mcp_config.schema.json",
   "antigravityFirmwareTarget": "2.25",
+  "consoleMarketLock": "XBOX_SERIES_S_ONLY",
   "temporalAnchoringMode": "DYNAMIC_T0_BRITISH_TIME",
+  "builtinSkills": [
+    "C:\\\\Users\\\\Kit\\\\.gemini\\\\antigravity\\\\builtin\\\\skills\\\\generative_ui\\\\SKILL.md"
+  ],
   "mcpServers": {
     "chrome-devtools-mcp": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-chrome-devtools", "--port", "9222"]
     },
-    "playwright-futbin-mcp": {
+    "playwright-futbin-xbox-mcp": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-playwright"]
     },
@@ -44,7 +86,7 @@ const MCP_CONFIG_JSON_STRING = `{
     },
     "sqlite-fc27-cache-mcp": {
       "command": "uvx",
-      "args": ["mcp-server-sqlite", "--db-path", "./fc27_futbin_mirror.db"]
+      "args": ["mcp-server-sqlite", "--db-path", "./fc27_xbox_mirror.db"]
     },
     "memory-transfer-graph-mcp": {
       "command": "npx",
@@ -61,19 +103,193 @@ const MCP_CONFIG_JSON_STRING = `{
   }
 }`;
 
+const GENERATIVE_UI_SKILL_SUMMARY = `# C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md
+name: "generative_ui"
+orchestrator: "Google Antigravity 2.25 Desktop App"
+consoleLock: "Xbox Series S (Console Cross-Play Market Only)"
+clubPolicy: "Zero-Guessing — Confirmed 35,000 Coins; all unknown club fields stay BLANK (—)"
+widgets:
+  - SBC_SCORE_SIMULATOR (Interactive Duplicate Storage + 1.25x/1.50x Holographic Score Sliders)
+  - HOLO_ARBITRAGE_CALCULATOR (Interactive Xbox Series S Bid/Sell Sliders + 5% EA Tax Guard)
+  - ROLE_SYNTHESIS_COMPARATOR (Interactive Stats + Chem + AcceleRATE 2.0 + 31 Roles++ Matrix)
+  - TACTICAL_PITCH_BOARD (Interactive FC IQ Line Height & Share Code Generator)`;
+
+/**
+ * Interactive Generative UI Widget Renderer mounted directly inside the chat / strategy stream
+ */
+const InteractiveGenUiWidgetCard: React.FC<{
+  spec: GenUiWidgetSpec;
+  userCoins: number | null;
+}> = ({ spec, userCoins }) => {
+  const [regHoloCount, setRegHoloCount] = useState<number>(1);
+  const [pristineHoloCount, setPristineHoloCount] = useState<number>(0);
+  const [baseGold84Count, setBaseGold84Count] = useState<number>(4);
+  const [simBuyPrice, setSimBuyPrice] = useState<number>(
+    spec.recommendedBuyPriceXbox || 10600
+  );
+  const [simSellPrice, setSimSellPrice] = useState<number>(
+    spec.recommendedSellPriceXbox || 12250
+  );
+
+  const cumulativeScore =
+    regHoloCount * 238 + pristineHoloCount * 465 + baseGold84Count * 135;
+  const totalSimCost =
+    regHoloCount * 10900 + pristineHoloCount * 27500 + baseGold84Count * 1600;
+  const fits35kBudget = userCoins !== null ? totalSimCost <= userCoins : true;
+  const taxCalc = calculateEaTaxMetrics(simBuyPrice, simSellPrice);
+
+  return (
+    <div className="bg-slate-950 border border-[#00ff87]/50 rounded-xl p-4 mt-3 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+        <div>
+          <div className="text-[11px] font-mono text-[#00ff87]">
+            Antigravity v2.25 Built-In Skill · generative_ui ({spec.widgetType})
+          </div>
+          <h4 className="text-sm font-bold text-white mt-0.5">{spec.title}</h4>
+          <p className="text-xs text-slate-400">{spec.subtitle}</p>
+        </div>
+        <span className="text-xs font-mono text-amber-400">
+          Xbox Series S Budget: {userCoins !== null ? `${userCoins.toLocaleString()} Coins` : '—'}
+        </span>
+      </div>
+
+      <p className="text-xs text-slate-200 leading-relaxed">{spec.executiveSummary}</p>
+
+      {/* Interactive Sliders depending on widgetType */}
+      {spec.widgetType === 'SBC_SCORE_SIMULATOR' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/90 border border-slate-800 rounded-lg p-3">
+          <div>
+            <label className="block text-[11px] text-slate-400 mb-1">
+              86 Regular Holo (1.25x = 238 pts @ 10.9k): <strong>{regHoloCount}</strong>
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={4}
+              value={regHoloCount}
+              onChange={(e) => setRegHoloCount(Number(e.target.value))}
+              className="w-full accent-[#00ff87]"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] text-slate-400 mb-1">
+              88 Pristine Holo (1.50x = 465 pts @ 27.5k): <strong>{pristineHoloCount}</strong>
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={2}
+              value={pristineHoloCount}
+              onChange={(e) => setPristineHoloCount(Number(e.target.value))}
+              className="w-full accent-[#00ff87]"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] text-slate-400 mb-1">
+              84 Base Gold (1.0x = 135 pts @ 1.6k): <strong>{baseGold84Count}</strong>
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              value={baseGold84Count}
+              onChange={(e) => setBaseGold84Count(Number(e.target.value))}
+              className="w-full accent-[#00ff87]"
+            />
+          </div>
+          <div className="sm:col-span-3 pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums">
+            <span>
+              Simulated Score: <strong className="text-[#00ff87]">{cumulativeScore}</strong> /{' '}
+              {spec.defaultTargetScore || 820} pts
+            </span>
+            <span className={fits35kBudget ? 'text-[#00ff87]' : 'text-red-400'}>
+              Xbox Series S Cost: <strong>{totalSimCost.toLocaleString()} Coins</strong>{' '}
+              {fits35kBudget ? '(Fits 35k Budget)' : '(Exceeds 35k Budget!)'}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/90 border border-slate-800 rounded-lg p-3">
+          <div>
+            <label className="block text-[11px] text-slate-400 mb-1">
+              Xbox Series S Buy / Bid Price
+            </label>
+            <input
+              type="number"
+              value={simBuyPrice}
+              onChange={(e) => setSimBuyPrice(Math.max(150, Number(e.target.value) || 0))}
+              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded text-xs font-mono text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] text-slate-400 mb-1">
+              Xbox Series S Target Sale Price
+            </label>
+            <input
+              type="number"
+              value={simSellPrice}
+              onChange={(e) => setSimSellPrice(Math.max(150, Number(e.target.value) || 0))}
+              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded text-xs font-mono text-white"
+            />
+          </div>
+          <div className="flex flex-col justify-center text-xs font-mono tabular-nums">
+            <span className="text-amber-400">
+              Break-Even (5% Tax): {taxCalc.breakEvenSalePrice.toLocaleString()}
+            </span>
+            <span className={taxCalc.netProfit >= 0 ? 'text-[#00ff87] font-bold' : 'text-red-400 font-bold'}>
+              Net Profit: {taxCalc.netProfit >= 0 ? '+' : ''}
+              {taxCalc.netProfit.toLocaleString()} Coins ({taxCalc.roiPct}%)
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-300">
+        <span>
+          Featured 26–27 Target: <strong className="text-white">{spec.featuredPlayerName}</strong> (
+          {spec.featuredPlayerClub2627})
+        </span>
+        <span className="text-amber-400">Role++ Focus: {spec.featuredRolePlusPlus}</span>
+      </div>
+
+      {spec.actionItems && spec.actionItems.length > 0 && (
+        <ul className="space-y-1 text-xs text-slate-300 border-t border-slate-800 pt-2">
+          {spec.actionItems.map((item, idx) => (
+            <li key={idx} className="font-mono">
+              {idx + 1}. {item}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerProps> = ({
   t0Anchor,
+  clubContextForAi,
   onVoiceClubCommand,
 }) => {
-  const [selectedModel, setSelectedModel] = useState<
-    'gemini-4-argon' | 'gemini-3.8-flash' | 'gemini-3.1-flash-lite'
-  >('gemini-4-argon');
+  const [routingMode, setRoutingMode] = useState<ClientRoutingMode>('AUTO');
   const [useSearchGrounding, setUseSearchGrounding] = useState<boolean>(true);
+  const [genUiModeActive, setGenUiModeActive] = useState<boolean>(false);
   const [chatInput, setChatInput] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
   const [isProbingFirmware, setIsProbingFirmware] = useState<boolean>(false);
-  const [firmwareDiscoveryLog, setFirmwareDiscoveryLog] = useState<string | null>(null);
+  const [firmwareDiscoveryLog, setFirmwareDiscoveryLog] = useState<{
+    text: string;
+    telemetry?: RoutingTelemetryReceipt;
+  } | null>(null);
   const [copiedMcp, setCopiedMcp] = useState<boolean>(false);
+  const [copiedSkill, setCopiedSkill] = useState<boolean>(false);
+
+  // Live FC 27 Xbox Series S Card Verifier state
+  const [verifyPlayerQuery, setVerifyPlayerQuery] = useState<string>('');
+  const [isVerifyingPlayer, setIsVerifyingPlayer] = useState<boolean>(false);
+  const [verifyPlayerOutput, setVerifyPlayerOutput] = useState<{
+    text: string;
+    telemetry?: RoutingTelemetryReceipt;
+  } | null>(null);
 
   // Voice recording state for gemini-3.5-transcribe
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -81,12 +297,23 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
+  const userCoins =
+    typeof clubContextForAi.coins === 'number' ? clubContextForAi.coins : null;
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
-      text: `Executive Summary: Connected to Google Antigravity ${t0Anchor.antigravityFirmware.version} Desktop Orchestrator and grounded at T=0 (${t0Anchor.britishFullFormatted} · ${t0Anchor.footballSeasonCode} Season). Ask me to solve Streamlined SBCs, chain Branching Evolutions around your FC Barcelona (Rodri/Yamal/Pedri) core, or analyze console Holographic arbitrage.`,
-      modelBadge: 'Antigravity v2.25 · T=0 Grounded',
+      text: `Executive Summary: Connected to Google Antigravity ${t0Anchor.antigravityFirmware.version} Desktop Orchestrator (with built-in generative_ui skill) at T=0 (${t0Anchor.britishFullFormatted} · ${t0Anchor.footballSeasonCode} Season).\n\nXbox Series S Club State Locked:\n• Confirmed Coin Balance: ${
+        userCoins !== null ? `${userCoins.toLocaleString()} Coins` : '— (Blank)'
+      }\n• All other personal club fields (Gallery Level, Owned Cards, FIFA Points, Rivals Division, Daily SP) are strictly BLANK (—) with zero guessing.\n• 5-Tier Smart Model Router is set to AUTO (routes by latency, benchmark strength, and cost).`,
       t0Stamp: t0Anchor.britishTimeFormatted,
+      telemetry: {
+        tierLabel: 'Tier 0 · Local T=0 Boot Verification',
+        modelUsed: 'Local Deterministic Guard',
+        latencyMs: 1,
+        routingReason:
+          'Zero-token initialization enforcing 35,000 Xbox Series S Coins and strict blank state for unknown personal club fields.',
+      },
     },
   ]);
 
@@ -94,6 +321,12 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
     navigator.clipboard.writeText(MCP_CONFIG_JSON_STRING);
     setCopiedMcp(true);
     setTimeout(() => setCopiedMcp(false), 2000);
+  };
+
+  const handleCopySkillMd = () => {
+    navigator.clipboard.writeText(GENERATIVE_UI_SKILL_SUMMARY);
+    setCopiedSkill(true);
+    setTimeout(() => setCopiedSkill(false), 2000);
   };
 
   const handleProbeT0FirmwareAndPatches = async () => {
@@ -104,25 +337,61 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           clientT0: t0Anchor.britishFullFormatted,
-          focusTopic: 'Antigravity 2.25 Desktop App, EA Sports FC 27 Title Update #3.1, and 2026-27 FotMob Transfers',
+          focusTopic:
+            'Antigravity 2.25 Desktop App (generative_ui skill), EA Sports FC 27 Xbox Series S Title Update #3.1, and 2026-27 FotMob Transfers',
         }),
       });
       const data = await res.json();
       if (data.error) {
-        setFirmwareDiscoveryLog(`Discovery Alert: ${data.error}`);
+        setFirmwareDiscoveryLog({ text: `Discovery Alert: ${data.error}` });
       } else {
-        setFirmwareDiscoveryLog(data.text);
+        setFirmwareDiscoveryLog({
+          text: data.text,
+          telemetry: data.routingTelemetry,
+        });
       }
     } catch (err: any) {
-      setFirmwareDiscoveryLog(`Failed to probe live T=0 release channels: ${err.message}`);
+      setFirmwareDiscoveryLog({
+        text: `Failed to probe live T=0 release channels: ${err.message}`,
+      });
     } finally {
       setIsProbingFirmware(false);
     }
   };
 
-  const handleSendMessage = async (overrideText?: string) => {
+  const handleVerifyXboxCard = async () => {
+    if (!verifyPlayerQuery.trim() || isVerifyingPlayer) return;
+    setIsVerifyingPlayer(true);
+    try {
+      const res = await fetch('/api/gemini/verify-fc27-xbox', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerName: verifyPlayerQuery.trim(),
+          clientT0: t0Anchor.britishFullFormatted,
+        }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        setVerifyPlayerOutput({ text: `Verification Error: ${data.error}` });
+      } else {
+        setVerifyPlayerOutput({
+          text: data.text,
+          telemetry: data.routingTelemetry,
+        });
+      }
+    } catch (err: any) {
+      setVerifyPlayerOutput({ text: `Network error: ${err.message}` });
+    } finally {
+      setIsVerifyingPlayer(false);
+    }
+  };
+
+  const handleSendMessage = async (overrideText?: string, forceGenUi?: boolean) => {
     const textToSend = (overrideText ?? chatInput).trim();
     if (!textToSend || isSending) return;
+
+    const shouldUseGenUi = forceGenUi ?? genUiModeActive;
 
     const userMsg: ChatMessage = {
       role: 'user',
@@ -136,42 +405,73 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
     setIsSending(true);
 
     try {
-      const res = await fetch('/api/gemini/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: nextMessages.map((m) => ({ role: m.role, text: m.text })),
-          selectedModel,
-          useSearchGrounding,
-          clientT0: t0Anchor.britishFullFormatted,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'model',
-            text: `Error: ${data.error}`,
-            modelBadge: selectedModel,
-            t0Stamp: t0Anchor.britishTimeFormatted,
-          },
-        ]);
+      if (shouldUseGenUi) {
+        const res = await fetch('/api/gemini/generative-ui', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: textToSend,
+            clubContext: clubContextForAi,
+            clientT0: t0Anchor.britishFullFormatted,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'model',
+              text: `GenUI Error: ${data.error}`,
+              t0Stamp: t0Anchor.britishTimeFormatted,
+            },
+          ]);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'model',
+              text:
+                data.widget?.executiveSummary ||
+                'Interactive Generative UI micro-tool synthesized below.',
+              t0Stamp: t0Anchor.britishTimeFormatted,
+              telemetry: data.routingTelemetry,
+              genUiWidget: data.widget,
+            },
+          ]);
+        }
       } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'model',
-            text: data.text,
-            modelBadge:
-              selectedModel === 'gemini-4-argon'
-                ? 'gemini-4-argon (Thinking HIGH)'
-                : selectedModel === 'gemini-3.8-flash'
-                ? 'gemini-3.8-flash (Search Grounded)'
-                : 'gemini-3.1-flash-lite (Fast)',
-            t0Stamp: t0Anchor.britishTimeFormatted,
-          },
-        ]);
+        const res = await fetch('/api/gemini/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: nextMessages.map((m) => ({ role: m.role, text: m.text })),
+            routingMode,
+            useSearchGrounding,
+            clubContext: clubContextForAi,
+            clientT0: t0Anchor.britishFullFormatted,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'model',
+              text: `Error: ${data.error}`,
+              t0Stamp: t0Anchor.britishTimeFormatted,
+            },
+          ]);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'model',
+              text: data.text,
+              t0Stamp: t0Anchor.britishTimeFormatted,
+              telemetry: data.routingTelemetry,
+            },
+          ]);
+        }
       }
     } catch (err: any) {
       setMessages((prev) => [
@@ -179,7 +479,6 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
         {
           role: 'model',
           text: `Network error: ${err.message}`,
-          modelBadge: selectedModel,
           t0Stamp: t0Anchor.britishTimeFormatted,
         },
       ]);
@@ -248,14 +547,149 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
 
   return (
     <div className="space-y-6">
-      {/* Top Grid: Antigravity v2.25 Orchestrator + Multi-Turn Gemini Chatbot */}
+      {/* 5-Tier Smart Model Routing Matrix (Latency, Benchmarks & Cost) */}
+      <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div className="text-xs text-[#00ff87] font-semibold">
+              Multi-Model Latency, Benchmark & Token Cost Architecture
+            </div>
+            <h3 className="text-lg font-bold text-white mt-0.5">
+              5-Tier Smart Model Router (Auto-Route by Complexity + Manual Override)
+            </h3>
+          </div>
+          <span className="text-xs font-mono text-amber-400">
+            Active Mode: {routingMode}
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="border-b border-slate-800 text-slate-400">
+                <th className="py-2 pr-3 font-semibold">Tier & Engine</th>
+                <th className="py-2 px-3 font-semibold">Target Latency</th>
+                <th className="py-2 px-3 font-semibold">Relative Cost</th>
+                <th className="py-2 pl-3 font-semibold">When Auto-Routed (Benchmark & Task Fit)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/70 font-mono text-slate-300">
+              <tr>
+                <td className="py-2 pr-3 font-bold text-[#00ff87]">
+                  Tier 0 · Local TypeScript Math
+                </td>
+                <td className="py-2 px-3 tabular-nums">0.2ms – 2.0ms</td>
+                <td className="py-2 px-3 text-[#00ff87]">$0.00 (0 Tokens)</td>
+                <td className="py-2 pl-3 font-sans">
+                  5% EA Tax, Streamlined SBC Item Score (1.25x/1.50x Holo), 33/33 Chem, AcceleRATE 2.0, Isolated vs. Synthesized Stat math.
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-3 font-bold text-white">
+                  Tier 1 · gemini-3.1-flash-lite
+                </td>
+                <td className="py-2 px-3 tabular-nums">~180ms – 350ms</td>
+                <td className="py-2 px-3 text-[#00ff87]">1x (Ultra-Low)</td>
+                <td className="py-2 pl-3 font-sans">
+                  Fast single-step FC 27 mechanics lookups, JSON/Paletools field normalization, and quick UI filter classification.
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-3 font-bold text-amber-400">
+                  Tier 2 · gemini-3.8-flash + Search
+                </td>
+                <td className="py-2 px-3 tabular-nums">~450ms – 950ms</td>
+                <td className="py-2 px-3 text-amber-400">~3x (Balanced)</td>
+                <td className="py-2 pl-3 font-sans">
+                  Live T=0 FUTBIN FC 27 Xbox Series S price verification, FotMob 2026/27 transfer checks (Rodri @ FC Barcelona), 18:00 UK drops.
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-3 font-bold text-[#00ff87]">
+                  Tier 3 · gemini-4-argon (HIGH)
+                </td>
+                <td className="py-2 px-3 tabular-nums">~2,200ms – 5,500ms</td>
+                <td className="py-2 px-3 text-slate-300">~15x (Premium)</td>
+                <td className="py-2 pl-3 font-sans">
+                  Complex multi-branch Evolution trade-offs, 35,000 Coin Xbox Series S squad/SBC optimization, and Antigravity v2.25 generative_ui widgets.
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-3 font-bold text-slate-200">
+                  Audio · gemini-3.5-transcribe
+                </td>
+                <td className="py-2 px-3 tabular-nums">~300ms – 600ms</td>
+                <td className="py-2 px-3 text-slate-400">Audio-Specific</td>
+                <td className="py-2 pl-3 font-sans">
+                  Hands-free controller microphone voice dictation for logging Xbox Series S coins or pack pulls.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Live FC 27 Xbox Series S Card & Market Price Verification Bar */}
+      <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-3">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div>
+            <div className="text-xs text-[#00ff87] font-semibold">
+              Strict FC 27 Xbox Series S Verification Gate (Tier 2: gemini-3.8-flash + Google Search)
+            </div>
+            <h3 className="text-base font-bold text-white mt-0.5">
+              Verify Any Player for EA Sports FC 27 (Xbox Series S Console Market Only)
+            </h3>
+            <p className="text-xs text-slate-400">
+              Checks 2026/27 FotMob club + FUTBIN FC 27 Xbox Series S price. Any datum that cannot be 100% verified for FC 27 is left BLANK (—).
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 w-full lg:w-auto">
+            <input
+              type="text"
+              value={verifyPlayerQuery}
+              onChange={(e) => setVerifyPlayerQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleVerifyXboxCard();
+              }}
+              placeholder="e.g. Rodri, Lamine Yamal, Kobbie Mainoo..."
+              className="flex-1 lg:w-72 px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-[#00ff87] min-h-[40px]"
+            />
+            <button
+              type="button"
+              disabled={isVerifyingPlayer || !verifyPlayerQuery.trim()}
+              onClick={handleVerifyXboxCard}
+              className="px-4 py-2 bg-[#00ff87] hover:bg-[#00e67a] text-slate-950 font-bold text-xs rounded-lg flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 min-h-[40px] disabled:opacity-50"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>{isVerifyingPlayer ? 'Verifying FC 27 Xbox...' : 'Verify FC 27 Xbox'}</span>
+            </button>
+          </div>
+        </div>
+
+        {verifyPlayerOutput && (
+          <div className="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-2 text-xs">
+            {verifyPlayerOutput.telemetry && (
+              <div className="font-mono text-[11px] text-[#00ff87] border-b border-slate-800 pb-1.5">
+                {verifyPlayerOutput.telemetry.tierLabel} · {verifyPlayerOutput.telemetry.latencyMs}ms ·{' '}
+                {verifyPlayerOutput.telemetry.routingReason}
+              </div>
+            )}
+            <div className="text-slate-200 whitespace-pre-wrap leading-relaxed">
+              {verifyPlayerOutput.text}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Main Grid: Antigravity v2.25 Orchestrator (Left) + Smart-Routed Chat & Generative UI (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Antigravity v2.25 Firmware & 7-Connector MCP Hub */}
+        {/* Left: Antigravity v2.25 Firmware, generative_ui SKILL.md & 7-Connector MCP Hub */}
         <div className="lg:col-span-6 bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
             <div>
               <div className="text-xs text-slate-400">
-                Dynamic T=0 Firmware & MCP Pipeline ({t0Anchor.britishDateFormatted})
+                Dynamic T=0 Firmware & Skill Pipeline ({t0Anchor.britishDateFormatted})
               </div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2 mt-0.5">
                 <Cpu className="w-4 h-4 text-[#00ff87]" />
@@ -279,27 +713,37 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
           </div>
 
           {firmwareDiscoveryLog && (
-            <div className="bg-slate-950 border border-[#00ff87]/40 rounded-lg p-3.5 text-xs text-slate-200 whitespace-pre-wrap max-h-48 overflow-y-auto">
-              {firmwareDiscoveryLog}
+            <div className="bg-slate-950 border border-[#00ff87]/40 rounded-lg p-3.5 space-y-2 text-xs text-slate-200 max-h-56 overflow-y-auto">
+              {firmwareDiscoveryLog.telemetry && (
+                <div className="font-mono text-[11px] text-[#00ff87] border-b border-slate-800 pb-1.5">
+                  {firmwareDiscoveryLog.telemetry.tierLabel} ·{' '}
+                  {firmwareDiscoveryLog.telemetry.latencyMs}ms ·{' '}
+                  {firmwareDiscoveryLog.telemetry.routingReason}
+                </div>
+              )}
+              <div className="whitespace-pre-wrap">{firmwareDiscoveryLog.text}</div>
             </div>
           )}
 
-          <div className="space-y-2.5">
-            <div className="text-xs font-semibold text-slate-300">
-              Active Capabilities Unlocked by Antigravity v{t0Anchor.antigravityFirmware.version} at T=0:
-            </div>
-            {t0Anchor.antigravityFirmware.activeFeatures.map((feat) => (
-              <div
-                key={feat.id}
-                className="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1"
+          {/* Built-in generative_ui Skill Inspector */}
+          <div className="space-y-2 bg-slate-900/90 border border-slate-800 rounded-lg p-3.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-bold text-[#00ff87] flex items-center gap-1.5">
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Built-In Skill: C:\Users\Kit\.gemini\antigravity\builtin\skills\generative_ui\SKILL.md</span>
+              </span>
+              <button
+                type="button"
+                onClick={handleCopySkillMd}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-white rounded-md flex items-center gap-1 transition-colors shrink-0"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="font-bold text-white">{feat.title}</span>
-                  <span className="font-mono text-[#00ff87]">{feat.commandOrConfig}</span>
-                </div>
-                <p className="text-xs text-slate-400">{feat.description}</p>
-              </div>
-            ))}
+                {copiedSkill ? <Check className="w-3.5 h-3.5 text-[#00ff87]" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedSkill ? 'Copied!' : 'Copy SKILL.md'}</span>
+              </button>
+            </div>
+            <pre className="bg-slate-950 border border-slate-800 rounded p-2.5 text-[11px] font-mono text-slate-300 overflow-x-auto">
+              {GENERATIVE_UI_SKILL_SUMMARY}
+            </pre>
           </div>
 
           {/* .agents/mcp_config.json Copy Block */}
@@ -307,7 +751,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                 <Terminal className="w-3.5 h-3.5 text-amber-400" />
-                <span>Scoped .agents/mcp_config.json (FUTBIN 27 + FotMob + SQLite)</span>
+                <span>Scoped .agents/mcp_config.json (Xbox Series S + FotMob + SQLite)</span>
               </span>
               <button
                 type="button"
@@ -318,54 +762,70 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
                 <span>{copiedMcp ? 'Copied!' : 'Copy Config'}</span>
               </button>
             </div>
-            <pre className="bg-slate-950 border border-slate-800 rounded-lg p-3 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-44">
+            <pre className="bg-slate-950 border border-slate-800 rounded-lg p-3 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-40">
               {MCP_CONFIG_JSON_STRING}
             </pre>
           </div>
         </div>
 
-        {/* Right: Multi-Turn Gemini Chatbot + Voice Transcription (gemini-3.5-transcribe) */}
+        {/* Right: Multi-Turn Smart-Routed Chat + Generative UI Widget Synthesizer */}
         <div className="lg:col-span-6 bg-[#111827] border border-slate-800 rounded-xl p-5 flex flex-col justify-between space-y-4">
           <div className="space-y-3 border-b border-slate-800 pb-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <div className="text-xs text-slate-400">
-                  Multi-Turn Tactical & Market Intelligence Thread
+                  Smart-Routed Xbox Series S Tactical & Market Thread (35,000 Coins Locked)
                 </div>
                 <h3 className="text-lg font-bold text-white flex items-center gap-2 mt-0.5">
                   <Sparkles className="w-4 h-4 text-[#00ff87]" />
-                  <span>Gemini Strategic Director & Voice Sync</span>
+                  <span>Strategic Director & Generative UI Stream</span>
                 </h3>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setUseSearchGrounding((v) => !v)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 min-h-[36px] ${
-                  useSearchGrounding
-                    ? 'bg-[#00ff87]/15 border-[#00ff87] text-[#00ff87]'
-                    : 'bg-slate-900 border-slate-800 text-slate-400'
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>Google Search Grounding: {useSearchGrounding ? 'ON' : 'OFF'}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setGenUiModeActive((v) => !v)}
+                  className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 min-h-[36px] ${
+                    genUiModeActive
+                      ? 'bg-amber-400 text-slate-950 border-amber-400 font-bold'
+                      : 'bg-slate-900 border-slate-800 text-slate-300'
+                  }`}
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>GenUI Skill: {genUiModeActive ? 'ON' : 'OFF'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setUseSearchGrounding((v) => !v)}
+                  className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 min-h-[36px] ${
+                    useSearchGrounding
+                      ? 'bg-[#00ff87]/15 border-[#00ff87] text-[#00ff87]'
+                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                  }`}
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Search: {useSearchGrounding ? 'ON' : 'OFF'}</span>
+                </button>
+              </div>
             </div>
 
-            {/* Model Selector */}
-            <div className="grid grid-cols-3 gap-2">
+            {/* 4-Option Smart Router Mode Selector (AUTO + Manual Overrides) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
-                { id: 'gemini-4-argon', label: 'Gemini 4 Argon (High Thinking)' },
-                { id: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash (Search)' },
-                { id: 'gemini-3.1-flash-lite', label: '3.1 Flash Lite (Fast)' },
+                { id: 'AUTO', label: 'AUTO (Smart Router)' },
+                { id: 'TIER_1_LITE', label: 'Tier 1: 3.1 Flash Lite' },
+                { id: 'TIER_2_FLASH_SEARCH', label: 'Tier 2: 3.8 Flash + Search' },
+                { id: 'TIER_3_ARGON_HIGH', label: 'Tier 3: 4 Argon HIGH' },
               ].map((m) => (
                 <button
                   key={m.id}
                   type="button"
-                  onClick={() => setSelectedModel(m.id as any)}
+                  onClick={() => setRoutingMode(m.id as ClientRoutingMode)}
                   className={`px-2.5 py-2 text-xs font-semibold rounded-lg border transition-colors truncate min-h-[38px] ${
-                    selectedModel === m.id
-                      ? 'bg-[#00ff87] text-slate-950 border-[#00ff87]'
+                    routingMode === m.id
+                      ? 'bg-[#00ff87] text-slate-950 border-[#00ff87] font-bold'
                       : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
                   }`}
                 >
@@ -375,42 +835,83 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
             </div>
           </div>
 
-          {/* Scrollable Message Thread */}
-          <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+          {/* Scrollable Message Thread with Routing Telemetry Receipts & Interactive GenUI Widgets */}
+          <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
             {messages.map((msg, i) => (
               <div
                 key={i}
                 className={`rounded-xl p-3.5 text-xs leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-[#00ff87]/15 border border-[#00ff87]/40 text-white ml-6'
-                    : 'bg-slate-900/95 border border-slate-800 text-slate-200 mr-4'
+                    : 'bg-slate-900/95 border border-slate-800 text-slate-200 mr-2'
                 }`}
               >
-                <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1 font-mono">
-                  <span>{msg.role === 'user' ? 'You (Console Commander)' : msg.modelBadge}</span>
-                  <span>{msg.t0Stamp}</span>
+                <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 mb-1.5 font-mono">
+                  <span>
+                    {msg.role === 'user'
+                      ? 'You (Xbox Series S · 35,000 Coins)'
+                      : msg.telemetry?.tierLabel || 'Gemini Strategic Router'}
+                  </span>
+                  <span>
+                    {msg.telemetry ? `${msg.telemetry.latencyMs}ms · ` : ''}
+                    {msg.t0Stamp}
+                  </span>
                 </div>
+
+                {msg.telemetry && (
+                  <div className="mb-2 px-2.5 py-1.5 bg-slate-950/90 border border-slate-800 rounded text-[11px] font-mono text-amber-300">
+                    <Zap className="w-3 h-3 inline mr-1 text-[#00ff87]" />
+                    {msg.telemetry.routingReason}
+                  </div>
+                )}
+
                 <div className="whitespace-pre-wrap">{msg.text}</div>
+
+                {msg.genUiWidget && (
+                  <InteractiveGenUiWidgetCard
+                    spec={msg.genUiWidget}
+                    userCoins={userCoins}
+                  />
+                )}
               </div>
             ))}
           </div>
 
-          {/* Quick Prompt Starters */}
+          {/* Quick Prompt Starters (Showcasing Tier 1, Tier 2, Tier 3, and GenUI Skill) */}
           <div className="flex flex-wrap gap-1.5">
-            {[
-              'Best Evolution chain for FC Barcelona links (Rodri + Yamal)?',
-              'Cheapest Holographic combo for 1,450 Item Score Hero SBC?',
-              'Best 5G Bid-Flipping targets before 18:00 UK drop?',
-            ].map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => handleSendMessage(q)}
-                className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-[11px] text-slate-300 transition-colors"
-              >
-                {q}
-              </button>
-            ))}
+            <button
+              type="button"
+              onClick={() =>
+                handleSendMessage('What is the 3 PlayStyles+ cap and Holographic multiplier rule in FC 27?', false)
+              }
+              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-[11px] text-slate-300 transition-colors"
+            >
+              [Tier 1 Fast] 3 PS+ & Holo Rules
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                handleSendMessage(
+                  'Verify current Xbox Series S Holographic fodder prices and 18:00 UK drop for my 35,000 Coin budget.',
+                  false
+                )
+              }
+              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-[11px] text-slate-300 transition-colors"
+            >
+              [Tier 2 Search] Live Xbox 35k Flips
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                handleSendMessage(
+                  'Build an interactive 35,000 Coin Xbox Series S Streamlined SBC & Holographic Arbitrage simulator widget.',
+                  true
+                )
+              }
+              className="px-2.5 py-1.5 bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/40 rounded-md text-[11px] text-amber-300 font-semibold transition-colors"
+            >
+              [Tier 3 GenUI Skill] Launch Interactive 35k Widget
+            </button>
           </div>
 
           {/* Input & Microphone Audio Transcription Bar */}
@@ -425,8 +926,14 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
                   : 'bg-slate-900 border-slate-700 text-slate-200 hover:border-[#00ff87]'
               }`}
             >
-              {isRecording ? <Square className="w-4 h-4 text-red-400" /> : <Mic className="w-4 h-4 text-[#00ff87]" />}
-              <span>{isRecording ? 'Stop Mic' : isTranscribing ? 'Transcribing...' : 'Voice Mic'}</span>
+              {isRecording ? (
+                <Square className="w-4 h-4 text-red-400" />
+              ) : (
+                <Mic className="w-4 h-4 text-[#00ff87]" />
+              )}
+              <span>
+                {isRecording ? 'Stop Mic' : isTranscribing ? 'Transcribing...' : 'Voice Mic'}
+              </span>
             </button>
 
             <input
@@ -436,7 +943,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleSendMessage();
               }}
-              placeholder="Ask about SBCs, 26-27 transfers, Roles++, or dictate pack pulls..."
+              placeholder="Ask anything (Auto-routed across Tier 1/2/3 respecting your 35,000 Xbox Coins)..."
               className="flex-1 px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-[#00ff87] min-h-[42px]"
             />
 
@@ -447,88 +954,9 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
               className="px-4 py-2.5 bg-[#00ff87] hover:bg-[#00e67a] text-slate-950 font-semibold text-xs rounded-lg flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 min-h-[42px] disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
-              <span>{isSending ? 'Thinking...' : 'Send'}</span>
+              <span>{isSending ? 'Routing...' : 'Send'}</span>
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Ecosystem Comparison Matrix: FUTBIN vs. FUT.GG vs. EasySBC vs. FotMob vs. Our App */}
-      <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-4">
-        <div>
-          <div className="text-xs text-slate-400">
-            RAEC Benchmark & Platform Critique (2026/27 Season Console Ecosystem)
-          </div>
-          <h3 className="text-lg font-bold text-white mt-0.5">
-            FUTBIN vs. FUT.GG vs. EasySBC vs. FotMob vs. FC 27 UT App
-          </h3>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-slate-800 text-slate-400">
-                <th className="py-2.5 pr-4 font-semibold">Evaluation Criteria</th>
-                <th className="py-2.5 px-3 font-semibold">FUTBIN (FC 27)</th>
-                <th className="py-2.5 px-3 font-semibold">FUT.GG</th>
-                <th className="py-2.5 px-3 font-semibold">EasySBC</th>
-                <th className="py-2.5 px-3 font-semibold">FotMob (26–27)</th>
-                <th className="py-2.5 pl-3 font-semibold text-[#00ff87]">Our FC 27 UT App (Winner)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/70 text-slate-300">
-              <tr>
-                <td className="py-2.5 pr-4 font-semibold text-white">Streamlined SBCs (Item Score)</td>
-                <td className="py-2.5 px-3">Static Item Score tables</td>
-                <td className="py-2.5 px-3">Cheapest by Rating list</td>
-                <td className="py-2.5 px-3">Paywalled solver ($11.99/mo)</td>
-                <td className="py-2.5 px-3">N/A</td>
-                <td className="py-2.5 pl-3 text-[#00ff87] font-semibold">
-                  0ms Deterministic Duplicate Storage + Holographic (1.25x/1.50x) Optimizer
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-semibold text-white">FUT Gallery Sets, Tags & Flip</td>
-                <td className="py-2.5 px-3">Gallery Builder & Grades</td>
-                <td className="py-2.5 px-3">Holographic card DB</td>
-                <td className="py-2.5 px-3">Minimal</td>
-                <td className="py-2.5 px-3">N/A</td>
-                <td className="py-2.5 pl-3 text-[#00ff87] font-semibold">
-                  100+ Sets Tracker + Tag Bonus Calc + Discard "Rent-and-Flip" Optimizer
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-semibold text-white">Gameplay Synthesis & 31 Roles++</td>
-                <td className="py-2.5 px-3">Chem style stat calculator</td>
-                <td className="py-2.5 px-3">Strong Evo Lab & Roles++</td>
-                <td className="py-2.5 px-3">S–D Meta Ratings</td>
-                <td className="py-2.5 px-3">N/A</td>
-                <td className="py-2.5 pl-3 text-[#00ff87] font-semibold">
-                  Synthesizes Stats + Chem + AcceleRATE 2.0 + 3 PS+ Cap + Body Type + Role++
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-semibold text-white">2026–27 Transfer Truth (T=0)</td>
-                <td className="py-2.5 px-3">Game DB bound</td>
-                <td className="py-2.5 px-3">Game DB bound</td>
-                <td className="py-2.5 px-3">Game DB bound</td>
-                <td className="py-2.5 px-3">Live 26–27 Rosters</td>
-                <td className="py-2.5 pl-3 text-[#00ff87] font-semibold">
-                  Dual FotMob + FUTBIN 27 Grounding (e.g. Rodri @ FC Barcelona verified)
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 pr-4 font-semibold text-white">Club Sync (No Camera Uploads)</td>
-                <td className="py-2.5 px-3">Broken/manual import</td>
-                <td className="py-2.5 px-3">Manual checklist</td>
-                <td className="py-2.5 px-3">Browser extension</td>
-                <td className="py-2.5 px-3">N/A</td>
-                <td className="py-2.5 pl-3 text-[#00ff87] font-semibold">
-                  Antigravity v2.25 /browser MCP + Web App JSON + Google Drive + Voice Mic
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

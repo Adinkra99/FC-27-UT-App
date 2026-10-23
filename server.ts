@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel, Type } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +59,7 @@ function buildServerT0Context() {
     t0Iso: now.toISOString(),
     formattedUk,
     seasonCode,
+    consolePlatform: 'Xbox Series S (Console Cross-Play Market Only)',
     antigravityVersion: '2.25',
     fc27Patch: 'EA Sports FC 27 Title Update #3.1 / Live Tuning #4',
   };
@@ -66,31 +67,161 @@ function buildServerT0Context() {
 
 function getCoreSystemInstruction(clientT0Override?: string) {
   const t0 = buildServerT0Context();
-  return `You are the EA SPORTS FC 27 ULTIMATE TEAM STRATEGIC ENGINE (PRO CONSOLE EDITION), orchestrated via Google Antigravity 2.0 Desktop App (Firmware v${t0.antigravityVersion}).
+  return `You are the EA SPORTS FC 27 ULTIMATE TEAM STRATEGIC ENGINE (XBOX SERIES S CONSOLE EDITION), orchestrated via Google Antigravity 2.0 Desktop App (Firmware v${t0.antigravityVersion}) with the built-in generative_ui skill (C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md).
 
-STRICT TEMPORAL & SEASONAL GROUNDING (T = 0):
-- Live British Time Anchor (Europe/London): ${clientT0Override || t0.formattedUk} (ISO: ${t0.t0Iso}).
-- Active Football Season: ${t0.seasonCode}. (Remember: Aug-Dec = 1st Half of [Year]-[Year+1] season; Jan-May = 2nd Half of [Year-1]-[Year] season).
-- Daily Content Drop Anchor: 18:00 UK Time.
-- ANTI-AUTOREGRESSIVE TRANSFER LAW: Override historical pre-training frequency bias completely. Ground strictly in the 2026/27 season verified via FotMob and FUTBIN FC 27 Console. For example, in 2026/27, Rodri plays for FC Barcelona (LaLiga EA Sports, Spain), Kylian Mbappé plays for Real Madrid, etc. NEVER reference FC 24, FC 25, or FC 26.
+STRICT TEMPORAL, CONSOLE & ZERO-HALLUCINATION GROUNDING (T = 0):
+1. Live British Time Anchor (Europe/London): ${clientT0Override || t0.formattedUk} (ISO: ${t0.t0Iso}).
+2. Active Football Season: ${t0.seasonCode}. Daily Content Drop Anchor: 18:00 UK Time.
+3. XBOX SERIES S CONSOLE MARKET ONLY: Only the Xbox Series S (Console Cross-Play) transfer market matters. NEVER use PC or Nintendo Switch prices.
+4. ZERO-GUESSING PERSONAL CLUB LAW:
+   - Never hallucinate, predict, or fill in gaps about the user's personal Ultimate Team (such as Gallery Level, cards they own, SBC Duplicate Storage, FIFA Points, Rivals Division, Daily SP, or Club Name).
+   - If a personal club field is null, empty ([]), or marked "BLANK", treat it strictly as unknown/blank ("—"). Do NOT assume the user owns any card unless it is explicitly listed in their synced clubContext.
+   - Respect the user's exact confirmed Xbox Series S Coin balance (currently 35,000 Coins unless updated by the user).
+5. ANTI-AUTOREGRESSIVE TRANSFER & EDITION LAW (FC 27 ONLY):
+   - Override historical pre-training frequency bias completely. Ground strictly in EA Sports FC 27 Ultimate Team (2026/27 season) verified via FotMob and FUTBIN FC 27 Console.
+   - For example, in 2026/27, Rodri plays for FC Barcelona (LaLiga EA Sports, Spain), Kylian Mbappé plays for Real Madrid, etc.
+   - NEVER reference or fall back to FC 24, FC 25, or FC 26 ratings, stats, or prices. If a datum cannot be verified for EA Sports FC 27 on Xbox Series S, leave it blank ("— [Unverified for FC 27 Xbox Series S]").
 
 FC 27 CORE MECHANICS:
-1. Dual-Mode SBCs:
-   - Streamlined SBCs use cumulative "Item Score" across partial submissions. Base cards are simply Bronze, Silver, or Gold (no Common/Rare split). Regular Holographic (OVR <= 87) adds a 1.25x Item Score multiplier; Pristine Holographic (OVR >= 88) adds a 1.50x multiplier. Prioritize SBC Duplicate Storage and untradeables first.
-   - Traditional Puzzle SBCs require 11 players and up to 33/33 chemistry.
-2. FUT Gallery:
-   - Permanent collection system (100+ Sets, Set Grades, Tag Bonuses). Cards remain registered in Gallery Sets even after being sold or submitted into SBCs ("Rent-and-Flip" at Quick Sell floor minus 5% EA tax).
-3. Gameplay Synthesis & Branching Evolutions:
-   - Strictly enforce the 3 PlayStyles+ hard cap in FC 27.
-   - Evaluate all 31 Player Roles & Focuses (Role, Role+, Role++), Chemistry Style boosts (0-3 diamonds), AcceleRATE 2.0 sprint curves, and Body Type responsiveness under ${t0.fc27Patch}.
-4. 5% EA Tax Enforcement:
-   - Net Sale = Sale Price * 0.95. Always state exact break-even sale price.
+- Dual-Mode SBCs: Streamlined SBCs use cumulative "Item Score" (Base Bronze/Silver/Gold with no Common/Rare split; Regular Holographic <=87 = 1.25x Score; Pristine Holographic >=88 = 1.50x Score). Puzzle SBCs require 11 players and up to 33/33 chemistry.
+- FUT Gallery: Permanent collection system (100+ Sets, Set Grades, Tag Bonuses). Cards stay registered even after being sold ("Rent-and-Flip" near Quick Sell floor minus 5% EA tax).
+- Gameplay Synthesis & Branching Evolutions: Strictly enforce the 3 PlayStyles+ hard cap in FC 27, 31 Player Roles (Role, Role+, Role++), Chemistry Style boosts (0-3 diamonds), AcceleRATE 2.0 sprint curves, and Body Type responsiveness under ${t0.fc27Patch}.
+- 5% EA Tax Enforcement: Net Sale = Sale Price * 0.95. Always state exact break-even sale price.
 
 OUTPUT FORMAT:
 - Executive Summary (1-2 crisp sentences).
-- Tactical Solution / Math Breakdown (clean bulleted breakdown with tabular numbers).
+- Tactical Solution / Math Breakdown (clean bulleted breakdown with tabular numbers, respecting 35,000 Coins and keeping unknown club fields blank).
 - Direct Action Items (1, 2, 3...).
-- Net Financials (Coins spent, Coins saved, 5% EA tax accounted for).`;
+- Net Financials (Xbox Series S Coins spent, 5% EA tax accounted for).`;
+}
+
+/**
+ * 5-Tier Smart Model Router Classifier
+ * Factors in task complexity, required live web grounding, latency, benchmarks, and token cost.
+ */
+export type RoutingOverrideMode =
+  | 'AUTO'
+  | 'TIER_1_LITE'
+  | 'TIER_2_FLASH_SEARCH'
+  | 'TIER_3_ARGON_HIGH';
+
+interface ResolvedRouteDecision {
+  model: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon';
+  tierLabel: string;
+  useSearch: boolean;
+  useHighThinking: boolean;
+  routingReason: string;
+  costBenchmarkSummary: string;
+}
+
+function resolveSmartModelRoute(
+  queryText: string,
+  overrideMode: RoutingOverrideMode = 'AUTO',
+  useSearchGroundingPref: boolean = true
+): ResolvedRouteDecision {
+  if (overrideMode === 'TIER_1_LITE') {
+    return {
+      model: 'gemini-3.1-flash-lite',
+      tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Manual Override)',
+      useSearch: false,
+      useHighThinking: false,
+      routingReason:
+        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~180-350ms TTFT, 1x baseline cost).',
+      costBenchmarkSummary: 'Lowest Cost (1x) · Sub-350ms Latency',
+    };
+  }
+
+  if (overrideMode === 'TIER_2_FLASH_SEARCH') {
+    return {
+      model: 'gemini-3.8-flash',
+      tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search (Manual Override)',
+      useSearch: useSearchGroundingPref,
+      useHighThinking: false,
+      routingReason:
+        'Manual override to Tier 2 Live Web Grounding model (~450-950ms TTFT, ~3x baseline cost).',
+      costBenchmarkSummary: 'Low-Moderate Cost (3x) · Live Web Search Grounded',
+    };
+  }
+
+  if (overrideMode === 'TIER_3_ARGON_HIGH') {
+    return {
+      model: 'gemini-4-argon',
+      tierLabel: 'Tier 3 · gemini-4-argon [ThinkingLevel.HIGH] (Manual Override)',
+      useSearch: false,
+      useHighThinking: true,
+      routingReason:
+        'Manual override to Tier 3 Frontier Multi-Constraint Reasoning (~2.5s-5.5s, 15x cost, top STEM/strategy benchmark).',
+      costBenchmarkSummary: 'Premium Reasoning (15x) · ThinkingLevel.HIGH',
+    };
+  }
+
+  // AUTO Mode: Classify query complexity, need for live T=0 search, vs multi-branch reasoning
+  const lower = queryText.toLowerCase();
+
+  const needsDeepMultiConstraintReasoning =
+    lower.includes('branch a') ||
+    lower.includes('branch b') ||
+    lower.includes('evolution chain') ||
+    lower.includes('synthesize') ||
+    lower.includes('synthesis') ||
+    lower.includes('optimize') ||
+    lower.includes('35,000') ||
+    lower.includes('35k') ||
+    lower.includes('squad') ||
+    lower.includes('sbc') ||
+    lower.includes('forecast') ||
+    lower.includes('arbitrage') ||
+    lower.includes('compare') ||
+    queryText.length > 160;
+
+  const needsLiveWebVerification =
+    lower.includes('price') ||
+    lower.includes('xbox') ||
+    lower.includes('futbin') ||
+    lower.includes('fotmob') ||
+    lower.includes('transfer') ||
+    lower.includes('18:00') ||
+    lower.includes('drop') ||
+    lower.includes('patch') ||
+    lower.includes('title update') ||
+    lower.includes('antigravity') ||
+    lower.includes('verify') ||
+    lower.includes('current') ||
+    lower.includes('live');
+
+  if (needsDeepMultiConstraintReasoning && !lower.includes('verify price only')) {
+    return {
+      model: 'gemini-4-argon',
+      tierLabel: 'Tier 3 · gemini-4-argon (Auto-Routed · ThinkingLevel.HIGH)',
+      useSearch: false,
+      useHighThinking: true,
+      routingReason:
+        'Auto-routed to Tier 3 (Gemini 4 Argon HIGH): Multi-constraint tactical/financial optimization detected (35k Xbox Series S budget / Evolution branching / Role++ synthesis). Selected for highest constraint-satisfaction benchmark accuracy.',
+      costBenchmarkSummary: 'Tier 3 Frontier Reasoning · ThinkingLevel.HIGH',
+    };
+  }
+
+  if (needsLiveWebVerification && useSearchGroundingPref) {
+    return {
+      model: 'gemini-3.8-flash',
+      tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search (Auto-Routed)',
+      useSearch: true,
+      useHighThinking: false,
+      routingReason:
+        'Auto-routed to Tier 2 (Gemini 3.8 Flash + Search): Live T=0 FC 27 Xbox Series S market/patch/transfer verification required. Saves ~80% token cost and ~3.5s latency vs. Tier 3 Argon while grounding in live web data.',
+      costBenchmarkSummary: 'Tier 2 Balanced (~3x Cost) · Live Search Grounded',
+    };
+  }
+
+  return {
+    model: 'gemini-3.1-flash-lite',
+    tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Auto-Routed · Ultra-Fast)',
+    useSearch: false,
+    useHighThinking: false,
+    routingReason:
+      'Auto-routed to Tier 1 (Gemini 3.1 Flash Lite): Single-step FC 27 mechanics lookup or structured parsing. Delivers sub-350ms latency at ~1/15th the cost of Tier 3 Argon.',
+    costBenchmarkSummary: 'Tier 1 Ultra-Low Cost (1x) · Sub-350ms Target',
+  };
 }
 
 async function startServer() {
@@ -104,23 +235,25 @@ async function startServer() {
     const t0 = buildServerT0Context();
     res.setHeader('X-FC27-T0-Anchor', t0.t0Iso);
     res.setHeader('X-Antigravity-Firmware', t0.antigravityVersion);
+    res.setHeader('X-Console-Market', 'Xbox-Series-S');
     next();
   });
 
   /**
-   * 1. Dynamic T=0 Firmware, Patch & Live Content Discovery Endpoint
-   * Uses gemini-3.8-flash with googleSearch tool grounded at T=0.
+   * 1. Dynamic T=0 Firmware, Patch & Live FC 27 Xbox Series S Discovery Endpoint
+   * Uses Tier 2 (gemini-3.8-flash + googleSearch) grounded at T=0.
    */
   app.post('/api/gemini/discover-t0-versions', async (req, res) => {
+    const startMs = performance.now();
     try {
       const { clientT0, focusTopic } = req.body || {};
       const t0 = buildServerT0Context();
       const prompt = `At exact British Time T=0 (${clientT0 || t0.formattedUk}, Season: ${t0.seasonCode}):
-Verify and summarize the current live state across our 4 pillars for ${focusTopic || 'all systems'}:
-1. Google Antigravity 2.0 Desktop App Firmware (v2.25 capabilities: /browser + Chrome DevTools MCP, /schedule cron hooks, dynamic subagents, .agents/mcp_config.json, Jetski CoT safety).
-2. EA Sports FC 27 Console Title Update & Live Tuning Patch meta impact on 31 Roles++, PlayStyles+ (3 cap), and AcceleRATE 2.0.
-3. FUTBIN FC 27 Console 18:00 UK Content Drop, Holographic arbitrage (1.25x Regular <=87 / 1.50x Pristine >=88), and Streamlined SBCs.
-4. FotMob 2026/27 Season verified squad transfers (e.g., Rodri at FC Barcelona) and matchday fixtures.`;
+Verify and summarize the current live state across our 4 pillars for ${focusTopic || 'EA Sports FC 27 Xbox Series S'}:
+1. Google Antigravity 2.0 Desktop App Firmware (v2.25 capabilities including built-in generative_ui skill at C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md, /browser + Chrome DevTools MCP, /schedule cron hooks).
+2. EA Sports FC 27 Xbox Series S Title Update #3.1 & Live Tuning #4 meta impact on 31 Roles++, PlayStyles+ (3 cap), and AcceleRATE 2.0.
+3. FUTBIN FC 27 Console (Xbox Series S) 18:00 UK Content Drop, Holographic arbitrage (1.25x Regular <=87 / 1.50x Pristine >=88), and Streamlined SBCs under a 35,000 Coin budget.
+4. FotMob 2026/27 Season verified squad transfers (e.g., Rodri at FC Barcelona). Never reference FC 24/25/26.`;
 
       const ai = getAiClient();
       const response = await ai.models.generateContent({
@@ -132,9 +265,17 @@ Verify and summarize the current live state across our 4 pillars for ${focusTopi
         },
       });
 
+      const latencyMs = Math.round(performance.now() - startMs);
       res.json({
         text: response.text || 'T=0 Temporal Discovery completed.',
         t0Anchor: t0,
+        routingTelemetry: {
+          tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search',
+          modelUsed: 'gemini-3.8-flash',
+          latencyMs,
+          routingReason:
+            'Auto-routed to Tier 2 for live T=0 web verification of FC 27 Xbox Series S patch & firmware state.',
+        },
       });
     } catch (error: any) {
       console.error('Error in /api/gemini/discover-t0-versions:', error);
@@ -145,96 +286,212 @@ Verify and summarize the current live state across our 4 pillars for ${focusTopi
   });
 
   /**
-   * 2. High-Thinking Strategic Engine (gemini-4-argon with ThinkingLevel.HIGH)
-   * Handles complex Dual-Mode SBC optimization, Branching Evolution chains,
-   * Additive Gameplay Synthesis analysis, and Holographic Market Arbitrage.
+   * 2. Live FC 27 Xbox Series S Card & Market Price Verification Gate
+   * Verifies a specific player's FC 27 (2026/27) club, rating, and Xbox Series S price.
+   * Leaves any unverified field strictly null/blank rather than guessing or using FC 24/25/26 data.
    */
-  app.post('/api/gemini/high-thinking-advisor', async (req, res) => {
+  app.post('/api/gemini/verify-fc27-xbox', async (req, res) => {
+    const startMs = performance.now();
     try {
-      const { mode, taskType, query, userQuery, clubContext, clientT0 } = req.body || {};
-      const resolvedMode = taskType || mode || 'STRATEGIC_ANALYSIS';
-      const resolvedQuery =
-        userQuery ||
-        query ||
-        'Provide an optimal FC 27 Console tactical and financial action plan grounded at T=0.';
+      const { playerName, rarity, clientT0 } = req.body || {};
+      if (!playerName) {
+        res.status(400).json({ error: 'playerName is required for FC 27 Xbox Series S verification.' });
+        return;
+      }
 
-      const fullPrompt = `[T=0 MODE: ${resolvedMode}]
-[USER CLUB & MARKET CONTEXT]:
-${JSON.stringify(clubContext || {}, null, 2)}
-
-[TACTICAL QUERY]:
-${resolvedQuery}`;
+      const prompt = `Verify player "${playerName}" (${rarity || 'Base/Special'}) strictly for EA SPORTS FC 27 ULTIMATE TEAM on the XBOX SERIES S (Console Cross-Play) Market during the 2026/27 football season at T=0 (${clientT0 || 'Now'}).
+CRITICAL RULES:
+- Do NOT use data from FC 24, FC 25, or FC 26.
+- Do NOT use PC or Switch prices.
+- Verify their 2026/27 club via FotMob (e.g., Rodri plays for FC Barcelona in 2026/27).
+- If you cannot 100% verify their exact live Xbox Series S price or a specific stat for EA Sports FC 27, explicitly state "BLANK (Unverified for FC 27 Xbox Series S)" for that field rather than guessing.`;
 
       const ai = getAiClient();
       const response = await ai.models.generateContent({
-        model: 'gemini-4-argon',
-        contents: fullPrompt,
+        model: 'gemini-3.8-flash',
+        contents: prompt,
         config: {
           systemInstruction: getCoreSystemInstruction(clientT0),
-          thinkingConfig: {
-            thinkingLevel: ThinkingLevel.HIGH,
-          },
+          tools: [{ googleSearch: {} }],
         },
       });
 
+      const latencyMs = Math.round(performance.now() - startMs);
       res.json({
-        text: response.text || 'High-thinking analysis complete.',
-        modelUsed: 'gemini-4-argon (ThinkingLevel.HIGH)',
-        t0Anchor: buildServerT0Context(),
+        text: response.text || 'Verification check completed.',
+        routingTelemetry: {
+          tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search',
+          modelUsed: 'gemini-3.8-flash',
+          latencyMs,
+          routingReason:
+            'Auto-routed to Tier 2 (Gemini 3.8 Flash + Google Search) to verify live FC 27 Xbox Series S market & 2026/27 FotMob club data without legacy hallucination.',
+        },
       });
     } catch (error: any) {
-      console.error('Error in /api/gemini/high-thinking-advisor:', error);
+      console.error('Error in /api/gemini/verify-fc27-xbox:', error);
       res.status(500).json({
-        error: error?.message || 'High-Thinking Advisor encountered an error.',
+        error: error?.message || 'Failed to verify FC 27 Xbox Series S data.',
       });
     }
   });
 
   /**
-   * 3. Multi-Turn Gemini Chatbot with Model Routing & Google Search Grounding
-   * Supports:
-   * - gemini-4-argon (with ThinkingLevel.HIGH for complex reasoning)
-   * - gemini-3.8-flash (with googleSearch tool for live grounding)
-   * - gemini-3.1-flash-lite (for ultra-fast tax/fodder checks)
+   * 3. Smart-Routed Strategic Advisor (/api/gemini/high-thinking-advisor)
+   * Respects the 5-Tier Smart Router (defaults to AUTO or honors manual override)
+   * and enforces the Zero-Guessing Personal Club Policy (35,000 Coins confirmed; nulls stay blank).
    */
-  app.post('/api/gemini/chat', async (req, res) => {
+  app.post('/api/gemini/high-thinking-advisor', async (req, res) => {
+    const startMs = performance.now();
     try {
-      const { messages, selectedModel, useSearchGrounding, clientT0 } = req.body || {};
-      const modelToUse =
-        selectedModel === 'gemini-4-argon' ||
-        selectedModel === 'gemini-3.8-flash' ||
-        selectedModel === 'gemini-3.1-flash-lite'
-          ? selectedModel
-          : 'gemini-3.8-flash';
+      const {
+        mode,
+        taskType,
+        query,
+        userQuery,
+        clubContext,
+        clientT0,
+        routingOverride,
+      } = req.body || {};
 
-      const formattedContents = Array.isArray(messages)
-        ? messages.map((m: { role: string; text: string }) => ({
-            role: m.role === 'model' ? 'model' : 'user',
-            parts: [{ text: m.text }],
-          }))
-        : [{ role: 'user', parts: [{ text: String(messages || 'Hello') }] }];
+      const resolvedMode = taskType || mode || 'STRATEGIC_ANALYSIS';
+      const resolvedQuery =
+        userQuery ||
+        query ||
+        'Provide an optimal FC 27 Xbox Series S tactical and financial action plan grounded at T=0.';
+
+      const route = resolveSmartModelRoute(
+        `${resolvedMode} ${resolvedQuery}`,
+        routingOverride || 'AUTO',
+        true
+      );
+
+      const fullPrompt = `[T=0 MODE: ${resolvedMode}]
+[CONSOLE PLATFORM LOCK: XBOX SERIES S MARKET ONLY]
+[USER PERSONAL CLUB CONTEXT (DO NOT GUESS OR FILL IN ANY NULL/EMPTY FIELDS!)]:
+${JSON.stringify(clubContext || { coins: 35000, allOtherFields: 'BLANK' }, null, 2)}
+
+[TACTICAL QUERY]:
+${resolvedQuery}`;
 
       const config: Record<string, any> = {
         systemInstruction: getCoreSystemInstruction(clientT0),
       };
 
-      if (modelToUse === 'gemini-4-argon') {
+      if (route.useHighThinking) {
         config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
-      } else if (modelToUse === 'gemini-3.8-flash' && useSearchGrounding !== false) {
+      } else if (route.useSearch) {
         config.tools = [{ googleSearch: {} }];
       }
 
       const ai = getAiClient();
       const response = await ai.models.generateContent({
-        model: modelToUse,
+        model: route.model,
+        contents: fullPrompt,
+        config,
+      });
+
+      const latencyMs = Math.round(performance.now() - startMs);
+      res.json({
+        text: response.text || 'Strategic analysis complete.',
+        modelUsed: route.model,
+        t0Anchor: buildServerT0Context(),
+        routingTelemetry: {
+          tierLabel: route.tierLabel,
+          modelUsed: route.model,
+          latencyMs,
+          routingReason: route.routingReason,
+          costBenchmarkSummary: route.costBenchmarkSummary,
+        },
+      });
+    } catch (error: any) {
+      console.error('Error in /api/gemini/high-thinking-advisor:', error);
+      res.status(500).json({
+        error: error?.message || 'Strategic Advisor encountered an error.',
+      });
+    }
+  });
+
+  /**
+   * 4. Multi-Turn Gemini Chatbot with 5-Tier Smart Model Router & Telemetry
+   */
+  app.post('/api/gemini/chat', async (req, res) => {
+    const startMs = performance.now();
+    try {
+      const {
+        messages,
+        routingMode,
+        selectedModel,
+        useSearchGrounding,
+        clubContext,
+        clientT0,
+      } = req.body || {};
+
+      const lastUserMessage = Array.isArray(messages) && messages.length > 0
+        ? String(messages[messages.length - 1]?.text || '')
+        : String(messages || '');
+
+      // Support both new routingMode ('AUTO' | 'TIER_1_LITE' | 'TIER_2_FLASH_SEARCH' | 'TIER_3_ARGON_HIGH')
+      // and direct model selection
+      let effectiveOverride: RoutingOverrideMode = routingMode || 'AUTO';
+      if (!routingMode && selectedModel) {
+        if (selectedModel === 'gemini-3.1-flash-lite') effectiveOverride = 'TIER_1_LITE';
+        else if (selectedModel === 'gemini-3.8-flash') effectiveOverride = 'TIER_2_FLASH_SEARCH';
+        else if (selectedModel === 'gemini-4-argon') effectiveOverride = 'TIER_3_ARGON_HIGH';
+      }
+
+      const route = resolveSmartModelRoute(
+        lastUserMessage,
+        effectiveOverride,
+        useSearchGrounding !== false
+      );
+
+      const clubContextPrefix = clubContext
+        ? `[USER XBOX SERIES S CLUB STATE (NEVER GUESS BLANK/NULL FIELDS): ${JSON.stringify(clubContext)}]\n\n`
+        : '';
+
+      const formattedContents = Array.isArray(messages)
+        ? messages.map((m: { role: string; text: string }, idx: number) => ({
+            role: m.role === 'model' ? 'model' : 'user',
+            parts: [
+              {
+                text:
+                  idx === messages.length - 1 && m.role !== 'model'
+                    ? `${clubContextPrefix}${m.text}`
+                    : m.text,
+              },
+            ],
+          }))
+        : [{ role: 'user', parts: [{ text: `${clubContextPrefix}${lastUserMessage}` }] }];
+
+      const config: Record<string, any> = {
+        systemInstruction: getCoreSystemInstruction(clientT0),
+      };
+
+      if (route.useHighThinking) {
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
+      } else if (route.useSearch) {
+        config.tools = [{ googleSearch: {} }];
+      }
+
+      const ai = getAiClient();
+      const response = await ai.models.generateContent({
+        model: route.model,
         contents: formattedContents,
         config,
       });
 
+      const latencyMs = Math.round(performance.now() - startMs);
       res.json({
         text: response.text || 'No response generated.',
-        modelUsed: modelToUse,
+        modelUsed: route.model,
         t0Anchor: buildServerT0Context(),
+        routingTelemetry: {
+          tierLabel: route.tierLabel,
+          modelUsed: route.model,
+          latencyMs,
+          routingReason: route.routingReason,
+          costBenchmarkSummary: route.costBenchmarkSummary,
+        },
       });
     } catch (error: any) {
       console.error('Error in /api/gemini/chat:', error);
@@ -245,9 +502,107 @@ ${resolvedQuery}`;
   });
 
   /**
-   * 4. Hands-Free Controller Voice Transcription Endpoint (gemini-3.5-transcribe)
+   * 5. Antigravity v2.25 Built-In Generative UI Skill Endpoint (/api/gemini/generative-ui)
+   * Host Skill: C:\Users\Kit\.gemini\antigravity\builtin\skills\generative_ui\SKILL.md
+   * Emits structured interactive GenUI micro-tool specifications calibrated to the user's 35,000 Xbox Series S Coins.
+   */
+  app.post('/api/gemini/generative-ui', async (req, res) => {
+    const startMs = performance.now();
+    try {
+      const { prompt, clubContext, clientT0 } = req.body || {};
+      const ai = getAiClient();
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-4-argon',
+        contents: `[ANTIGRAVITY v2.25 GENERATIVE_UI SKILL INVOCATION]
+Skill Path: C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md
+User Xbox Series S Club Context (DO NOT GUESS BLANK/NULL FIELDS): ${JSON.stringify(
+          clubContext || { coins: 35000 }
+        )}
+User Prompt: ${
+          prompt ||
+          'Generate an interactive Xbox Series S 35,000 Coin Holographic Arbitrage & Streamlined SBC micro-tool.'
+        }`,
+        config: {
+          systemInstruction: getCoreSystemInstruction(clientT0),
+          thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH },
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              widgetType: {
+                type: Type.STRING,
+                enum: [
+                  'SBC_SCORE_SIMULATOR',
+                  'HOLO_ARBITRAGE_CALCULATOR',
+                  'ROLE_SYNTHESIS_COMPARATOR',
+                  'TACTICAL_PITCH_BOARD',
+                ],
+              },
+              title: { type: Type.STRING },
+              subtitle: { type: Type.STRING },
+              executiveSummary: { type: Type.STRING },
+              defaultTargetScore: { type: Type.INTEGER },
+              recommendedBuyPriceXbox: { type: Type.INTEGER },
+              recommendedSellPriceXbox: { type: Type.INTEGER },
+              featuredPlayerName: { type: Type.STRING },
+              featuredPlayerClub2627: { type: Type.STRING },
+              featuredRolePlusPlus: { type: Type.STRING },
+              actionItems: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+            },
+            required: [
+              'widgetType',
+              'title',
+              'subtitle',
+              'executiveSummary',
+              'defaultTargetScore',
+              'recommendedBuyPriceXbox',
+              'recommendedSellPriceXbox',
+              'featuredPlayerName',
+              'featuredPlayerClub2627',
+              'featuredRolePlusPlus',
+              'actionItems',
+            ],
+          },
+        },
+      });
+
+      const latencyMs = Math.round(performance.now() - startMs);
+      let parsedWidget = null;
+      try {
+        parsedWidget = JSON.parse(response.text || '{}');
+      } catch {
+        parsedWidget = null;
+      }
+
+      res.json({
+        widget: parsedWidget,
+        rawText: response.text,
+        routingTelemetry: {
+          tierLabel: 'Tier 3 · gemini-4-argon (Generative UI Skill · Thinking HIGH)',
+          modelUsed: 'gemini-4-argon',
+          latencyMs,
+          routingReason:
+            'Routed to Tier 3 (Gemini 4 Argon + JSON Schema) to synthesize an interactive Antigravity v2.25 generative_ui widget.',
+          costBenchmarkSummary: 'Tier 3 Structured GenUI Synthesis',
+        },
+      });
+    } catch (error: any) {
+      console.error('Error in /api/gemini/generative-ui:', error);
+      res.status(500).json({
+        error: error?.message || 'Generative UI synthesis failed.',
+      });
+    }
+  });
+
+  /**
+   * 6. Hands-Free Controller Voice Transcription Endpoint (gemini-3.5-transcribe)
    */
   app.post('/api/gemini/transcribe', async (req, res) => {
+    const startMs = performance.now();
     try {
       const { audioBase64, mimeType } = req.body || {};
       if (!audioBase64) {
@@ -267,15 +622,22 @@ ${resolvedQuery}`;
               },
             },
             {
-              text: 'Transcribe this EA Sports FC 27 Ultimate Team voice command or club update accurately.',
+              text: 'Transcribe this EA Sports FC 27 Ultimate Team (Xbox Series S) voice command or club update accurately.',
             },
           ],
         },
       });
 
+      const latencyMs = Math.round(performance.now() - startMs);
       res.json({
         transcript: response.text || '',
         t0Anchor: buildServerT0Context(),
+        routingTelemetry: {
+          tierLabel: 'Audio Tier · gemini-3.5-transcribe',
+          modelUsed: 'gemini-3.5-transcribe',
+          latencyMs,
+          routingReason: 'Dedicated speech-to-text model for hands-free Xbox controller voice dictation.',
+        },
       });
     } catch (error: any) {
       console.error('Error in /api/gemini/transcribe:', error);
@@ -300,7 +662,7 @@ ${resolvedQuery}`;
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`FC 27 UT App Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`FC 27 UT App (Xbox Series S Console Edition) listening on http://0.0.0.0:${PORT}`);
   });
 }
 

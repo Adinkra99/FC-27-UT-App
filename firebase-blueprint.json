@@ -2,7 +2,7 @@
   "entities": {
     "UserClubState": {
       "title": "UserClubState",
-      "description": "Stores the user's synced EA Sports FC 27 Ultimate Team club wallet, Season 2 SP progress, FUT Gallery level, and T=0 temporal firmware anchor.",
+      "description": "Stores the user's synced EA Sports FC 27 Ultimate Team Xbox Series S club state. Unknown fields remain null (blank) rather than guessed.",
       "type": "object",
       "properties": {
         "ownerId": {
@@ -12,27 +12,38 @@
           "maxLength": 128,
           "pattern": "^[a-zA-Z0-9_\\-]+$"
         },
-        "clubName": {
+        "consolePlatform": {
           "type": "string",
-          "description": "Display name of the user's FC 27 Ultimate Team club.",
+          "description": "Target console market platform (locked to Xbox Series S).",
+          "enum": ["Xbox Series S"]
+        },
+        "clubName": {
+          "type": ["string", "null"],
+          "description": "Display name of the user's FC 27 Ultimate Team club, or null if not provided.",
           "minLength": 1,
           "maxLength": 64
         },
         "coins": {
-          "type": "integer",
-          "description": "Current synced FC 27 Console Coin balance."
+          "type": ["integer", "null"],
+          "description": "Current Xbox Series S Coin balance (e.g. 35000), or null if blank."
         },
         "fifaPoints": {
-          "type": "integer",
-          "description": "Current synced FC/FIFA Points balance."
+          "type": ["integer", "null"],
+          "description": "Current FC/FIFA Points balance, or null if blank."
+        },
+        "rivalsDivision": {
+          "type": ["string", "null"],
+          "description": "Current Division Rivals division (e.g. 'Division 3' or 'Elite'), or null if blank.",
+          "minLength": 1,
+          "maxLength": 32
         },
         "dailySp": {
-          "type": "integer",
-          "description": "Match-earned Season Points today (capped at 850 SP/day in FC 27)."
+          "type": ["integer", "null"],
+          "description": "Match-earned Season Points today (0-850 SP cap), or null if blank."
         },
         "galleryLevel": {
-          "type": "integer",
-          "description": "Overall FUT Gallery collection level (1-100)."
+          "type": ["integer", "null"],
+          "description": "Overall FUT Gallery collection level (1-100), or null if blank."
         },
         "activeFormation": {
           "type": "string",
@@ -71,9 +82,11 @@
       },
       "required": [
         "ownerId",
+        "consolePlatform",
         "clubName",
         "coins",
         "fifaPoints",
+        "rivalsDivision",
         "dailySp",
         "galleryLevel",
         "activeFormation",
@@ -86,7 +99,7 @@
     },
     "TrackedInvestment": {
       "title": "TrackedInvestment",
-      "description": "Stores a user's tracked FC 27 console market flip, Holographic arbitrage position, or Gallery Rent-and-Flip target.",
+      "description": "Stores a user's tracked FC 27 Xbox Series S market flip, Holographic arbitrage position, or Gallery Rent-and-Flip target.",
       "type": "object",
       "properties": {
         "ownerId": {
@@ -98,7 +111,7 @@
         },
         "playerId": {
           "type": "string",
-          "description": "Unique FC 27 console player identifier.",
+          "description": "Unique FC 27 Xbox Series S player identifier.",
           "minLength": 1,
           "maxLength": 64,
           "pattern": "^[a-zA-Z0-9_\\-]+$"
@@ -121,11 +134,11 @@
         },
         "buyPrice": {
           "type": "integer",
-          "description": "Console purchase or target bid price in coins."
+          "description": "Xbox Series S purchase or target bid price in coins."
         },
         "targetSellPrice": {
           "type": "integer",
-          "description": "Target sale price on console before 5% EA tax."
+          "description": "Target sale price on Xbox Series S before 5% EA tax."
         },
         "quantity": {
           "type": "integer",
@@ -169,7 +182,7 @@
     },
     "/users/{userId}/investments/{investmentId}": {
       "schema": { "$ref": "#/entities/TrackedInvestment" },
-      "description": "Subcollection of tracked FC 27 console market investments and price alerts owned by the parent user."
+      "description": "Subcollection of tracked FC 27 Xbox Series S market investments owned by the parent user."
     }
   }
 }

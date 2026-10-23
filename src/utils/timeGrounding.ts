@@ -181,6 +181,14 @@ export function resolveAntigravityFirmwareAtT0(year: number, month: number, day:
           'Binds local ZenBook SQLite cache (<2ms math), Playwright, Fetch, Memory Graph, Google Drive, and GitHub MCP connectors directly to the runtime.',
         status: 'NEW_IN_2_25',
       },
+      {
+        id: 'ag-builtin-generative-ui-skill',
+        title: 'Built-In Generative UI Skill (Dynamic Interactive Micro-Tools)',
+        commandOrConfig: 'C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md',
+        description:
+          'Synthesizes live, interactive GenUI widgets (SBC Score Sliders, Role++ Comparators, 5G Tax Calculators, and FC IQ Pitch Boards) directly inside the tactical stream at T=0.',
+        status: 'NEW_IN_2_25',
+      },
     ],
   };
 }
