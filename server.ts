@@ -286,6 +286,155 @@ Verify and summarize the current live state across our 4 pillars for ${focusTopi
   });
 
   /**
+   * 1b. Dedicated Game Mechanics & Patch Notes Tracker Endpoint
+   * Uses gemini-3.8-flash with googleSearch tool to fetch the latest EA Sports FC 27
+   * Title Updates and Live Tuning notes with special emphasis on gameplay mechanics:
+   * passing accuracy, sprint speed, goalie behavior, AcceleRATE 2.0 sprint sustain, and Roles++.
+   * Also extracts grounding metadata links per skill rules.
+   */
+  app.post('/api/gemini/fetch-patch-notes', async (req, res) => {
+    const startMs = performance.now();
+    try {
+      const { clientT0, mechanicFocus } = req.body || {};
+      const t0 = buildServerT0Context();
+      const prompt = `At British Time T=0 (${clientT0 || t0.formattedUk}, Season: ${t0.seasonCode}):
+Search and compile the latest EA Sports FC 27 Ultimate Team Title Update and Live Tuning Pitch Notes for Console (Xbox Series S / PS5).
+Focus topic: ${mechanicFocus || 'all gameplay mechanics'}.
+
+You must explicitly analyze and highlight changes to these critical gameplay mechanics:
+1. Passing Accuracy & Ground Through Balls (pinged passes, vision curve, pass receiver lock-on, first-touch error).
+2. Sprint Speed & AcceleRATE 2.0 (breakaway acceleration, sprint sustain, Controlled Lengthy vs. Explosive curve adjustments).
+3. Goalie Behavior (1v1 reaction time, near-post shot stopping, cross-claiming radius, Sweeper Keeper++ responsiveness).
+4. Defensive Recovery & Tackling (standing tackle stun time, jockey speed, Intercept+ animation speed).
+5. 31 Roles & Focuses (Inside Forward++, Deep-Lying Playmaker++, Shadow Striker++ AI runs under Title Update #3.1).
+
+Format your response cleanly:
+- Title Update / Live Tuning version and effective date
+- Executive Summary of the gameplay patch meta
+- Detailed section for:
+  * Passing Accuracy Changes
+  * Sprint Speed & AcceleRATE 2.0 Changes
+  * Goalie Behavior & Reactions
+  * Defending & Player Roles Changes
+- Competitive Pro Console (Xbox Series S) Takeaways`;
+
+      const ai = getAiClient();
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          systemInstruction: getCoreSystemInstruction(clientT0),
+          tools: [{ googleSearch: {} }],
+        },
+      });
+
+      const latencyMs = Math.round(performance.now() - startMs);
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      const sources: { title: string; uri: string }[] = [];
+      if (Array.isArray(chunks)) {
+        for (const c of chunks) {
+          if (c.web?.uri && c.web?.title) {
+            sources.push({ title: c.web.title, uri: c.web.uri });
+          }
+        }
+      }
+
+      res.json({
+        patchNotesText: response.text || 'No patch notes retrieved.',
+        sources,
+        t0Anchor: t0,
+        routingTelemetry: {
+          tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search Grounding',
+          modelUsed: 'gemini-3.8-flash',
+          latencyMs,
+          routingReason:
+            'Grounded live web search for EA Sports FC 27 Title Updates and mechanics tuning.',
+        },
+      });
+    } catch (error: any) {
+      console.error('Error in /api/gemini/fetch-patch-notes:', error);
+      res.status(500).json({
+        error: error?.message || 'Failed to fetch FC 27 patch notes.',
+      });
+    }
+  });
+
+  /**
+   * 1c. Dynamic Live Evolutions Discovery & Scouter Endpoint (/api/gemini/fetch-live-evolutions)
+   * Uses gemini-3.8-flash with googleSearch tool grounded at British Time T=0 to search
+   * for currently active EA Sports FC 27 Ultimate Team Evolutions on Console (Xbox Series S),
+   * evaluating Free vs. Paid (against user's 35,000 Coin budget), branching pathways,
+   * 3 PlayStyles+ hard cap compliance, and 31 Roles++ additions.
+   */
+  app.post('/api/gemini/fetch-live-evolutions', async (req, res) => {
+    const startMs = performance.now();
+    try {
+      const { clientT0, budgetCoins, categoryFilter } = req.body || {};
+      const t0 = buildServerT0Context();
+      const resolvedBudget = typeof budgetCoins === 'number' ? budgetCoins : 35000;
+
+      const prompt = `At British Time T=0 (${clientT0 || t0.formattedUk}, Season: ${t0.seasonCode}, Content Drop Grounding 18:00 UK):
+Search and compile all currently active EA SPORTS FC 27 ULTIMATE TEAM EVOLUTIONS on Console (Xbox Series S / PS5).
+Focus Filter: ${categoryFilter || 'all active evolutions'}.
+User Confirmed Budget: ${resolvedBudget.toLocaleString()} Xbox Series S Coins.
+
+CRITICAL FC 27 CONSTRAINTS:
+- Strictly ground in EA SPORTS FC 27 (2026/27 Season). Zero FC 24/25/26 data.
+- Enforce FC 27's 3 PlayStyles+ (PS+) hard cap.
+- Highlight 31 Roles++ granted (e.g. Inside Forward++, Holding++, Box-to-Box++, Falseback++, Attacking Wingback++, Shadow Striker++).
+- Categorize each active Evolution:
+  * Name and promotional theme (e.g. Titan Wingback, Midfield Catalyst, Inside Forward Unleashed, Power Surge, Centurions Striker, Box-to-Box Engine)
+  * Cost: Free (0 Coins) vs Paid (Coins & FP) — explicitly mark whether it fits the user's ${resolvedBudget.toLocaleString()} Coin budget.
+  * Time Remaining / Expiry relative to T=0.
+  * Entry Eligibility (Max OVR, Position, Max Pace, Max PS+ <= 2).
+  * Stat Upgrades & Added PlayStyles+.
+  * Branching Choices: Branch A vs Branch B differences and tactical priorities.
+  * Recommended tradeable base cards on Xbox Series S under ${resolvedBudget.toLocaleString()} coins (e.g., 83 Balde, 84 Camavinga, 83 Mainoo, 84 Wharton, 83 Tel) with chemistry links.
+
+Format clearly with an Executive Evolution Summary, Per-Evolution Deep Dive with Branching Pathways, and Pro Console (Xbox Series S) 35k Action Plan.`;
+
+      const ai = getAiClient();
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          systemInstruction: getCoreSystemInstruction(clientT0),
+          tools: [{ googleSearch: {} }],
+        },
+      });
+
+      const latencyMs = Math.round(performance.now() - startMs);
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      const sources: { title: string; uri: string }[] = [];
+      if (Array.isArray(chunks)) {
+        for (const c of chunks) {
+          if (c.web?.uri && c.web?.title) {
+            sources.push({ title: c.web.title, uri: c.web.uri });
+          }
+        }
+      }
+
+      res.json({
+        evolutionsReportText: response.text || 'No live evolutions report generated.',
+        sources,
+        t0Anchor: t0,
+        routingTelemetry: {
+          tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search Grounding',
+          modelUsed: 'gemini-3.8-flash',
+          latencyMs,
+          routingReason:
+            'Grounded live search for active EA Sports FC 27 Ultimate Team Evolutions at T=0.',
+        },
+      });
+    } catch (error: any) {
+      console.error('Error in /api/gemini/fetch-live-evolutions:', error);
+      res.status(500).json({
+        error: error?.message || 'Failed to fetch live FC 27 evolutions.',
+      });
+    }
+  });
+
+  /**
    * 2. Live FC 27 Xbox Series S Card & Market Price Verification Gate
    * Verifies a specific player's FC 27 (2026/27) club, rating, and Xbox Series S price.
    * Leaves any unverified field strictly null/blank rather than guessing or using FC 24/25/26 data.

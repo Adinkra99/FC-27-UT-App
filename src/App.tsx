@@ -29,6 +29,7 @@ import {
 } from './services/firebaseAndDriveService';
 import { InteractiveMarketChart } from './components/InteractiveMarketChart';
 import { GameplaySynthesisView } from './components/GameplaySynthesisView';
+import { LiveEvolutionsView } from './components/LiveEvolutionsView';
 import {
   AntigravityMcpAndChatDrawer,
   RoutingTelemetryReceipt,
@@ -49,6 +50,7 @@ import {
   LogOut,
   Coins,
   Zap,
+  GitBranch,
   AlertTriangle,
   X,
   Mic,
@@ -63,6 +65,7 @@ type PrincipalDomain = 'MENUS' | 'GAMEPLAY';
 type ActiveTab =
   | 'CLUB_SYNC'
   | 'DUAL_SBCS'
+  | 'EVOLUTIONS'
   | 'FUT_GALLERY'
   | 'CONSOLE_MARKET'
   | 'GAMEPLAY_LAB'
@@ -616,10 +619,12 @@ export function App() {
     } else if (lower.includes('gallery') || lower.includes('rent')) {
       setPrincipalDomain('MENUS');
       setActiveTab('FUT_GALLERY');
+    } else if (lower.includes('evo') || lower.includes('evolution')) {
+      setActiveTab('EVOLUTIONS');
     } else if (lower.includes('market') || lower.includes('price')) {
       setPrincipalDomain('MENUS');
       setActiveTab('CONSOLE_MARKET');
-    } else if (lower.includes('gameplay') || lower.includes('role') || lower.includes('evo')) {
+    } else if (lower.includes('gameplay') || lower.includes('role')) {
       setPrincipalDomain('GAMEPLAY');
       setActiveTab('GAMEPLAY_LAB');
     }
@@ -863,6 +868,12 @@ export function App() {
                   icon: Layers,
                 },
                 {
+                  id: 'EVOLUTIONS',
+                  label: 'Live Dynamic Evolutions',
+                  domain: principalDomain,
+                  icon: GitBranch,
+                },
+                {
                   id: 'FUT_GALLERY',
                   label: 'FUT Gallery & Rent-Flip',
                   domain: 'MENUS' as PrincipalDomain,
@@ -896,7 +907,9 @@ export function App() {
                     onClick={() => {
                       setActiveTab(item.id as ActiveTab);
                       if (item.id === 'GAMEPLAY_LAB') setPrincipalDomain('GAMEPLAY');
-                      else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
+                      else if (item.id === 'EVOLUTIONS') {
+                        // Accessible from both Menus & Gameplay
+                      } else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
                     }}
                     className={`w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-3 transition-colors whitespace-nowrap shrink-0 min-h-[42px] ${
                       isActive
@@ -1808,6 +1821,17 @@ export function App() {
             </div>
           )}
 
+          {/* TAB 3: DYNAMIC LIVE EVOLUTIONS HUB & BRANCHING SCOUTER */}
+          {activeTab === 'EVOLUTIONS' && (
+            <LiveEvolutionsView
+              t0Anchor={t0Anchor}
+              userCoins={coins}
+              players={players}
+              onRunHighThinkingAudit={handleRunSmartAdvisor}
+              isThinking={isThinkingAdvisor}
+            />
+          )}
+
           {/* TAB 5: DOMAIN 2 — GAMEPLAY SYNTHESIS LAB, 31 ROLES++ & BRANCHING EVOLUTIONS */}
           {activeTab === 'GAMEPLAY_LAB' && (
             <GameplaySynthesisView
@@ -1859,14 +1883,15 @@ export function App() {
       )}
 
       {/* MOBILE THUMB-FRIENDLY BOTTOM NAVIGATION BAR (375px–430px Viewport Budget <=15%) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-[#090d16]/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 grid grid-cols-6 gap-1">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-[#090d16]/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 grid grid-cols-7 gap-1">
         {[
-          { id: 'CLUB_SYNC', label: 'My Club', icon: Shield },
+          { id: 'CLUB_SYNC', label: 'Club', icon: Shield },
           { id: 'DUAL_SBCS', label: 'SBCs', icon: Layers },
+          { id: 'EVOLUTIONS', label: 'Evos', icon: GitBranch },
           { id: 'FUT_GALLERY', label: 'Gallery', icon: Award },
           { id: 'CONSOLE_MARKET', label: 'Xbox Mkt', icon: TrendingUp },
           { id: 'GAMEPLAY_LAB', label: 'Gameplay', icon: Zap },
-          { id: 'ANTIGRAVITY_AI', label: 'Router/AI', icon: Cpu },
+          { id: 'ANTIGRAVITY_AI', label: 'AI', icon: Cpu },
         ].map((item) => {
           const Icon = item.icon;
           const active = activeTab === item.id;
@@ -1877,7 +1902,9 @@ export function App() {
               onClick={() => {
                 setActiveTab(item.id as ActiveTab);
                 if (item.id === 'GAMEPLAY_LAB') setPrincipalDomain('GAMEPLAY');
-                else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
+                else if (item.id === 'EVOLUTIONS') {
+                  // Accessible from both
+                } else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
               }}
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg text-[10px] font-semibold transition-colors min-h-[44px] ${
                 active ? 'text-[#00ff87] bg-[#00ff87]/10' : 'text-slate-400'

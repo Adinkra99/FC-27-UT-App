@@ -171,6 +171,8 @@ export interface FUTGallerySet {
 export interface BranchingEvolution {
   id: string;
   title: string;
+  promoName?: string;
+  categoryTag?: 'FREE' | 'AFFORDABLE_35K' | 'PAID_PREMIUM';
   costCoins: number;
   costFifaPoints: number;
   expiresInDays: number;
@@ -1382,15 +1384,133 @@ export const FC27_GALLERY_SETS: FUTGallerySet[] = [
 
 export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
   {
+    id: 'evo-inside-forward-unleashed',
+    title: 'Inside Forward Unleashed (Free / 0 Coins)',
+    promoName: 'Season 2 Groundbreaker',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 14,
+    eligibility: {
+      maxOvr: 83,
+      positions: ['RW', 'LW', 'RM', 'LM'],
+      maxPlayStylesPlus: 1,
+    },
+    branchA: {
+      branchName: 'Branch A: Inside Forward++ Inverted Finisher',
+      focusSummary: 'Boosts Finishing (+8), Curve (+10), and adds Finesse Shot+ with Inside Forward++ diagonal run AI.',
+      statBoosts: { pac: 5, sho: 8, pas: 4, dri: 6, def: 1, phy: 4 },
+      addedPlayStylePlus: 'Finesse Shot+',
+      addedRolePlusPlus: 'Inside Forward++ (Attack)',
+      projectedMetaScore: 94.2,
+    },
+    branchB: {
+      branchName: 'Branch B: Rapid Touchline Winger++',
+      focusSummary: 'Maximizes Sprint Speed (+7), Crossing (+9), Rapid+, and Touchline Winger++ sideline spacing.',
+      statBoosts: { pac: 7, sho: 4, pas: 7, dri: 7, def: 2, phy: 3 },
+      addedPlayStylePlus: 'Rapid+',
+      addedRolePlusPlus: 'Winger++ (Attack)',
+      projectedMetaScore: 93.8,
+    },
+    recommendedClubFits: [
+      {
+        playerName: 'Mathys Tel',
+        currentOvr: 81,
+        finalOvr: 86,
+        club: 'FC Bayern München',
+        league: 'Bundesliga',
+        nation: 'France',
+        inUserClub: false,
+        marketPrice: 3800,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          '0 Coin Evolution; card costs only 3,800 Coins on Xbox Series S; gains Inside Forward++ and Finesse Shot+ with 93 Pace.',
+      },
+      {
+        playerName: 'Bradley Barcola',
+        currentOvr: 82,
+        finalOvr: 87,
+        club: 'Paris Saint-Germain',
+        league: 'Ligue 1 McDonald\'s',
+        nation: 'France',
+        inUserClub: false,
+        marketPrice: 5200,
+        recommendedBranch: 'Branch B',
+        chemistryLinkReason:
+          'Fits 35k budget (5,200 Coins); Explosive AcceleRATE with Rapid+ and 97 sprint speed on Xbox Series S.',
+      },
+    ],
+  },
+  {
+    id: 'evo-box-to-box-engine',
+    title: 'Box-to-Box Midfield Engine (25k Coins)',
+    promoName: 'Centurions Catalyst',
+    categoryTag: 'AFFORDABLE_35K',
+    costCoins: 25000,
+    costFifaPoints: 250,
+    expiresInDays: 9,
+    eligibility: {
+      maxOvr: 84,
+      positions: ['CM', 'CDM'],
+      maxPlayStylesPlus: 1,
+    },
+    branchA: {
+      branchName: 'Branch A: Relentless Box-to-Box++ Stamina Engine',
+      focusSummary: 'Boosts Stamina (+12), Def Awareness (+7), and adds Relentless+ for full 90-minute box-to-box dominance.',
+      statBoosts: { pac: 4, sho: 5, pas: 6, dri: 6, def: 7, phy: 8 },
+      addedPlayStylePlus: 'Relentless+',
+      addedRolePlusPlus: 'Box-to-Box++ (Balanced)',
+      projectedMetaScore: 95.1,
+    },
+    branchB: {
+      branchName: 'Branch B: Deep-Lying Playmaker++ Orchestrator',
+      focusSummary: 'Maximizes Vision (+9), Short Passing (+10), Long Passing (+8), and adds Tiki-Taka+ for press resistance.',
+      statBoosts: { pac: 3, sho: 3, pas: 9, dri: 8, def: 5, phy: 6 },
+      addedPlayStylePlus: 'Tiki-Taka+',
+      addedRolePlusPlus: 'Deep-Lying Playmaker++ (Build-Up)',
+      projectedMetaScore: 94.9,
+    },
+    recommendedClubFits: [
+      {
+        playerName: 'Adam Wharton',
+        currentOvr: 83,
+        finalOvr: 87,
+        club: 'Crystal Palace',
+        league: 'Premier League',
+        nation: 'England',
+        inUserClub: false,
+        marketPrice: 4200,
+        recommendedBranch: 'Branch B',
+        chemistryLinkReason:
+          'Total cost 29,200 Coins (fits 35k budget); reaches 93 Short Passing and Deep-Lying Playmaker++ under TU #3.1.',
+      },
+      {
+        playerName: 'Kobbie Mainoo',
+        currentOvr: 82,
+        finalOvr: 87,
+        club: 'Manchester United',
+        league: 'Premier League',
+        nation: 'England',
+        inUserClub: false,
+        marketPrice: 6500,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          'Total cost 31,500 Coins (fits 35k budget); 95 Agility & Relentless+ keeps him dominating Weekend League extra time.',
+      },
+    ],
+  },
+  {
     id: 'evo-la-masia-catalyst-branching',
-    title: 'Titan Wingback & Midfield Catalyst (Branching Pathway)',
+    title: 'Titan Wingback & Midfield Catalyst (50k Coins)',
+    promoName: 'Trailblazers Evolution',
+    categoryTag: 'PAID_PREMIUM',
     costCoins: 50000,
     costFifaPoints: 500,
     expiresInDays: 11,
     eligibility: {
       maxOvr: 84,
       positions: ['LB', 'RB', 'CM'],
-      maxPlayStylesPlus: 2, // Ensures final card does not exceed FC 27's 3 PlayStyles+ hard cap
+      maxPlayStylesPlus: 2, // Strictly <= 3 in FC 27
     },
     branchA: {
       branchName: 'Branch A: Attacking Wingback++ Specialist',
@@ -1420,7 +1540,7 @@ export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
         marketPrice: 8400,
         recommendedBranch: 'Branch B',
         chemistryLinkReason:
-          'Fits your 35,000 Xbox Series S Coin budget (8,400 Coins); links FC Barcelona & Spain; caps at 2/3 PlayStyles+ leaving room for PlayStyles Lab chain.',
+          'Target for when coins reach 58,400; links FC Barcelona & Spain; caps at 2/3 PlayStyles+.',
       },
       {
         playerName: 'Eduardo Camavinga',
@@ -1433,7 +1553,65 @@ export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
         marketPrice: 19500,
         recommendedBranch: 'Branch B',
         chemistryLinkReason:
-          'Fits your 35,000 Xbox Series S Coin budget (19,500 Coins): Real Madrid & France links with Holding++ and 94 Synthesized Meta Rating.',
+          'Premium progressive target: Real Madrid & France links with Holding++ and 95.8 Synthesized Meta Rating.',
+      },
+    ],
+  },
+  {
+    id: 'evo-power-surge-defender',
+    title: 'Power Surge Defensive Anchor (Free / 0 Coins)',
+    promoName: 'Power Surge Series',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 7,
+    eligibility: {
+      maxOvr: 82,
+      positions: ['CB', 'CDM'],
+      maxPlayStylesPlus: 1,
+    },
+    branchA: {
+      branchName: 'Branch A: Anticipate+ Stopper++ Enforcer',
+      focusSummary: 'Boosts Standing Tackle (+8), Anticipate+, and Stopper++ aggressive interception step.',
+      statBoosts: { pac: 4, sho: 1, pas: 5, dri: 4, def: 8, phy: 9 },
+      addedPlayStylePlus: 'Anticipate+',
+      addedRolePlusPlus: 'Stopper++ (Defend)',
+      projectedMetaScore: 94.0,
+    },
+    branchB: {
+      branchName: 'Branch B: Ball-Playing CB++ Long Passer',
+      focusSummary: 'Maximizes Long Ball Pass+, Vision (+10), and Composure (+8) for counter-attacking distribution.',
+      statBoosts: { pac: 3, sho: 2, pas: 9, dri: 6, def: 7, phy: 7 },
+      addedPlayStylePlus: 'Long Ball Pass+',
+      addedRolePlusPlus: 'Ball-Playing CB++ (Build-Up)',
+      projectedMetaScore: 93.5,
+    },
+    recommendedClubFits: [
+      {
+        playerName: 'Pau Cubarsí',
+        currentOvr: 80,
+        finalOvr: 85,
+        club: 'FC Barcelona',
+        league: 'LaLiga EA Sports',
+        nation: 'Spain',
+        inUserClub: false,
+        marketPrice: 2200,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          '0 Coin Free Evolution; card costs only 2,200 Coins; strong links to Rodri and Yamal; 94 Standing Tackle post-upgrade.',
+      },
+      {
+        playerName: 'Gonçalo Inácio',
+        currentOvr: 81,
+        finalOvr: 86,
+        club: 'Sporting CP',
+        league: 'Liga Portugal',
+        nation: 'Portugal',
+        inUserClub: false,
+        marketPrice: 1800,
+        recommendedBranch: 'Branch B',
+        chemistryLinkReason:
+          'Budget 1,800 Coin gem; left-footed Ball-Playing CB++ with Long Ball Pass+ for direct transition counters.',
       },
     ],
   },
@@ -1506,6 +1684,7 @@ export const FC27_META_FORMATIONS: FC27MetaFormation[] = [
     formation: '4-4-2 (2 CDMs)',
     tier: 'S TIER',
     fcIqShareCode: 'FC27#7K2P-W9R1-HOLD',
+    patchStatus: 'STABLE META',
     buildUpStyle: 'Short Passing',
     defensiveApproachHeight: 62,
     keyRolesRequired: [

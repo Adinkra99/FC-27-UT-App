@@ -12,6 +12,7 @@ import {
 } from '../utils/fc27DeterministicEngine';
 import { TemporalAnchor } from '../utils/timeGrounding';
 import { Shield, Zap, GitBranch, Sparkles, CheckCircle2, Layers } from 'lucide-react';
+import { GameMechanicsPatchTracker } from './GameMechanicsPatchTracker';
 
 interface GameplaySynthesisViewProps {
   t0Anchor: TemporalAnchor;
@@ -95,6 +96,9 @@ export const GameplaySynthesisView: React.FC<GameplaySynthesisViewProps> = ({
           </span>
         </button>
       </div>
+
+      {/* Dedicated Game Mechanics & Patch Notes Tracker */}
+      <GameMechanicsPatchTracker t0Anchor={t0Anchor} />
 
       {/* Interactive Additive Synthesis Calculator: Stats in Isolation vs. Synthesized */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

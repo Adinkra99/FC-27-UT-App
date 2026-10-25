@@ -89,7 +89,7 @@ service cloud.firestore {
 
     // 4. Root User Club Collection
     match /users/{userId} {
-      allow get: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && existing().ownerId == request.auth.uid;
+      allow get: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId;
 
       allow create: if isVerifiedUser() &&
         isValidId(userId) &&
@@ -115,7 +115,7 @@ service cloud.firestore {
           ])
         );
 
-      allow delete: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && existing().ownerId == request.auth.uid;
+      allow delete: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId;
 
       // 5. Subcollection: Tracked Investments (Master Gate Enforced)
       match /investments/{investmentId} {
@@ -128,7 +128,6 @@ service cloud.firestore {
           isValidId(userId) &&
           isValidId(investmentId) &&
           request.auth.uid == userId &&
-          existing().ownerId == request.auth.uid &&
           isParentClubOwner();
 
         allow list: if isVerifiedUser() &&
@@ -166,7 +165,6 @@ service cloud.firestore {
           isValidId(userId) &&
           isValidId(investmentId) &&
           request.auth.uid == userId &&
-          existing().ownerId == request.auth.uid &&
           isParentClubOwner();
       }
     }

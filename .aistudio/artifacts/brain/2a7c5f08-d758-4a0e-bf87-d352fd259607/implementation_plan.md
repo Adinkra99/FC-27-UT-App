@@ -1,109 +1,135 @@
-# FC 27 UT App — Xbox Series S Zero-Guessing Club State (35k Coins), Smart Model Router & Antigravity v2.25 Plan
+# FC 27 UT App — Live Ultimate Scream Content Engine, Ranked Top-5 Player vs. Upgrade SBCs, Squad-Linked Tracker & `gemini-3.5-flash-lite` Router Plan
 
-An authoritative **EA Sports FC 27 Ultimate Team (Xbox Series S Console Market)** tactical, club, and market terminal orchestrated via **Google Antigravity 2.0 Desktop App (`v2.25`)** and anchored dynamically to **British Time (`Europe/London` BST/GMT at $T=0$)**. This revision locks in your confirmed **`35,000` Xbox Series S Coin balance**, keeps every other personal club attribute strictly **blank (`null` / `—` / `[]`)** with zero guessing, enforces a **Strict FC 27 Xbox Series S Verification Gate**, integrates the **Antigravity `v2.25` Built-In `generative_ui` Skill** (`C:\Users\Kit\.gemini\antigravity\builtin\skills\generative_ui\SKILL.md`), and introduces a **5-Tier Smart Model Router** that automatically routes tasks by complexity, latency, benchmark strength, and token cost (with manual override and live `ms` telemetry).
+An authoritative **EA Sports FC 27 Ultimate Team (Xbox Series S Console Market)** tactical, squad, and market intelligence terminal anchored dynamically to **British Time (`Europe/London` BST/GMT at $T=0$, October 2026 — Ultimate Scream Team 1)**. This revision upgrades the fast model tier from `gemini-3.1-flash-lite` to **`gemini-3.5-flash-lite`**, centers the entire workspace around **dynamically tracking your Squad & Club Inventory against live expiring content**, splits the **SBC Hub into Ranked Top 5 Player SBCs vs. Top 5 Upgrade SBCs** (with live countdown timers, exact Xbox Series S coin costs, and "Worth-It" value scores), integrates the complete **Ultimate Scream Team 1 Promo Roster, SBCs (`85 Moore`, `85 Otamendi`) & Live Objectives (`87 Jill Scott CB/CDM/CM`, `87 Verón CM`)**, and unifies the **Console Investment Tracker**, **Standalone Tactical Command Chatbot**, **Live Audio HUD (`gemini-3.8-live`)**, and **Push-to-Talk Transcription (`gemini-3.5-transcribe`)**.
 
 ---
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> **Confirmed User Decisions Enforced Across All Systems**:
-> 1. **Confirmed Xbox Series S Coin Balance (`35,000` Coins) & Strict Zero-Guessing Club Policy**:
->    - **Xbox Series S Coins**: Initialized to **`35,000` Coins** (`35k`), acting as the active budget filter across SBCs, 5G Bid-Flipping, and FUT Gallery "Rent-and-Flip" candidates.
->    - **All Other Personal Club Fields Start Strictly Blank (`null` / `—` / `[]`)**: The app never guesses or fills in gaps for **FIFA Points (`—`)**, **FUT Gallery Level (`—`)**, **Rivals Division (`—`)**, **Daily SP (`—`)**, **Club Name (`—`)**, **Cards You Own (`[]` / 0 cards)**, **SBC Duplicate Storage (`[]` / 0 cards)**, or **Tracked Investments (`[]` / 0 flips)**.
->    - **Immediate Launch Club Sync Modal**: Opens on launch so you can optionally populate any blank field via **Antigravity `v2.25` `/browser` MCP**, **Companion Web App / Paletools JSON**, **Voice Dictation (`gemini-3.5-transcribe`) / Manual Entry**, or **Firestore / Google Drive Restore**—or click **"Continue with 35,000 Coins (Keep Others Blank)"**.
-> 2. **Strict FC 27 Xbox Series S Verification Gate**:
->    - Only the **Xbox Series S (Console Cross-Play) Market** matters. Any player stat, Xbox price, or SBC detail not 100% verified for **EA Sports FC 27 (2026/27 Season)** is left **blank (`—`)** with a 1-click **"Verify Live (FC 27 Xbox Series S @ T=0)"** trigger. Zero FC 24/25/26 or PC market contamination.
-> 3. **Confirmed Smart Model Router (`AUTO` by Complexity + Manual Override + Tier/Latency/Reason Display)**:
->    - Automatically routes every calculation and prompt across **Tier 0 (`<2ms` Local TypeScript Math)**, **Tier 1 (`gemini-3.1-flash-lite`)**, **Tier 2 (`gemini-3.8-flash` + `googleSearch`)**, **Tier 3 (`gemini-4-argon` `ThinkingLevel.HIGH`)**, and **Audio Tier (`gemini-3.5-transcribe`)** while displaying the **Model Tier, Execution Latency (`ms`), and Routing Reason** on every response.
+> **Confirmed User Revisions & Architectural Alignment**:
+> 1. **Model Router Upgrade (`gemini-3.5-flash-lite`)**:
+>    - Replaces `gemini-3.1-flash-lite` with **`gemini-3.5-flash-lite`** across the Smart Model Router, Tactical Command Chatbot, and fast club/SBC evaluation endpoints for lower latency and stronger structured reasoning per token.
+> 2. **Split & Ranked SBC Hub (Top 5 Player SBCs vs. Top 5 Upgrade SBCs)**:
+>    - The SBC view is divided into two side-by-side / toggleable leaderboards: **Top 5 Currently Available Player SBCs** and **Top 5 Currently Available Upgrade SBCs**, plus a **Live Objectives Tracker**.
+>    - Every SBC and Objective displays: **Rank (`#1`–`#5` by Worth-It Value Score)**, **Exact Time Remaining Countdown** (anchored to $T=0$ 18:00 UK expiry), **Xbox Series S Coin Cost**, **Fodder Burn Fit** (against your logged club/duplicate storage), and a clear **Verdict (`MUST DO`, `FODDER ONLY`, `SKIP`)**.
+> 3. **Live October 2026 Grounding — Ultimate Scream Team 1 Promo, SBCs & Objectives**:
+>    - Pre-loaded and live-updatable with the exact active **Ultimate Scream Team 1** release:
+>      - **Promo Pack Roster**: `90 Raphinha`, `89 Cristiano Ronaldo`, `89 Gianfranco Zola`, `88 Dominik Szoboszlai`, `88 Jaap Stam`, `87 Fabinho`, `87 Cole Palmer`, `87 Mario Mandžukić`, `86 Geoffrey Kondogbia`, `86 Hakan Çalhanoğlu`, `86 Vobian`, `86 Corentin Tolisso`, `86 Enzo Le Fée`, `86 Fabinho`, `85 Marcos Alonso`, `85 Tahith Chong`, `85 Castello Lukeba`, `85 Aden Flint`, `85 Said El Mala`, `83 Jeppe Tverskov`.
+>      - **Active Ultimate Scream Player SBCs**: `85 Bobby Moore (Ultimate Scream SBC)`, `85 Nicolás Otamendi (Ultimate Scream SBC)`, alongside active meta Player SBCs ranked #1–#5.
+>      - **Active Ultimate Scream Objectives (Free Grind)**: `87 Jill Scott (Ultimate Scream Objective — CB / CDM / CM)` and `87 Juan Sebastián Verón (Ultimate Scream Objective — CM)`.
+> 4. **Squad-Centric Dynamic Sync & Zero-Guessing Invariant**:
+>    - Keeps your confirmed **`35,000` Xbox Series S Coin balance** as the baseline budget while keeping unconfirmed personal club slots blank (`—`) until you log or sync your Starting XI and Club Inventory. Once a position or card is logged in your squad, every SBC, Evolution, Objective, and Market card dynamically calculates its **Net Upgrade Delta** over your current starter.
 
 ---
 
 ## 1. Overview & Core Concept
 
-- **What It Does**: Delivers a two-domain (**`1. MENUS`** & **`2. GAMEPLAY`**) EA Sports FC 27 Ultimate Team strategic companion exclusively for the **Xbox Series S Console Market**, calibrated to your **`35,000` Coin budget**, with zero hallucinated club state and intelligent multi-model cost/latency routing.
-- **Target Audience / Persona**: Competitive **Xbox Series S** EA Sports FC 27 Ultimate Team player operating across an **Asus ZenBook UX482** (14" primary display + `1920x515` ScreenPad Plus secondary touch strip) and mobile (`375px–430px`) over a 5G connection.
-- **Key Value**: Combines 100% data honesty (never assuming you own cards or inventing your Division/Gallery Level) with optimal speed and API economics—executing deterministic math in `<2ms` for `$0.00`, routing quick lookups to sub-350ms `gemini-3.1-flash-lite`, live FC 27 Xbox Series S market verification to `gemini-3.8-flash`, and reserving `gemini-4-argon` (`ThinkingLevel.HIGH`) strictly for deep multi-constraint strategy and Generative UI synthesis.
+- **What It Does**: Acts as a live, clock-synchronized Director of Football that tracks your exact **Starting XI & Club Inventory** against **what is live right now in EA Sports FC 27 Ultimate Team** (Ultimate Scream Team 1 promo cards, Ranked Top 5 Player SBCs, Ranked Top 5 Upgrade SBCs, Live Objectives, and Active Evolutions)—showing exactly **how much time is left**, **what each costs on Xbox Series S**, and **which ones are the best value to complete today**.
+- **Target Audience / Persona**: Competitive **Xbox Series S** Ultimate Team player managing a `35,000` Coin liquid budget across console and dual-screen **Asus ZenBook UX482** displays.
+- **Key Value**: Eliminates FOMO and wasted fodder by ranking every live SBC, Evolution, and Objective by true value-for-coins and direct fit for your squad before the 18:00 UK timer expires.
 
 ---
 
-## 2. 5-Tier Smart Model Routing Matrix (Latency, Benchmarks & Cost)
+## 2. 5-Tier Smart Model Routing Matrix (`gemini-3.5-flash-lite` Upgraded)
 
-| Tier | Engine / Model | Target Latency | Relative Cost | Benchmark Strength & Primary Use Cases in FC 27 UT App |
-| :--- | :--- | :--- | :--- | :--- |
-| **Tier 0** | **Local Deterministic TypeScript Engine** | **`0.2ms – 2.0ms`** | **`$0.00` (Zero Tokens)** | **100% Exact Arithmetic**: 5% EA Transfer Tax & break-even, Streamlined SBC Item Score summation (`1.25x` Regular / `1.50x` Pristine Holographic multipliers), 33/33 Chemistry links, AcceleRATE 2.0 thresholds, and Isolated vs. Synthesized Stat math. |
-| **Tier 1** | **`gemini-3.1-flash-lite`** | **`~180ms – 350ms`** | **Ultra-Low (~1x Baseline)** | **High-Throughput / Low-Latency Parsing & Fast Q&A**: Normalizing pasted Web App / Paletools JSON, extracting partial manual club updates, and answering single-step FC 27 mechanics questions (e.g., 3 PlayStyles+ cap, Gallery rules) without search overhead. |
-| **Tier 2** | **`gemini-3.8-flash` + `googleSearch`** | **`~450ms – 950ms`** | **Low-Moderate (~3x Baseline)** | **Live Web Grounding & $T=0$ Fact Verification**: Verifying live **FUTBIN FC 27 Xbox Series S** Buy-Now prices, confirming **2026/27 FotMob** club transfers (e.g., Rodri at FC Barcelona), checking the 18:00 UK Daily Content Drop, and probing Antigravity `v2.25` / Title Update `#3.1` notes. |
-| **Tier 3** | **`gemini-4-argon` (`ThinkingLevel.HIGH`)** | **`~2,200ms – 5,500ms`** | **Premium Paid (~15x Baseline)** | **Frontier Multi-Constraint Reasoning & `generative_ui` Synthesis**: Comparing Branching Evolution pathways (`Branch A` vs. `Branch B` + Role++ Meta Score), solving multi-constraint SBC/squad puzzles under your **`35,000` Coin budget**, forecasting 24H/7D Xbox Series S price curves, and generating interactive GenUI widgets. |
-| **Audio** | **`gemini-3.5-transcribe`** | **`~300ms – 600ms`** | **Audio-Specific** | **Hands-Free Controller Voice Dictation**: Transcribing spoken Xbox Series S pack pulls, coin updates, or tactical queries while holding your Xbox controller. |
-
-### Auto-Router Heuristic & Telemetry Badge
-- **Automatic Classifier (`server.ts` & Client Router)**:
-  - When the user selects **`AUTO (Smart Cost/Latency Router)`** (default), the classifier inspects the request intent:
-    - *Pure Math / Tax / Score Filter* $\rightarrow$ Handled locally in **Tier 0 (`<2ms`, `$0.00`)**.
-    - *Live Price / Transfer / Patch / 18:00 Drop Verification* $\rightarrow$ Routed to **Tier 2 (`gemini-3.8-flash` + `googleSearch`)**.
-    - *Multi-Branch Evolution / 35k Budget Squad Optimization / Chart Forecast / Generative UI Widget* $\rightarrow$ Routed to **Tier 3 (`gemini-4-argon` `ThinkingLevel.HIGH`)**.
-    - *Quick Mechanics Q&A / JSON Parsing* $\rightarrow$ Routed to **Tier 1 (`gemini-3.1-flash-lite`)**.
-- **Manual Override Bar**: Users can switch from **`AUTO (Smart Router)`** to force **`Tier 1 (3.1 Flash Lite)`**, **`Tier 2 (3.8 Flash + Search)`**, or **`Tier 3 (4 Argon HIGH)`** at any time.
-- **Visible Routing Receipt**: Every AI output displays a crisp inline telemetry header:
-  `Tier [0/1/2/3] · [Model Name] · [Latency in ms] · Reason: [Why this tier was chosen for cost/latency/benchmark fit]`.
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                          UPGRADED 5-TIER SMART MODEL ROUTING MATRIX                             │
+├──────────────┬─────────────────────────┬──────────────┬───────────────┬─────────────────────────┤
+│ Tier         │ Model / Engine          │ Latency      │ Token Cost    │ Target Workload         │
+├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
+│ Tier 0       │ Local Deterministic TS  │ < 2 ms       │ $0.00         │ 5% EA Tax, SBC Score    │
+│              │ Engine                  │              │ (0 Tokens)    │ Math, Live Countdowns   │
+├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
+│ Tier 1 (Fast)│ gemini-3.5-flash-lite   │ ~200–380 ms  │ Lowest (~1x)  │ Fast SBC Worth-It Check,│
+│              │                         │              │               │ Quick Squad Delta & Q&A │
+├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
+│ Tier 2       │ gemini-3.8-flash        │ ~750–1300 ms │ Moderate (~3x)│ Live Promo/SBC/Evo Sync │
+│ (Grounded)   │ (+ googleSearch)        │              │               │ & Xbox Price Grounding  │
+├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
+│ Tier 3       │ gemini-4-argon          │ ~2.2–4.8 s   │ Premium (~15x)│ Full Squad Rebuild,     │
+│ (Deep)       │ (ThinkingLevel.HIGH)    │              │               │ Multi-Card Investment AI│
+├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
+│ Audio / Live │ gemini-3.5-transcribe   │ ~300–550 ms  │ Audio / Stream│ Push-to-Talk Dictation  │
+│ Voice Tiers  │ & gemini-3.8-live       │ Sub-second   │ Rate          │ & Real-Time Voice HUD   │
+└──────────────┴─────────────────────────┴──────────────┴───────────────┴─────────────────────────┘
+```
 
 ---
 
 ## 3. User Experience & Visual Design
 
-- **Key User Flows**:
-  1. **Zero-Guessing Launch & Partial Club Sync (`35,000` Coins Confirmed)**:
-     - Header and Club KPI cards display **Xbox Series S Coins: `35,000`**, while **FC Points (`—`)**, **Rivals Division (`—`)**, **Gallery Level (`—`)**, **Daily SP (`— / 850`)**, **Club Name (`—`)**, and **Owned Cards (`0 Synced`)** render as clean blank indicators (`—`).
-     - The **Xbox Series S Club Sync Modal** opens immediately on launch so you can optionally fill in any blank attribute (or click **"Continue with 35,000 Coins — Keep Unknowns Blank"**).
-  2. **Strict Separation of "FC 27 Xbox Series S Market Catalog" vs. "My Club"**:
-     - The **My Club Inventory & SBC Duplicate Storage** table starts completely empty (`0 Owned Cards`) with an action button to add or sync only the cards you actually own.
-     - The **FC 27 Xbox Series S Market Catalog** provides verified 2026/27 reference cards (with a **"Mark as Owned in My Club"** toggle and a **"Verify Live Xbox Series S Price @ T=0"** trigger for any unverified field).
-  3. **Interactive Generative UI (`generative_ui` Skill) & Smart Router**:
-     - Toggling **Generative UI Mode (`SKILL.md`)** in the AI & MCP view renders interactive sliders and comparators calibrated to your **`35,000` Coin budget**, accompanied by the **Smart Router Telemetry Receipt** (`Tier`, `Latency ms`, and `Reason`).
-- **Visual Identity & Theme**:
-  - *Aesthetic Direction*: High-Contrast Console Tactical & Financial Terminal (`#090d16` Pitch Obsidian canvas, `#111827` slate panels, `#00ff87` FC 27 Pitch Emerald primary accent, `#fbbf24` Holographic Gold accent).
-  - *Typography & Hierarchy*: `Outfit` for headers, `Plus Jakarta Sans` for dense UI copy, and `JetBrains Mono` (`tabular-nums`) for all Xbox Series S coin figures, `ms` latency counters, and `—` blank indicators.
+### A. My Squad & Club Tracker (`CLUB & SQUAD`)
+- **Interactive Starting XI Pitch & Club Roster**:
+  - Slot your owned cards into your active formation (or dictate them quickly via **`gemini-3.5-transcribe`** Push-to-Talk). Unfilled slots remain cleanly blank (`—`) with zero guessing.
+  - Instantly flags your **Weakest Squad Links** and highlights which live **Ultimate Scream SBC (`85 Moore`, `85 Otamendi`)**, **Objective (`87 Jill Scott CB/CDM/CM`, `87 Verón CM`)**, **Evolution**, or **Market Buy ($\le 35,000$ Coins)** provides the highest Meta Score upgrade.
+
+### B. Split & Ranked SBC + Objectives Hub (`DUAL SBCS`)
+- **View Switcher & Live Sync Bar**:
+  - Button to **"Sync Live FC 27 SBCs & Objectives @ T=0 (`gemini-3.8-flash` + Search)"** so the board always reflects the exact day's 18:00 UK content drop.
+- **Column 1: Top 5 Ranked Player SBCs (Ranked `#1` to `#5` by Worth-It Score)**:
+  - Features active **Ultimate Scream Team 1 Player SBCs** (`85 Bobby Moore`, `85 Nicolás Otamendi`, plus live promo Player SBCs).
+  - Each card row displays:
+    - **Rank & Worth-It Score (`0–100`)**: Calculated from Xbox Series S coin price vs. meta performance, Role++ quality, and chemistry links.
+    - **Live Expiry Countdown**: Exact `Days : Hours : Minutes` remaining.
+    - **Xbox Series S Cost & Club Fodder Offset**: Shows full market cost alongside your net coin cost after applying your logged untradeable fodder / duplicate storage.
+    - **Squad Fit Verdict**: Shows whether the player improves your Starting XI (`STARTER UPGRADE`, `SUPER SUB`, or `SKIP`).
+- **Column 2: Top 5 Ranked Upgrade & Gamble SBCs (Ranked `#1` to `#5` by ROI)**:
+  - Ranks repeatable and limited upgrade SBCs (e.g., *Ultimate Scream 83+ Double Upgrade*, *80+ Player Pick (1 of 3)*, *Max 87 Hero/Promo Upgrade*, *Daily Gold Upgrade*, *84+ x5 Upgrade*).
+  - Evaluates **Pack Weight / Expected Return vs. Cost** and highlights **Zero-Coin Duplicate Storage Burns** utilizing `1.25x` / `1.50x` Holographic score multipliers.
+- **Column 3: Live Free Objectives Tracker (`87 Jill Scott` & `87 Verón`)**:
+  - Tracks live playable Objectives (`87 Jill Scott` with `CB / CDM / CM` versatility, `87 Juan Sebastián Verón CM`), showing XP/task requirements, time remaining, and why they save you liquid coins over paid SBCs.
+
+### C. Ultimate Scream Team 1 Live Promo & Console Investment Tracker (`INVESTMENTS & MARKET`)
+- **Ultimate Scream Team 1 Live Roster Catalog**:
+  - Filterable by budget (`All Ultimate Scream` vs. `Affordable Under 35,000 Coins` vs. `High-Tier Meta`):
+    - **Headliners**: `90 Raphinha`, `89 Cristiano Ronaldo`, `89 Gianfranco Zola`, `88 Szoboszlai`, `88 Jaap Stam`, `87 Fabinho`, `87 Cole Palmer`, `87 Mandžukić`.
+    - **Mid-Tier & Budget Beasts (35k Coin Target Zone)**: `86 Kondogbia`, `86 Çalhanoğlu`, `86 Vobian`, `86 Tolisso`, `86 Le Fée`, `86 Fabinho`, `85 Alonso`, `85 Chong`, `85 Lukeba`, `85 Flint`, `85 El Mala`, `83 Tverskov`.
+- **Console Investment Logger & Gemini Transfer Alerts**:
+  - Log player acquisitions with automatic **5% EA Tax Break-Even (`Buy / 0.95`)**, quantity, and target sell price.
+  - Run **Gemini Market Trend Analysis** to receive actionable `BUY WINDOW`, `HOLD`, or `SELL BEFORE 18:00 DROP` transfer alerts.
+
+### D. Standalone Tactical Command Tab, Live Audio HUD & Push-to-Talk
+- **Standalone `TACTICAL COMMAND` Tab**: Multi-turn chat interface with scrollable history, tactical role personas, and complexity routing across **`gemini-3.5-flash-lite`**, **`gemini-3.8-flash` (+ Search)**, and **`gemini-4-argon`**.
+- **Interactive Live Audio HUD (`gemini-3.8-live`)**: Top-bar real-time voice coaching session with live waveform visualizer.
+- **Push-to-Talk Mic Buttons (`gemini-3.5-transcribe`)**: Embedded in all search bars, squad slot inputs, investment forms, and the Club Sync modal.
 
 ---
 
-## 4. Technical Architecture & Data Strategy *(Technical Reference)*
+## 4. Technical Architecture & Data Flow
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│            UNIVERSAL DYNAMIC TEMPORAL ANCHOR (T = 0 · Europe/London BST/GMT)           │
-│   • Football Season: 2026-27 (1st Half Aug–Dec) · 18:00 UK Content Drop Countdown      │
-│   • Platform Lock: Xbox Series S (Console Cross-Play Market Only — Zero PC/Legacy)     │
-└───────────────────────────────┬────────────────────────────────────────────────────────┘
-                                │
-         ┌──────────────────────┴────────────────────────┐
-         ▼                                               ▼
-┌─────────────────────────────────────────┐   ┌──────────────────────────────────────────┐
-│  PERSONAL XBOX SERIES S CLUB PROFILE    │   │  5-TIER SMART MODEL & COST ROUTER        │
-│  • coins: 35,000 (Confirmed by User)    │   │  • Tier 0: Local TS Math (<2ms, $0.00)   │
-│  • fifaPoints: null ('—')               │   │  • Tier 1: gemini-3.1-flash-lite (~250ms)│
-│  • galleryLevel: null ('—')             │   │  • Tier 2: gemini-3.8-flash + Search     │
-│  • rivalsDivision: null ('—')           │   │  • Tier 3: gemini-4-argon (Thinking HIGH)│
-│  • dailySp: null ('—')                  │   │  • Audio:  gemini-3.5-transcribe         │
-│  • clubName: null ('—')                 │   │  • Telemetry: Shows Tier, ms, & Reason   │
-│  • ownedCards / dupStorage: [] (Blank)  │   └────────────────────┬─────────────────────┘
-└───────────────────┬─────────────────────┘                        │
-                    └─────────────────────┬────────────────────────┘
-                                          ▼
+│        LIVE TEMPORAL & PROMO ENGINE (T = 0 · Oct 2026 · Ultimate Scream Team 1)        │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  • Active Promo Catalog: 90 Raphinha, 89 CR7, 89 Zola, 88 Szoboszlai, 88 Stam,         │
+│    87 Palmer, 87 Fabinho, 87 Mandžukić, 86 Kondogbia, 86 Çalhanoğlu, 86 Vobian,        │
+│    86 Tolisso, 86 Le Fée, 85 Alonso, 85 Chong, 85 Lukeba, 85 Flint, 85 El Mala,        │
+│    83 Tverskov                                                                         │
+│  • Active Player SBCs: 85 Moore, 85 Otamendi + Top 5 Ranked Player SBCs                │
+│  • Active Upgrade SBCs: Top 5 Ranked Repeatable/Upgrade SBCs                           │
+│  • Active Objectives: 87 Jill Scott (CB/CDM/CM), 87 Verón (CM)                         │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│          DUAL-DOMAIN WORKSPACE (35K BUDGET AWARE) + GENERATIVE UI ENGINE               │
-├───────────────────────────┬────────────────────────────┬───────────────────────────────┤
-│     DOMAIN 1: MENUS       │     DOMAIN 2: GAMEPLAY     │   ANTIGRAVITY v2.25 GenUI     │
-│ • Launch Club Sync Modal  │ • Isolated vs. Synthesized │ • Interactive GenUI Widgets   │
-│ • Dual-Mode SBC Solver    │   Stat + Chem + Role++ Lab │   via /api/gemini/gen-ui      │
-│   (35k Budget Check)      │ • AcceleRATE 2.0 & 3 PS+   │ • Live FC 27 Xbox Series S    │
-│ • Gallery Rent-Flip <=35k │   Hard Cap Enforcement     │   Price/Stat Verifier         │
-└───────────────────────────┴────────────────────────────┴───────────────────────────────┘
+│           5-TIER GEMINI SERVER ROUTER (`server.ts` + `@google/genai` SDK)              │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│  • Tier 1 Fast: `gemini-3.5-flash-lite` (Replaces 3.1-flash-lite across all routes)    │
+│  • Tier 2 Grounded: `gemini-3.8-flash` + `googleSearch` (Live SBC/Promo/Price sync)    │
+│  • Tier 3 Deep: `gemini-4-argon` (`ThinkingLevel.HIGH` for Squad & Portfolio AI)       │
+│  • Audio Transcription: `gemini-3.5-transcribe` (`/api/gemini/transcribe`)             │
+│  • Live Voice API: `gemini-3.8-live` (`/api/gemini/live-session` + Web Audio HUD)      │
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Interactive Component & State Mapping
-- **Smart Router Endpoint (`/api/gemini/smart-route` in `server.ts`)**:
-  - Accepts `{ query, requestedMode: 'AUTO' | 'TIER_1_LITE' | 'TIER_2_FLASH_SEARCH' | 'TIER_3_ARGON_HIGH', useSearchGrounding, clubContext, clientT0 }`.
-  - Measures exact server execution time (`latencyMs`), selects the optimal model when `requestedMode === 'AUTO'`, enforces the **Zero-Guessing Personal Club & Xbox Series S Only Contract**, and returns `{ text, modelUsed, tierLabel, latencyMs, routingReason, estimatedCostTier, genUiWidget }`.
-- **Blank-Safe Firestore Persistence (`firebase-blueprint.json` & `firestore.rules`)**:
-  - Supports nullable fields (`clubName`, `fifaPoints`, `rivalsDivision`, `galleryLevel`, `dailySp`) alongside `coins` (`35000`) so syncing to Firestore never overwrites blank fields with fake numbers.
+### Planned Execution Steps:
+1. **Model Router Upgrade (`gemini-3.5-flash-lite`)**: Update `modelRouter.ts` and `server.ts` so Tier 1 uses `gemini-3.5-flash-lite` everywhere.
+2. **Ultimate Scream Team 1 Catalog, Ranked SBCs & Objectives Data (`fc27ConsoleData.ts`)**:
+   - Add all Ultimate Scream Team 1 players, `85 Moore` & `85 Otamendi` Player SBCs, Top 5 Player SBCs vs. Top 5 Upgrade SBCs with live countdown timers and Worth-It scores, and `87 Jill Scott (CB/CDM/CM)` & `87 Verón (CM)` Objectives.
+3. **Split Ranked SBC & Objectives View + Live Squad Tracker**:
+   - Upgrade the SBC tab to split **Top 5 Player SBCs**, **Top 5 Upgrade SBCs**, and **Live Objectives**, ranked by Worth-It Score and linked to your Starting XI & `35,000` Coin budget.
+4. **Investment Tracker, Standalone Tactical Command Tab, Live Audio HUD & Push-to-Talk**:
+   - Implement the full Console Investment Tracker with 5% tax math and Gemini transfer alerts, the standalone `TACTICAL COMMAND` multi-turn chat tab, the `LiveAudioHud`, and reusable `PushToTalkButton` components.
+5. **Verification**: Run `lint_applet` and `compile_applet` to verify zero errors.
