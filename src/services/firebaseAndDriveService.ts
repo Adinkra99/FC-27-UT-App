@@ -27,7 +27,8 @@ import { getFirestore } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, 'ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607');
+const dbId = (firebaseConfig as any).firestoreDatabaseId || 'ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607';
+export const db = getFirestore(app, dbId);
 export const auth = getAuth(app);
 
 export const WORKSPACE_DRIVE_SCOPES = [
