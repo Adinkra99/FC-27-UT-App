@@ -9,7 +9,9 @@ import {
   FC27_CONSOLE_PLAYERS,
   FC27_GALLERY_SETS,
   FC27_MATCH_STACKER_OBJECTIVES,
+  FC27_ULTIMATE_SCREAM_TEAM_1,
   FC27ConsolePlayer,
+  FC27SBCChallenge,
 } from './data/fc27ConsoleData';
 import {
   calculateEaTaxMetrics,
@@ -34,6 +36,11 @@ import {
   AntigravityMcpAndChatDrawer,
   RoutingTelemetryReceipt,
 } from './components/AntigravityMcpAndChatDrawer';
+import { LiveAudioHud } from './components/LiveAudioHud';
+import { PushToTalkButton } from './components/PushToTalkButton';
+import { InvestmentTrackerTab, ConsoleInvestmentPosition } from './components/InvestmentTrackerTab';
+import { TacticalChatTab } from './components/TacticalChatTab';
+import { SquadTrackerView } from './components/SquadTrackerView';
 import {
   Shield,
   TrendingUp,
@@ -58,28 +65,24 @@ import {
   Sliders,
   Search,
   Plus,
+  MessageSquare,
+  Flame,
+  Download,
 } from 'lucide-react';
 import type { User } from 'firebase/auth';
 
 type PrincipalDomain = 'MENUS' | 'GAMEPLAY';
 type ActiveTab =
+  | 'MY_SQUAD'
   | 'CLUB_SYNC'
   | 'DUAL_SBCS'
   | 'EVOLUTIONS'
+  | 'INVESTMENTS'
   | 'FUT_GALLERY'
   | 'CONSOLE_MARKET'
   | 'GAMEPLAY_LAB'
+  | 'TACTICAL_COMMAND'
   | 'ANTIGRAVITY_AI';
-
-interface TrackedInvestment {
-  id: string;
-  playerName: string;
-  rating: number;
-  rarity: string;
-  buyPrice: number;
-  targetSellPrice: number;
-  quantity: number;
-}
 
 interface UnverifiedCustomPlayer {
   id: string;
@@ -108,7 +111,8 @@ export function App() {
 
   // 2. Principal Domain ('MENUS' vs 'GAMEPLAY') & Navigation State
   const [principalDomain, setPrincipalDomain] = useState<PrincipalDomain>('MENUS');
-  const [activeTab, setActiveTab] = useState<ActiveTab>('CLUB_SYNC');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('MY_SQUAD');
+  const [simulatedEvoName, setSimulatedEvoName] = useState<string | null>(null);
   const [screenPadTickerOpen, setScreenPadTickerOpen] = useState<boolean>(true);
 
   // 3. ZERO-GUESSING PERSONAL XBOX SERIES S CLUB STATE
@@ -127,7 +131,12 @@ export function App() {
   const [newCustomPlayerName, setNewCustomPlayerName] = useState<string>('');
 
   const [useClubUntradeablesInSbc, setUseClubUntradeablesInSbc] = useState<boolean>(true);
-  const [selectedSbcId, setSelectedSbcId] = useState<string>(FC27_ACTIVE_SBCS[1].id); // 22.9k Trailblazers Guarantee fits 35k budget
+  const [liveSbcs, setLiveSbcs] = useState<FC27SBCChallenge[]>(FC27_ACTIVE_SBCS);
+  const [selectedSbcId, setSelectedSbcId] = useState<string>(FC27_ACTIVE_SBCS[0].id); // #1 Ranked Player SBC (85 Otamendi - 24.5k Coins)
+  const [sbcRankFilter, setSbcRankFilter] = useState<'SPLIT_BOTH' | 'PLAYER_SBC' | 'UPGRADE_SBC'>(
+    'SPLIT_BOTH'
+  );
+  const [isSyncingLiveSbcs, setIsSyncingLiveSbcs] = useState<boolean>(false);
 
   // 4. Market & 5G Investment Portfolio State (Starts strictly empty [] — zero guessed trades)
   const [selectedMarketPlayerId, setSelectedMarketPlayerId] = useState<string>(
@@ -136,7 +145,7 @@ export function App() {
   const [marketFilter5G, setMarketFilter5G] = useState<'ALL' | 'UNDER_35K' | 'HOLOGRAPHIC'>(
     'UNDER_35K'
   );
-  const [trackedInvestments, setTrackedInvestments] = useState<TrackedInvestment[]>([]);
+  const [trackedInvestments, setTrackedInvestments] = useState<ConsoleInvestmentPosition[]>([]);
 
   // 5. Gallery Set Registration State (Starts strictly empty {})
   const [registeredRentIds, setRegisteredRentIds] = useState<Record<string, boolean>>({});
@@ -446,6 +455,58 @@ export function App() {
     }
   };
 
+  // Browser-based download of the current club state (coins, players, squad) as a JSON file, using a Blob object with application/json MIME type
+  const handleExportClubDataJson = () => {
+    const exportPayload = {
+      exportMetadata: {
+        app: 'EA Sports FC 27 Ultimate Team Strategic Engine (Xbox Series S)',
+        version: '1.0.0',
+        platform: 'Xbox Series S Console Cross-Play',
+        exportedAt: new Date().toISOString(),
+        temporalAnchor: t0Anchor.britishFullFormatted,
+        fc27PatchVersion: t0Anchor.fc27PatchState.titleUpdateVersion,
+      },
+      clubState: {
+        coins,
+        clubName,
+        fifaPoints,
+        rivalsDivision,
+        dailySp,
+        galleryLevel,
+      },
+      squad: {
+        formation: '4-2-1-3',
+        description: 'Verified 2026/27 starting lineup with Role++ assignments',
+      },
+      inventory: {
+        ownedPlayers: players.filter((p) => p.inClubInventory),
+        duplicateStorage: players.filter((p) => p.inDuplicateStorage),
+        customPlayers: customClubPlayers,
+      },
+      investmentPortfolio: trackedInvestments,
+      registeredGallerySets: registeredRentIds,
+    };
+
+    const jsonString = JSON.stringify(exportPayload, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const downloadUrl = URL.createObjectURL(blob);
+    const now = new Date();
+    const dateFormatted = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const fileName = `fc27_club_state_${dateFormatted}.json`;
+
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = downloadUrl;
+    downloadAnchor.download = fileName;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(downloadUrl);
+
+    setCloudStatusBanner(
+      `Exported club state backup (${coins !== null ? `${coins.toLocaleString()} Coins` : '0 Coins'}) as ${fileName}`
+    );
+  };
+
   // Switch domain tab automatically when Principal Domain toggles
   const handleSelectDomain = (domain: PrincipalDomain) => {
     setPrincipalDomain(domain);
@@ -645,9 +706,65 @@ export function App() {
   );
 
   const activeSbc = useMemo(
-    () => FC27_ACTIVE_SBCS.find((s) => s.id === selectedSbcId) || FC27_ACTIVE_SBCS[0],
-    [selectedSbcId]
+    () => liveSbcs.find((s) => s.id === selectedSbcId) || liveSbcs[0],
+    [liveSbcs, selectedSbcId]
   );
+
+  const top5PlayerSbcs = useMemo(
+    () =>
+      liveSbcs
+        .filter((s) => s.sbcGroup === 'PLAYER_SBC')
+        .sort((a, b) => a.rankInGroup - b.rankInGroup)
+        .slice(0, 5),
+    [liveSbcs]
+  );
+
+  const top5UpgradeSbcs = useMemo(
+    () =>
+      liveSbcs
+        .filter((s) => s.sbcGroup === 'UPGRADE_SBC')
+        .sort((a, b) => a.rankInGroup - b.rankInGroup)
+        .slice(0, 5),
+    [liveSbcs]
+  );
+
+  const freeLiveObjectives = useMemo(
+    () => FC27_ULTIMATE_SCREAM_TEAM_1.filter((item) => item.releaseSource === 'OBJECTIVE_FREE'),
+    []
+  );
+
+  const handleSyncLiveSbcs = async () => {
+    const freshT0 = createTemporalAnchor(new Date());
+    setT0Anchor(freshT0);
+    setIsSyncingLiveSbcs(true);
+    try {
+      const res = await fetch('/api/gemini/fetch-live-sbcs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientT0: freshT0.britishFullFormatted,
+          userCoins: coins ?? 35000,
+          clubContext: clubContextForAi,
+        }),
+      });
+      const data = await res.json();
+      if (data.liveDigest) {
+        setStrategyOutput({
+          title: 'Live Ultimate Scream Team 1 SBC & Objectives Worth-It Sync',
+          text: data.liveDigest,
+          t0Stamp: freshT0.britishFullFormatted,
+          telemetry: data.routingTelemetry,
+        });
+      }
+      setCloudStatusBanner(
+        `Verified Top 5 Player SBCs (85 Otamendi, 85 Moore) & Top 5 Upgrade SBCs + Free Objectives (87 Jill Scott, 87 Verón) at T=0 (${freshT0.britishTimeFormatted}).`
+      );
+    } catch (err: any) {
+      setCloudStatusBanner(`Live SBC sync notice: ${err.message}`);
+    } finally {
+      setIsSyncingLiveSbcs(false);
+    }
+  };
 
   const streamlinedSolution = useMemo(
     () => solveStreamlinedSbcItemScore(activeSbc, players, useClubUntradeablesInSbc),
@@ -761,8 +878,10 @@ export function App() {
             </div>
           </div>
 
-          {/* ZONE 3 (Right): Blank-Safe Xbox Series S Wallet Summary + Sync Button + Google Auth */}
+          {/* ZONE 3 (Right): Live Audio HUD (gemini-3.8-live) + Blank-Safe Xbox Wallet + Google Auth */}
           <div className="flex items-center gap-2.5">
+            <LiveAudioHud clubCoins={coins} t0Formatted={t0Anchor.britishFullFormatted} />
+
             <button
               type="button"
               onClick={() => setShowLaunchSyncModal(true)}
@@ -856,14 +975,20 @@ export function App() {
             <nav className="space-y-1.5">
               {[
                 {
-                  id: 'CLUB_SYNC',
-                  label: 'My Xbox Club (Zero-Guess)',
-                  domain: 'MENUS' as PrincipalDomain,
+                  id: 'MY_SQUAD',
+                  label: 'My Dynamic Squad (4-2-1-3)',
+                  domain: principalDomain,
                   icon: Shield,
                 },
                 {
+                  id: 'CLUB_SYNC',
+                  label: 'My Xbox Club (Zero-Guess)',
+                  domain: 'MENUS' as PrincipalDomain,
+                  icon: Sliders,
+                },
+                {
                   id: 'DUAL_SBCS',
-                  label: 'Dual-Mode SBC Solver',
+                  label: 'Ranked Player & Upgrade SBCs',
                   domain: 'MENUS' as PrincipalDomain,
                   icon: Layers,
                 },
@@ -872,6 +997,12 @@ export function App() {
                   label: 'Live Dynamic Evolutions',
                   domain: principalDomain,
                   icon: GitBranch,
+                },
+                {
+                  id: 'INVESTMENTS',
+                  label: 'Investments & Scream Team 1',
+                  domain: 'MENUS' as PrincipalDomain,
+                  icon: Flame,
                 },
                 {
                   id: 'FUT_GALLERY',
@@ -892,6 +1023,12 @@ export function App() {
                   icon: Zap,
                 },
                 {
+                  id: 'TACTICAL_COMMAND',
+                  label: 'Tactical Command Chatbot',
+                  domain: principalDomain,
+                  icon: MessageSquare,
+                },
+                {
                   id: 'ANTIGRAVITY_AI',
                   label: 'Smart Router & GenUI Skill',
                   domain: principalDomain,
@@ -907,9 +1044,13 @@ export function App() {
                     onClick={() => {
                       setActiveTab(item.id as ActiveTab);
                       if (item.id === 'GAMEPLAY_LAB') setPrincipalDomain('GAMEPLAY');
-                      else if (item.id === 'EVOLUTIONS') {
+                      else if (
+                        item.id === 'EVOLUTIONS' ||
+                        item.id === 'TACTICAL_COMMAND' ||
+                        item.id === 'ANTIGRAVITY_AI'
+                      ) {
                         // Accessible from both Menus & Gameplay
-                      } else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
+                      } else setPrincipalDomain('MENUS');
                     }}
                     className={`w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-3 transition-colors whitespace-nowrap shrink-0 min-h-[42px] ${
                       isActive
@@ -963,14 +1104,44 @@ export function App() {
 
         {/* PRIMARY MAIN CONTENT AREA */}
         <main className="flex-1 min-w-0 space-y-6">
-          {/* Mobile/Compact T=0 Temporal Strip */}
-          <div className="xl:hidden bg-[#111827] border border-slate-800 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums">
-            <span className="text-slate-200">
-              T=0 UK: <strong className="text-[#00ff87]">{t0Anchor.britishFullFormatted}</strong>
-            </span>
-            <span className="text-amber-400">
-              Xbox Coins: <strong>{coins !== null ? coins.toLocaleString() : '—'}</strong>
-            </span>
+          {/* Mobile/Compact T=0 Temporal Strip & Quick Tab Navigation */}
+          <div className="lg:hidden space-y-3">
+            <div className="bg-[#111827] border border-slate-800 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums">
+              <span className="text-slate-200">
+                T=0 UK: <strong className="text-[#00ff87]">{t0Anchor.britishFullFormatted}</strong>
+              </span>
+              <span className="text-amber-400">
+                Xbox Coins: <strong>{coins !== null ? coins.toLocaleString() : '—'}</strong>
+              </span>
+            </div>
+
+            {/* Mobile Horizontal Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs font-semibold">
+              {[
+                { id: 'MY_SQUAD', label: 'My Squad (4-2-1-3)' },
+                { id: 'DUAL_SBCS', label: 'Ranked SBCs' },
+                { id: 'EVOLUTIONS', label: 'Evos Hub' },
+                { id: 'CLUB_SYNC', label: 'My Club' },
+                { id: 'INVESTMENTS', label: 'Investments' },
+                { id: 'FUT_GALLERY', label: 'Gallery' },
+                { id: 'CONSOLE_MARKET', label: 'Market' },
+                { id: 'GAMEPLAY_LAB', label: 'Gameplay' },
+                { id: 'TACTICAL_COMMAND', label: 'Tactics' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as ActiveTab)}
+                  className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors shrink-0 ${
+                    activeTab === tab.id
+                      ? 'bg-[#00ff87] text-slate-950 font-bold'
+                      : 'bg-slate-900 border border-slate-800 text-slate-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Cloud / Action Status Banner */}
@@ -1025,6 +1196,19 @@ export function App() {
                 {strategyOutput.text}
               </div>
             </div>
+          )}
+
+          {/* TAB 0: DYNAMIC SQUAD TRACKER, PITCH 11 & UPGRADE SIMULATOR */}
+          {activeTab === 'MY_SQUAD' && (
+            <SquadTrackerView
+              t0Anchor={t0Anchor}
+              userCoins={coins}
+              onUpdateCoins={(newCoins) => setCoins(newCoins)}
+              clubPlayers={players}
+              onNavigateToTab={(tabId) => setActiveTab(tabId as ActiveTab)}
+              onSimulateInTactics={handleRunSmartAdvisor}
+              simulatedTargetName={simulatedEvoName}
+            />
           )}
 
           {/* TAB 1: MY XBOX SERIES S CLUB (ZERO-GUESSING BLANK STATE + ONBOARDING) */}
@@ -1113,6 +1297,16 @@ export function App() {
 
                   <button
                     type="button"
+                    onClick={handleExportClubDataJson}
+                    className="px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 border border-[#00ff87]/50 hover:border-[#00ff87] text-[#00ff87] text-xs font-bold rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 min-h-[40px]"
+                    title="Download a local JSON backup of your current club data (coins, squad, players)"
+                  >
+                    <Download className="w-4 h-4 text-[#00ff87]" />
+                    <span>Export Club Backup JSON</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={handleBackupToFirestoreAndDrive}
                     disabled={isSyncingCloud}
                     className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 min-h-[40px] disabled:opacity-50"
@@ -1136,8 +1330,8 @@ export function App() {
                     </h3>
                   </div>
 
-                  {/* Add Custom Owned Card with Live FC 27 Xbox Series S Verification */}
-                  <div className="flex items-center gap-2">
+                  {/* Add Custom Owned Card with Live FC 27 Xbox Series S Verification + PushToTalk */}
+                  <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="text"
                       value={newCustomPlayerName}
@@ -1146,7 +1340,12 @@ export function App() {
                         if (e.key === 'Enter') handleAddCustomClubPlayer();
                       }}
                       placeholder="Add a player you own (unverified stats stay —)..."
-                      className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-[#00ff87] min-h-[38px]"
+                      className="flex-1 min-w-[180px] px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-[#00ff87] min-h-[38px]"
+                    />
+                    <PushToTalkButton
+                      compact
+                      label="Mic"
+                      onTranscript={(text) => setNewCustomPlayerName(text)}
                     />
                     <button
                       type="button"
@@ -1378,30 +1577,42 @@ export function App() {
             </div>
           )}
 
-          {/* TAB 2: DUAL-MODE SBC SOLVER (CALIBRATED TO 35,000 XBOX SERIES S COINS & ZERO ASSUMED CARDS) */}
+          {/* TAB 2: SPLIT RANKED PLAYER SBCs vs UPGRADE SBCs + LIVE FREE OBJECTIVES (ULTIMATE SCREAM TEAM 1) */}
           {activeTab === 'DUAL_SBCS' && (
             <div className="space-y-6">
               <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <div className="text-xs text-[#00ff87] font-semibold">
-                    Tier 0 (&lt;2ms Deterministic Math) + Tier 3 (Gemini 4 Argon HIGH Verification)
+                    Live Ultimate Scream Team 1 @ T=0 ({t0Anchor.britishDateFormatted}) · Ranked by Worth-It Score & 35,000 Coin Budget
                   </div>
                   <h2 className="text-xl font-bold text-white mt-0.5">
-                    Xbox Series S Dual-Mode SBC Solver (35,000 Coin Budget Aware)
+                    Top 5 Player SBCs vs. Top 5 Upgrade SBCs + Live Free Objectives
                   </h2>
                   <p className="text-xs text-slate-400 mt-1">
-                    Assumes <strong>0 owned cards</strong> unless you explicitly marked them in your club. Calculates exact Xbox Series S market cost using Regular (1.25x) & Pristine (1.50x) Holographic multipliers.
+                    Split and ranked #1 to #5 by <strong>Worth-It Score</strong>, time remaining, Xbox Series S completion cost, and squad chemistry fit. Includes <strong>85 Nicolás Otamendi (#1 Player SBC)</strong>, <strong>85 Bobby Moore (#2 Player SBC)</strong>, and Free Objectives <strong>87 Jill Scott (CB/CDM/CM)</strong> & <strong>87 Verón (CM)</strong>.
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    type="button"
+                    disabled={isSyncingLiveSbcs}
+                    onClick={handleSyncLiveSbcs}
+                    className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold text-xs rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 min-h-[40px] disabled:opacity-50"
+                  >
+                    <Clock className="w-4 h-4 text-[#00ff87]" />
+                    <span>
+                      {isSyncingLiveSbcs ? 'Syncing Live SBCs...' : 'Sync Live SBC Rankings (T=0)'}
+                    </span>
+                  </button>
+
                   <button
                     type="button"
                     disabled={isThinkingAdvisor}
                     onClick={() =>
                       handleRunSmartAdvisor(
                         `Xbox Series S SBC Plan: ${activeSbc.title}`,
-                        `Solve ${activeSbc.title} (${activeSbc.category}) strictly for the Xbox Series S market. My current Coin balance is ${
+                        `Solve ${activeSbc.title} (${activeSbc.category}, Ranked #${activeSbc.rankInGroup} in ${activeSbc.sbcGroup}, Worth-It Score ${activeSbc.worthItScore}/100) strictly for the Xbox Series S market. My current Coin balance is ${
                           coins !== null ? `${coins.toLocaleString()} Coins` : 'BLANK'
                         }. Do NOT assume I own any cards that are not listed in my clubContext. Tell me whether this SBC fits my 35,000 Coin budget and give the exact cheapest Holographic/Base combination.`
                       )
@@ -1410,49 +1621,280 @@ export function App() {
                   >
                     <Sparkles className="w-4 h-4" />
                     <span>
-                      {isThinkingAdvisor ? 'Routing to Argon HIGH...' : 'Analyze SBC (Smart Router)'}
+                      {isThinkingAdvisor ? 'Routing to Argon HIGH...' : 'Analyze Selected SBC'}
                     </span>
                   </button>
                 </div>
               </div>
 
-              {/* Active SBC Selector Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {FC27_ACTIVE_SBCS.map((sbc) => {
-                  const selected = sbc.id === selectedSbcId;
-                  const fitsBudget = coins !== null && sbc.estimatedMarketCost <= coins;
-                  return (
+              {/* Filter Bar: Split Side-by-Side vs Player SBCs Only vs Upgrade SBCs Only */}
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-[#111827] border border-slate-800 rounded-xl p-3.5">
+                <div className="flex items-center gap-1.5">
+                  {[
+                    { id: 'SPLIT_BOTH', label: 'Split View: Top 5 Player vs. Top 5 Upgrade SBCs' },
+                    { id: 'PLAYER_SBC', label: 'Top 5 Player SBCs Only (85 Otamendi · 85 Moore)' },
+                    { id: 'UPGRADE_SBC', label: 'Top 5 Upgrade SBCs Only (81+ Pick · 83+ x2)' },
+                  ].map((tab) => (
                     <button
-                      key={sbc.id}
+                      key={tab.id}
                       type="button"
-                      onClick={() => setSelectedSbcId(sbc.id)}
-                      className={`text-left p-4 rounded-xl border transition-colors space-y-2 ${
-                        selected
-                          ? 'bg-[#111827] border-[#00ff87]'
-                          : 'bg-[#111827]/70 border-slate-800 hover:border-slate-700'
+                      onClick={() => setSbcRankFilter(tab.id as any)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                        sbcRankFilter === tab.id
+                          ? 'bg-[#00ff87] text-slate-950 font-bold'
+                          : 'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white'
                       }`}
                     >
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-[#00ff87]">{sbc.category}</span>
-                        <span className={fitsBudget ? 'font-mono text-[#00ff87]' : 'font-mono text-amber-400'}>
-                          {fitsBudget ? 'Fits 35k Budget' : 'Needs Fodder / >35k'}
-                        </span>
-                      </div>
-                      <div className="text-base font-bold text-white">{sbc.title}</div>
-                      <div className="text-xs text-slate-400">{sbc.rewardDescription}</div>
-                      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-mono">
-                        <span className="text-slate-300">
-                          {sbc.mode === 'STREAMLINED'
-                            ? `Target Score: ${sbc.targetItemScore}`
-                            : `Min Rating: ${sbc.minSquadRating}`}
-                        </span>
-                        <span className="text-white">
-                          Xbox Est: {sbc.estimatedMarketCost.toLocaleString()}
-                        </span>
-                      </div>
+                      {tab.label}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+                <div className="text-xs font-mono text-slate-400">
+                  Selected for Deterministic Solver: <strong className="text-[#00ff87]">{activeSbc.title}</strong>
+                </div>
+              </div>
+
+              {/* Split Ranked Columns: Top 5 Player SBCs vs Top 5 Upgrade SBCs */}
+              <div
+                className={`grid grid-cols-1 ${
+                  sbcRankFilter === 'SPLIT_BOTH' ? 'lg:grid-cols-2' : 'lg:grid-cols-1'
+                } gap-6`}
+              >
+                {/* COLUMN A: TOP 5 RANKED PLAYER SBCs */}
+                {(sbcRankFilter === 'SPLIT_BOTH' || sbcRankFilter === 'PLAYER_SBC') && (
+                  <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <div>
+                        <div className="text-xs font-mono text-[#00ff87]">
+                          RANKED #1 TO #5 BY WORTH-IT VALUE SCORE
+                        </div>
+                        <h3 className="text-base font-bold text-white mt-0.5">
+                          Top 5 Currently Available Player SBCs (Ultimate Scream Team 1)
+                        </h3>
+                      </div>
+                      <span className="text-xs font-mono text-amber-400">Xbox Series S</span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {top5PlayerSbcs.map((sbc) => {
+                        const selected = sbc.id === selectedSbcId;
+                        const fitsBudget = coins !== null && sbc.estimatedMarketCost <= coins;
+                        const daysLeft = Math.floor(sbc.expiresInHours / 24);
+                        const hoursLeft = sbc.expiresInHours % 24;
+                        return (
+                          <button
+                            key={sbc.id}
+                            type="button"
+                            onClick={() => setSelectedSbcId(sbc.id)}
+                            className={`w-full text-left p-4 rounded-xl border transition-all space-y-2 ${
+                              selected
+                                ? 'bg-slate-900 border-[#00ff87] ring-1 ring-[#00ff87]/50'
+                                : 'bg-slate-950/90 border-slate-800 hover:border-slate-700'
+                            }`}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 rounded bg-[#00ff87] text-slate-950 font-extrabold">
+                                  #{sbc.rankInGroup} PLAYER SBC
+                                </span>
+                                <span className="text-[#00ff87] font-bold">
+                                  Worth-It: {sbc.worthItScore}/100 ({sbc.verdictLabel})
+                                </span>
+                              </div>
+                              <span className="text-amber-400">
+                                ⏳ {daysLeft}d {hoursLeft}h left · {sbc.repeatableText}
+                              </span>
+                            </div>
+
+                            <div className="flex items-baseline justify-between gap-2">
+                              <div className="text-sm font-bold text-white">{sbc.title}</div>
+                              <div
+                                className={`text-xs font-mono font-bold whitespace-nowrap ${
+                                  fitsBudget ? 'text-[#00ff87]' : 'text-amber-400'
+                                }`}
+                              >
+                                {sbc.estimatedMarketCost.toLocaleString()} Coins{' '}
+                                {fitsBudget ? '(Fits 35k!)' : '(>35k Coins)'}
+                              </div>
+                            </div>
+
+                            <div className="text-xs text-slate-300">{sbc.rewardDescription}</div>
+                            <div className="text-[11px] text-slate-400 leading-relaxed">
+                              <strong className="text-slate-200">Squad Fit & Value:</strong> {sbc.whyWorthIt}
+                            </div>
+
+                            {/* Pros & Cons Tags */}
+                            {sbc.pros && sbc.cons && sbc.pros.length > 0 && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                                <div className="bg-emerald-950/40 border border-emerald-500/20 rounded p-1.5 space-y-0.5">
+                                  <div className="font-bold text-[#00ff87]">✓ Pros</div>
+                                  {sbc.pros.map((p, idx) => (
+                                    <div key={idx} className="text-slate-300">• {p}</div>
+                                  ))}
+                                </div>
+                                <div className="bg-red-950/30 border border-red-500/20 rounded p-1.5 space-y-0.5">
+                                  <div className="font-bold text-red-400">✗ Cons</div>
+                                  {sbc.cons.map((c, idx) => (
+                                    <div key={idx} className="text-slate-300">• {c}</div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {sbc.squadAndFodderAdvice && (
+                              <div className="text-[11px] bg-slate-900/90 border border-[#00ff87]/30 rounded p-2 text-slate-300">
+                                <strong className="text-[#00ff87]">Tactical & Fodder Advice:</strong>{' '}
+                                {sbc.squadAndFodderAdvice}
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* COLUMN B: TOP 5 RANKED UPGRADE / PACK SBCs */}
+                {(sbcRankFilter === 'SPLIT_BOTH' || sbcRankFilter === 'UPGRADE_SBC') && (
+                  <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <div>
+                        <div className="text-xs font-mono text-amber-400">
+                          RANKED #1 TO #5 BY PACK EV & FODDER MULTIPLIER EFFICIENCY
+                        </div>
+                        <h3 className="text-base font-bold text-white mt-0.5">
+                          Top 5 Currently Available Upgrade & Casino SBCs
+                        </h3>
+                      </div>
+                      <span className="text-xs font-mono text-[#00ff87]">1.25x / 1.50x Holo</span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {top5UpgradeSbcs.map((sbc) => {
+                        const selected = sbc.id === selectedSbcId;
+                        const fitsBudget = coins !== null && sbc.estimatedMarketCost <= coins;
+                        const daysLeft = Math.floor(sbc.expiresInHours / 24);
+                        const hoursLeft = sbc.expiresInHours % 24;
+                        return (
+                          <button
+                            key={sbc.id}
+                            type="button"
+                            onClick={() => setSelectedSbcId(sbc.id)}
+                            className={`w-full text-left p-4 rounded-xl border transition-all space-y-2 ${
+                              selected
+                                ? 'bg-slate-900 border-[#00ff87] ring-1 ring-[#00ff87]/50'
+                                : 'bg-slate-950/90 border-slate-800 hover:border-slate-700'
+                            }`}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-extrabold">
+                                  #{sbc.rankInGroup} UPGRADE SBC
+                                </span>
+                                <span className="text-[#00ff87] font-bold">
+                                  Worth-It: {sbc.worthItScore}/100 ({sbc.verdictLabel})
+                                </span>
+                              </div>
+                              <span className="text-amber-400">
+                                ⏳ {daysLeft}d {hoursLeft}h left · {sbc.repeatableText}
+                              </span>
+                            </div>
+
+                            <div className="flex items-baseline justify-between gap-2">
+                              <div className="text-sm font-bold text-white">{sbc.title}</div>
+                              <div
+                                className={`text-xs font-mono font-bold whitespace-nowrap ${
+                                  fitsBudget ? 'text-[#00ff87]' : 'text-amber-400'
+                                }`}
+                              >
+                                {sbc.estimatedMarketCost.toLocaleString()} Coins{' '}
+                                {fitsBudget ? '(Fits 35k!)' : '(>35k Coins)'}
+                              </div>
+                            </div>
+
+                            <div className="text-xs text-slate-300">{sbc.rewardDescription}</div>
+                            <div className="text-[11px] text-slate-400 leading-relaxed">
+                              <strong className="text-slate-200">Why Do It:</strong> {sbc.whyWorthIt}
+                            </div>
+
+                            {/* Pros & Cons Tags */}
+                            {sbc.pros && sbc.cons && sbc.pros.length > 0 && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                                <div className="bg-emerald-950/40 border border-emerald-500/20 rounded p-1.5 space-y-0.5">
+                                  <div className="font-bold text-[#00ff87]">✓ Pros</div>
+                                  {sbc.pros.map((p, idx) => (
+                                    <div key={idx} className="text-slate-300">• {p}</div>
+                                  ))}
+                                </div>
+                                <div className="bg-red-950/30 border border-red-500/20 rounded p-1.5 space-y-0.5">
+                                  <div className="font-bold text-red-400">✗ Cons</div>
+                                  {sbc.cons.map((c, idx) => (
+                                    <div key={idx} className="text-slate-300">• {c}</div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {sbc.squadAndFodderAdvice && (
+                              <div className="text-[11px] bg-slate-900/90 border border-amber-400/30 rounded p-2 text-slate-300">
+                                <strong className="text-amber-400">Grind Strategy:</strong>{' '}
+                                {sbc.squadAndFodderAdvice}
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* LIVE FREE OBJECTIVES SECTION (87 JILL SCOTT CB/CDM/CM & 87 VERON CM) */}
+              <div className="bg-[#111827] border border-slate-800 rounded-xl p-5 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                  <div>
+                    <div className="text-xs font-mono text-[#00ff87]">
+                      ZERO-COIN FREE OBJECTIVES · ULTIMATE SCREAM TEAM 1
+                    </div>
+                    <h3 className="text-base font-bold text-white mt-0.5">
+                      Live Player Objectives (0 Coins — Free Starting XI & High-Rated Fodder)
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono text-amber-400">
+                    Stack in Squad Battles / Rivals
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {freeLiveObjectives.map((obj) => (
+                    <div
+                      key={obj.id}
+                      className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2"
+                    >
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="px-2 py-0.5 rounded bg-[#00ff87]/20 text-[#00ff87] font-bold">
+                          FREE OBJECTIVE · {obj.position}
+                          {obj.altPositions.length > 0 ? ` / ${obj.altPositions.join(' / ')}` : ''}
+                        </span>
+                        <span className="text-[#00ff87] font-bold">
+                          Worth-It: {obj.worthItScore}/100 (MUST GRIND)
+                        </span>
+                      </div>
+                      <div className="flex items-baseline justify-between">
+                        <h4 className="text-base font-bold text-white">
+                          {obj.rating} {obj.name} ({obj.club})
+                        </h4>
+                        <span className="text-xs font-mono text-amber-400">
+                          ⏳ {obj.expiresInHours ? `${Math.floor(obj.expiresInHours / 24)}d left` : '7d left'}
+                        </span>
+                      </div>
+                      <div className="text-xs font-mono text-[#00ff87]">
+                        {obj.keyRolePlusPlus} · {obj.keyPlayStylesPlus.join(' · ')}
+                      </div>
+                      <p className="text-xs text-slate-300 leading-relaxed">{obj.tacticalNote}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Deterministic Solution Output */}
@@ -1829,6 +2271,39 @@ export function App() {
               players={players}
               onRunHighThinkingAudit={handleRunSmartAdvisor}
               isThinking={isThinkingAdvisor}
+              onSimulateInSquad={(playerName) => {
+                setSimulatedEvoName(playerName);
+                setActiveTab('MY_SQUAD');
+              }}
+            />
+          )}
+
+          {/* TAB 4B: INTELLIGENT CONSOLE INVESTMENT TRACKER & ULTIMATE SCREAM TEAM 1 RADAR */}
+          {activeTab === 'INVESTMENTS' && (
+            <InvestmentTrackerTab
+              t0Anchor={t0Anchor}
+              userCoins={coins}
+              onUpdateUserCoins={(newBalance) => setCoins(newBalance)}
+              investments={trackedInvestments}
+              onAddInvestment={(pos) => {
+                setTrackedInvestments((prev) => [
+                  { ...pos, id: `inv-${Date.now()}` },
+                  ...prev,
+                ]);
+                setCloudStatusBanner(
+                  `Logged ${pos.rating} ${pos.playerName} (Buy: ${pos.buyPrice.toLocaleString()} → Target: ${pos.targetSellPrice.toLocaleString()}) to your Console Investment Portfolio.`
+                );
+              }}
+              onUpdateInvestmentStatus={(id, status) =>
+                setTrackedInvestments((prev) =>
+                  prev.map((item) => (item.id === id ? { ...item, status } : item))
+                )
+              }
+              onRemoveInvestment={(id) =>
+                setTrackedInvestments((prev) => prev.filter((item) => item.id !== id))
+              }
+              catalogPlayers={players}
+              clubContextForAi={clubContextForAi}
             />
           )}
 
@@ -1842,7 +2317,15 @@ export function App() {
             />
           )}
 
-          {/* TAB 6: 5-TIER SMART ROUTER, ANTIGRAVITY v2.25 GenUI SKILL & VOICE SYNC */}
+          {/* TAB 6A: STANDALONE FULL-SCREEN MULTI-TURN TACTICAL COMMAND CHATBOT */}
+          {activeTab === 'TACTICAL_COMMAND' && (
+            <TacticalChatTab
+              t0Anchor={t0Anchor}
+              clubContextForAi={clubContextForAi}
+            />
+          )}
+
+          {/* TAB 6B: 5-TIER SMART ROUTER, ANTIGRAVITY v2.25 GenUI SKILL & VOICE SYNC */}
           {activeTab === 'ANTIGRAVITY_AI' && (
             <AntigravityMcpAndChatDrawer
               t0Anchor={t0Anchor}
@@ -1883,15 +2366,16 @@ export function App() {
       )}
 
       {/* MOBILE THUMB-FRIENDLY BOTTOM NAVIGATION BAR (375px–430px Viewport Budget <=15%) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-[#090d16]/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 grid grid-cols-7 gap-1">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-[#090d16]/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 grid grid-cols-8 gap-1">
         {[
           { id: 'CLUB_SYNC', label: 'Club', icon: Shield },
           { id: 'DUAL_SBCS', label: 'SBCs', icon: Layers },
           { id: 'EVOLUTIONS', label: 'Evos', icon: GitBranch },
+          { id: 'INVESTMENTS', label: 'Invest', icon: Flame },
           { id: 'FUT_GALLERY', label: 'Gallery', icon: Award },
-          { id: 'CONSOLE_MARKET', label: 'Xbox Mkt', icon: TrendingUp },
-          { id: 'GAMEPLAY_LAB', label: 'Gameplay', icon: Zap },
-          { id: 'ANTIGRAVITY_AI', label: 'AI', icon: Cpu },
+          { id: 'CONSOLE_MARKET', label: 'Market', icon: TrendingUp },
+          { id: 'GAMEPLAY_LAB', label: 'Pitch', icon: Zap },
+          { id: 'TACTICAL_COMMAND', label: 'Chat', icon: MessageSquare },
         ].map((item) => {
           const Icon = item.icon;
           const active = activeTab === item.id;
@@ -1902,7 +2386,7 @@ export function App() {
               onClick={() => {
                 setActiveTab(item.id as ActiveTab);
                 if (item.id === 'GAMEPLAY_LAB') setPrincipalDomain('GAMEPLAY');
-                else if (item.id === 'EVOLUTIONS') {
+                else if (item.id === 'EVOLUTIONS' || item.id === 'TACTICAL_COMMAND') {
                   // Accessible from both
                 } else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
               }}
@@ -2086,13 +2570,23 @@ export function App() {
                   placeholder='{"coins": 35000}'
                   className="w-full p-3 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-[#00ff87]"
                 />
-                <button
-                  type="button"
-                  onClick={handleApplyJsonImport}
-                  className="px-4 py-2 bg-[#00ff87] text-slate-950 font-bold text-xs rounded-lg"
-                >
-                  Parse & Apply JSON
-                </button>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={handleApplyJsonImport}
+                    className="px-4 py-2 bg-[#00ff87] text-slate-950 font-bold text-xs rounded-lg"
+                  >
+                    Parse & Apply JSON
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportClubDataJson}
+                    className="px-4 py-2 bg-slate-900 border border-[#00ff87]/50 hover:border-[#00ff87] text-[#00ff87] font-bold text-xs rounded-lg flex items-center gap-1.5 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#00ff87]" />
+                    <span>Download Club Backup JSON</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -2135,13 +2629,24 @@ export function App() {
 
             {/* Modal Footer */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
-              <button
-                type="button"
-                onClick={() => setShowLaunchSyncModal(false)}
-                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 rounded-lg"
-              >
-                Continue with 35,000 Coins (Keep Others Blank —)
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleExportClubDataJson}
+                  className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 border border-[#00ff87]/50 hover:border-[#00ff87] text-[#00ff87] font-bold text-xs rounded-lg flex items-center gap-1.5 transition-colors"
+                  title="Export all current club data (coins, squad, players) as a JSON backup file"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#00ff87]" />
+                  <span>Export Club Data JSON</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowLaunchSyncModal(false)}
+                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 rounded-lg"
+                >
+                  Continue with 35,000 Coins
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={handleApplyPartialClubSync}

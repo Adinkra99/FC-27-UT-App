@@ -586,7 +586,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
               </tr>
               <tr>
                 <td className="py-2 pr-3 font-bold text-white">
-                  Tier 1 · gemini-3.1-flash-lite
+                  Tier 1 · gemini-3.5-flash-lite
                 </td>
                 <td className="py-2 px-3 tabular-nums">~180ms – 350ms</td>
                 <td className="py-2 px-3 text-[#00ff87]">1x (Ultra-Low)</td>
@@ -815,7 +815,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { id: 'AUTO', label: 'AUTO (Smart Router)' },
-                { id: 'TIER_1_LITE', label: 'Tier 1: 3.1 Flash Lite' },
+                { id: 'TIER_1_LITE', label: 'Tier 1: 3.5 Flash Lite' },
                 { id: 'TIER_2_FLASH_SEARCH', label: 'Tier 2: 3.8 Flash + Search' },
                 { id: 'TIER_3_ARGON_HIGH', label: 'Tier 3: 4 Argon HIGH' },
               ].map((m) => (

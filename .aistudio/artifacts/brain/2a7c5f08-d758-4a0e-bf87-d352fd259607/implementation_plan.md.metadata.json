@@ -1,6 +1,6 @@
 {
-  "summary":  "Revised implementation plan swapping gemini-3.1-flash-lite for gemini-3.5-flash-lite and introducing the Live Content, Squad-Linked SBC Ranker (Top 5 Player SBCs vs. Top 5 Upgrade SBCs with countdown timers and Value Score rankings), Ultimate Scream Team 1 roster & Objectives tracker (90 Raphinha, 89 Cristiano Ronaldo, 89 Zola, 88 Szoboszlai, 88 Stam, 87 Palmer, 87 Mandzukic, 85 Moore SBC, 85 Otamendi SBC, 87 Jill Scott CB/CDM/CM Objective, 87 Veron CM Objective, etc.), Console Investment Tracker, Standalone Tactical Command Chatbot, Live Audio HUD, and Push-to-Talk Transcription.",
-  "updatedAt":  "2026-10-25T20:16:39.435223820Z",
+  "summary":  "Implementation plan for the FC 27 UT App features prototype, including the Club Sync Modal JSON backup export (Blob with application/json MIME type and timestamped filename), dedicated AI Tactical Director prototype with tiered Gemini model routing (gemini-4-argon, gemini-3.8-flash, gemini-3.5-flash-lite, gemini-3.5-transcribe, gemini-3.8-live), and an interactive Three.js 3D photorealistic stadium pitch visualizer with procedural card totems.",
+  "updatedAt":  "2026-10-26T00:40:14.300516795Z",
   "requestFeedback":  true,
   "userFacing":  true
 }

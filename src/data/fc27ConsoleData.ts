@@ -16,6 +16,7 @@ export type FC27CardRarity =
   | 'Bronze'
   | 'Regular Holographic'
   | 'Pristine Holographic'
+  | 'Ultimate Scream'
   | 'TOTW'
   | 'Trailblazers'
   | 'Destined for Glory'
@@ -122,11 +123,22 @@ export interface FC27ConsolePlayer {
 export interface FC27SBCChallenge {
   id: string;
   title: string;
+  sbcGroup: 'PLAYER_SBC' | 'UPGRADE_SBC';
+  rankInGroup: number; // 1 to 5
+  worthItScore: number; // 0 to 100
+  verdictLabel: 'MUST COMPLETE' | 'BEST 35K VALUE' | 'DO WITH FODDER' | 'DAILY MUST DO' | 'OVERRATED / SKIP';
+  whyWorthIt: string;
+  playerOvr?: number;
+  playerPosition?: string;
+  playerClubOrLeague?: string;
   category: 'Streamlined (Item Score)' | 'Puzzle (11-Player Squad)';
   mode: 'STREAMLINED' | 'PUZZLE';
   rewardDescription: string;
   expiresInHours: number;
   repeatableText: string;
+  pros?: string[];
+  cons?: string[];
+  squadAndFodderAdvice?: string;
   // For Streamlined SBCs
   targetItemScore?: number;
   currentProgressItemScore?: number;
@@ -139,6 +151,24 @@ export interface FC27SBCChallenge {
   minNations?: number;
   requiredLeagueOrClub?: string;
   estimatedMarketCost: number;
+}
+
+export interface LivePromoCardItem {
+  id: string;
+  name: string;
+  rating: number;
+  position: string;
+  altPositions: string[];
+  club: string;
+  league: string;
+  nation: string;
+  releaseSource: 'PACKS_MARKET' | 'PLAYER_SBC' | 'OBJECTIVE_FREE';
+  xboxSeriesSPrice: number; // 0 if Objective
+  expiresInHours?: number;
+  keyPlayStylesPlus: string[];
+  keyRolePlusPlus: string;
+  worthItScore: number;
+  tacticalNote: string;
 }
 
 export interface FUTGallerySet {
@@ -168,18 +198,83 @@ export interface FUTGallerySet {
   }[];
 }
 
+export type EvolutionSectionType =
+  | 'ALL'
+  | 'MY_EVOS'
+  | 'ACTIVE_EVOS'
+  | 'PLAYSTYLES_PLUS_LAB'
+  | 'FUTURE_STARS_ACADEMY'
+  | 'TRAINING_CAMP'
+  | 'REWARD_EVOS'
+  | 'COSMETICS';
+
 export interface BranchingEvolution {
   id: string;
   title: string;
   promoName?: string;
+  evolutionSection: EvolutionSectionType;
   categoryTag?: 'FREE' | 'AFFORDABLE_35K' | 'PAID_PREMIUM';
   costCoins: number;
   costFifaPoints: number;
   expiresInDays: number;
+  claimWindowHours?: number;
+  isCurrentlyInProgress?: boolean;
+  currentProgressStage?: {
+    completedChallenges: number;
+    totalChallenges: number;
+    currentLevel: number;
+    activePlayerName: string;
+  };
   eligibility: {
     maxOvr: number;
     positions: string[];
     maxPlayStylesPlus: number; // Strictly <= 3 in FC 27
+  };
+  detailedCriteria?: {
+    maxOvr: number;
+    position: string;
+    maxPlayStyles?: number;
+    maxPace?: number;
+    disallowedPositions?: string[];
+  };
+  challengeStages?: {
+    levelNumber: number;
+    title: string;
+    challengeCount: number;
+    challenges: string[];
+    levelUpgrades: string;
+    playStyleReward?: string;
+    roleReward?: string;
+  }[];
+  categorizedCandidates?: {
+    cheapOptions: {
+      playerName: string;
+      ovr: number;
+      club: string;
+      league: string;
+      nation: string;
+      price: number;
+      reason: string;
+      finalRating: number;
+    }[];
+    bestSquadFitOptions: {
+      playerName: string;
+      ovr: number;
+      club: string;
+      league: string;
+      nation: string;
+      price: number;
+      reason: string;
+      finalRating: number;
+    }[];
+    premiumSpecialOptions: {
+      playerName: string;
+      ovr: number;
+      cardType: string;
+      price: number;
+      reason: string;
+      finalRating: number;
+    }[];
   };
   branchA: {
     branchName: string;
@@ -1267,41 +1362,106 @@ export const FC27_CHEAPEST_BY_RATING: {
 ];
 
 export const FC27_ACTIVE_SBCS: FC27SBCChallenge[] = [
+  // =========================================================================
+  // TOP 5 CURRENTLY AVAILABLE PLAYER SBCs (RANKED #1 TO #5 BY WORTH-IT SCORE)
+  // =========================================================================
   {
-    id: 'sbc-streamlined-87-hero-pack',
-    title: 'Max 88 Base Hero Upgrade (Streamlined Item Score)',
+    id: 'sbc-player-otamendi-85-scream',
+    title: '85 Nicolás Otamendi — Ultimate Scream Player SBC',
+    sbcGroup: 'PLAYER_SBC',
+    rankInGroup: 1,
+    worthItScore: 96,
+    verdictLabel: 'BEST 35K VALUE',
+    whyWorthIt:
+      'Ranked #1 Player SBC today: Fits inside your 35,000 Coin Xbox Series S budget (24,500 Coins or 0 Coins with Duplicate Storage). Delivers 86 PAC Scream boost, Anticipate+, Stopper++, and Argentine links.',
+    pros: [
+      'Fits inside your confirmed 35,000 Coin balance (costs only 24.5k or 0 Coins with fodder)',
+      '+16 Pace Scream surge (86 PAC) with elite Anticipate+ playstyle',
+      'Strong green nation link to Free Objective 87 Juan Sebastián Verón (CM)',
+      'Stopper++ role AI stops breakaway through-balls on Xbox Series S',
+    ],
+    cons: [
+      'Liga Portugal league requires Icon links (e.g. 85 Moore or 87 Verón) for 33/33 chemistry',
+      'Non-repeatable card; untradeable asset',
+    ],
+    squadAndFodderAdvice:
+      'MUST COMPLETE FOR SQUAD: If you pair him with Free 87 Verón Objective, you lock down your starting CB spot without spending a single liquid coin by burning duplicate 82–84s.',
+    playerOvr: 85,
+    playerPosition: 'CB',
+    playerClubOrLeague: 'SL Benfica · Liga Portugal · Argentina',
     category: 'Streamlined (Item Score)',
     mode: 'STREAMLINED',
-    rewardDescription: '1x Base UT Hero Player Pick (1 of 3, Max 88 OVR)',
-    expiresInHours: 57,
-    repeatableText: 'Repeatable: 2x every 7 days (Partial Submissions Saved)',
-    targetItemScore: 1450,
+    rewardDescription: '85 Ultimate Scream Nicolás Otamendi (CB · Stopper++ & Bruiser+)',
+    expiresInHours: 162, // 6d 18h
+    repeatableText: 'Non-Repeatable (Expires in 6d 18h @ 18:00 UK)',
+    targetItemScore: 680,
     currentProgressItemScore: 0,
-    eligibleRarityNote: 'Min Gold (75+ OVR). Regular Holographic = 1.25x Score; Pristine Holographic = 1.50x Score.',
+    eligibleRarityNote: 'Min 82 OVR Gold. 1x 86 Regular Holographic (238 pts) covers 35% of total score!',
     holographicBonusActive: true,
-    estimatedMarketCost: 61500,
+    estimatedMarketCost: 24500,
   },
   {
-    id: 'sbc-streamlined-trailblazers-guarantee',
-    title: 'Season 2 Trailblazers / TOTW Guarantee (Streamlined)',
+    id: 'sbc-player-bobby-moore-85-scream-icon',
+    title: '85 Bobby Moore — Ultimate Scream Icon SBC',
+    sbcGroup: 'PLAYER_SBC',
+    rankInGroup: 2,
+    worthItScore: 94,
+    verdictLabel: 'MUST COMPLETE',
+    whyWorthIt:
+      'Ranked #2 Player SBC: Ultimate Scream pace surge (85 PAC / 90 DEF / 91 PAS) with Ball-Playing CB++ and Deep-Lying Playmaker++ CDM alternate position plus universal Icon chemistry.',
+    pros: [
+      'Universal Icon chemistry: gives +1 chemistry point to EVERY player in your squad',
+      'Massive 85 Pace boost eliminates the traditional Moore pace weakness',
+      'Dual position versatility: CB (Ball-Playing CB++) and CDM (Deep-Lying Playmaker++)',
+      'Holographic multiplier cuts cost from 48k to ~22k with 1x 88 Pristine Holo',
+    ],
+    cons: [
+      'Costs 48,000 Coins raw (exceeds 35k budget if buying all cards on market)',
+      'Requires submitting at least 2 untradeable 85+ cards to complete safely',
+    ],
+    squadAndFodderAdvice:
+      'DO WITH FODDER ONLY: Grind the 81+ Player Pick and 83+ Double Upgrade first to gather 85–87 fodder; do NOT spend all your 35k coins on the transfer market.',
+    playerOvr: 85,
+    playerPosition: 'CB / CDM',
+    playerClubOrLeague: 'Icon · England',
     category: 'Streamlined (Item Score)',
     mode: 'STREAMLINED',
-    rewardDescription: '1x Guaranteed Trailblazers or TOTW 5–6 Player Pack (Untradeable)',
-    expiresInHours: 33,
-    repeatableText: 'Repeatable: 3x Daily Refresh @ 18:00 UK',
-    targetItemScore: 820,
+    rewardDescription: '85 Ultimate Scream Icon Bobby Moore (CB / CDM · Intercept+ & Long Ball Pass+)',
+    expiresInHours: 330, // 13d 18h
+    repeatableText: 'Non-Repeatable (5-Match Loan SBC also available for 5,400 Coins)',
+    targetItemScore: 1180,
     currentProgressItemScore: 0,
-    eligibleRarityNote: 'Min 82 OVR Gold. Duplicate Storage & Holographic 1.25x/1.50x Multipliers Active.',
+    eligibleRarityNote: 'Min Gold (78+ OVR). Submit 88 Pristine Holographic (1.50x = 465 pts) to slash cost by 28%.',
     holographicBonusActive: true,
-    estimatedMarketCost: 22900,
+    estimatedMarketCost: 48000,
   },
   {
     id: 'sbc-puzzle-laliga-potm',
     title: 'LaLiga EA Sports POTM Final Squad (11-Player Puzzle)',
+    sbcGroup: 'PLAYER_SBC',
+    rankInGroup: 3,
+    worthItScore: 91,
+    verdictLabel: 'DO WITH FODDER',
+    whyWorthIt:
+      'Ranked #3 Player SBC: High-meta LaLiga attacker with Inside Forward++ and Finesse Shot+. Complete only if your untradeable club fodder covers at least 45k of the 74k Xbox Series S cost.',
+    pros: [
+      'Top-tier LaLiga attacker with Inside Forward++ and 5-star Skill Moves',
+      'Perfect link to verified 26–27 stars (Pedri, Yamal, Balde, Mbappé)',
+      'Comes with tradeable Jumbo Rare Players Pack on completion',
+    ],
+    cons: [
+      'Costs 74,000 Coins on Xbox Series S (requires 86 squad with 24 chemistry)',
+      'Drains valuable 86–87 fodder needed for future promo SBCs',
+    ],
+    squadAndFodderAdvice:
+      'WAIT FOR REWARD DROPS: Complete only if you have surplus 86+ fodder from Weekend League or Rivals rewards; do not buy fillers right now.',
+    playerOvr: 88,
+    playerPosition: 'RW / LW',
+    playerClubOrLeague: 'LaLiga EA Sports',
     category: 'Puzzle (11-Player Squad)',
     mode: 'PUZZLE',
-    rewardDescription: 'LaLiga POTM Special Item + Jumbo Rare Players Pack',
-    expiresInHours: 129,
+    rewardDescription: '88 LaLiga POTM Special Item + Jumbo Rare Players Pack',
+    expiresInHours: 129, // 5d 09h
     repeatableText: 'Non-Repeatable',
     minSquadRating: 86,
     minChemistry: 24,
@@ -1310,7 +1470,646 @@ export const FC27_ACTIVE_SBCS: FC27SBCChallenge[] = [
     requiredLeagueOrClub: 'Min 2 LaLiga EA Sports Players + Min 1 TOTW or Holographic',
     estimatedMarketCost: 74000,
   },
+  {
+    id: 'sbc-player-scream-flashback-wingback',
+    title: '86 Ultimate Scream Flashback Fullback SBC',
+    sbcGroup: 'PLAYER_SBC',
+    rankInGroup: 4,
+    worthItScore: 85,
+    verdictLabel: 'BEST 35K VALUE',
+    whyWorthIt:
+      'Ranked #4 Player SBC: Costs 31,500 Coins on Xbox Series S (fits inside your 35,000 Coin budget) and grants Attacking Wingback++ with 93 Sprint Speed.',
+    pros: [
+      'Affordable 31,500 Coin market cost (fits within your 35,000 Coin balance)',
+      '93 Sprint Speed + Whipped Cross+ for meta wide counter-attacks',
+      'Attacking Wingback++ AI creates overlap overloads in 4-2-1-3',
+    ],
+    cons: [
+      'Marcos Alonso 85 tradeable is only 12.2k on the market (better coin liquidity)',
+      'Expires in 4 days; high opportunity cost if you need CB upgrades more',
+    ],
+    squadAndFodderAdvice:
+      'OPTIONAL UPGRADE: If you already have tradeable Balde (8,400) or Marcos Alonso (12,200), skip this SBC and keep your liquid coins.',
+    playerOvr: 86,
+    playerPosition: 'LB / LM',
+    playerClubOrLeague: 'Premier League',
+    category: 'Streamlined (Item Score)',
+    mode: 'STREAMLINED',
+    rewardDescription: '86 Ultimate Scream Flashback LB (Attacking Wingback++)',
+    expiresInHours: 114, // 4d 18h
+    repeatableText: 'Non-Repeatable',
+    targetItemScore: 760,
+    currentProgressItemScore: 0,
+    eligibleRarityNote: 'Min 81 OVR Gold. Regular Holographic 1.25x Multiplier Active.',
+    holographicBonusActive: true,
+    estimatedMarketCost: 31500,
+  },
+  {
+    id: 'sbc-player-overpriced-striker-88',
+    title: '88 Showdown / Moments Striker SBC (11-Player Puzzle)',
+    sbcGroup: 'PLAYER_SBC',
+    rankInGroup: 5,
+    worthItScore: 62,
+    verdictLabel: 'OVERRATED / SKIP',
+    whyWorthIt:
+      'Ranked #5 Player SBC (SKIP WARNING): Costs 138,000 Coins on Xbox Series S with only 3-star Weak Foot. Tradeable 87 Mario Mandžukić or 86 Vobian on the market offers far better coin efficiency.',
+    pros: [
+      '88 OVR with 91 Finishing and Target Forward++ role',
+      'Solid physical presence in the penalty box',
+    ],
+    cons: [
+      'Extremely overpriced: costs 138,000 Coins (nearly 4x your entire club coin balance)',
+      'Only 3-star Weak Foot limits competitive finishing against top goalkeepers',
+      'Tradeable 87 Mandžukić is 68k and 86 Vobian is 14.5k on open market',
+    ],
+    squadAndFodderAdvice:
+      'STRICT SKIP: Do not spend coins or fodder here. Free Objectives and cheap tradeable Scream cards give superior value.',
+    playerOvr: 88,
+    playerPosition: 'ST',
+    playerClubOrLeague: 'Serie A Enilive',
+    category: 'Puzzle (11-Player Squad)',
+    mode: 'PUZZLE',
+    rewardDescription: '88 Moments Striker (Untradeable)',
+    expiresInHours: 89, // 3d 17h
+    repeatableText: 'Non-Repeatable',
+    minSquadRating: 87,
+    minChemistry: 26,
+    minClubs: 4,
+    minNations: 4,
+    requiredLeagueOrClub: 'Min 2 Serie A Players + Min 2 TOTW/Holographic',
+    estimatedMarketCost: 138000,
+  },
+
+  // =========================================================================
+  // TOP 5 CURRENTLY AVAILABLE UPGRADE SBCs (RANKED #1 TO #5 BY ROI & VALUE)
+  // =========================================================================
+  {
+    id: 'sbc-upgrade-scream-81-player-pick',
+    title: 'Ultimate Scream 81+ Player Pick (1 of 3) (Streamlined)',
+    sbcGroup: 'UPGRADE_SBC',
+    rankInGroup: 1,
+    worthItScore: 98,
+    verdictLabel: 'DAILY MUST DO',
+    whyWorthIt:
+      'Ranked #1 Upgrade SBC today: Highest drop rate per coin for Ultimate Scream Team 1 cards (90 Raphinha, 89 CR7, 86 Kondogbia, 85 Lukeba) and burns low-rated Duplicate Storage for 0 liquid coins.',
+    pros: [
+      'Player Pick mechanic (1 of 3) allows targeting highest OVR or promo card',
+      'Low requirement: target score 260 burns 75–80 rated low fodder',
+      'Contains entire Ultimate Scream Team 1 roster in the drop pool',
+      'Unlimited repeatability during the promo window',
+    ],
+    cons: [
+      'Requires time investment in menu crafting',
+      'Untradeable output',
+    ],
+    squadAndFodderAdvice:
+      'GRIND PRIORITY #1: Dump all duplicate 75–81s here. Recycles common fodder into 85+ promo walkouts and Holographic cards.',
+    category: 'Streamlined (Item Score)',
+    mode: 'STREAMLINED',
+    rewardDescription: '1 of 3 81+ OVR Gold Player Pick (Ultimate Scream Team 1 in Pool)',
+    expiresInHours: 114, // 4d 18h
+    repeatableText: 'Unlimited Repeatable (Refreshes in 4d 18h @ 18:00 UK)',
+    targetItemScore: 260,
+    currentProgressItemScore: 0,
+    eligibleRarityNote: 'Any Gold (75+ OVR). Zero Common/Rare split in FC 27 makes this ultra-cheap.',
+    holographicBonusActive: true,
+    estimatedMarketCost: 4200,
+  },
+  {
+    id: 'sbc-upgrade-scream-83-double',
+    title: 'Ultimate Scream 83+ Double Upgrade (Streamlined)',
+    sbcGroup: 'UPGRADE_SBC',
+    rankInGroup: 2,
+    worthItScore: 95,
+    verdictLabel: 'DAILY MUST DO',
+    whyWorthIt:
+      'Ranked #2 Upgrade SBC: Repeatable 3x daily at 18:00 UK. Generates 85–88 fodder to fund 85 Otamendi or 85 Bobby Moore SBCs without touching your 35,000 Coins.',
+    pros: [
+      'Guarantees 2x 83+ cards per completion with high walkout probability',
+      'Generates 1.25x Regular Holographic fodder for Streamlined Player SBCs',
+      'Costs only 9,800 Coins raw or 0 coins from 80–82 club untradeables',
+    ],
+    cons: [
+      'Capped at 3 completions per 24-hour cycle (refreshes daily @ 18:00 UK)',
+      'Requires submitting 80+ rated cards',
+    ],
+    squadAndFodderAdvice:
+      'DAILY MUST DO: Complete all 3 daily refreshes at 18:00 UK using low untradeables to generate fodder for 85 Otamendi.',
+    category: 'Streamlined (Item Score)',
+    mode: 'STREAMLINED',
+    rewardDescription: '83+ x2 Players Pack (Untradeable)',
+    expiresInHours: 162, // 6d 18h
+    repeatableText: 'Repeatable: 3x Daily Refresh @ 18:00 UK',
+    targetItemScore: 440,
+    currentProgressItemScore: 0,
+    eligibleRarityNote: 'Min 80 OVR Gold. Regular Holographic 1.25x Multiplier Active.',
+    holographicBonusActive: true,
+    estimatedMarketCost: 9800,
+  },
+  {
+    id: 'sbc-streamlined-trailblazers-guarantee',
+    title: 'Season 2 Ultimate Scream / Trailblazers / TOTW Party Bag (Streamlined)',
+    sbcGroup: 'UPGRADE_SBC',
+    rankInGroup: 3,
+    worthItScore: 92,
+    verdictLabel: 'BEST 35K VALUE',
+    whyWorthIt:
+      'Ranked #3 Upgrade SBC: Costs 22,900 Coins (well under your 35,000 Coin balance) and accepts 1.25x Regular Holographic / 1.50x Pristine Holographic multipliers.',
+    pros: [
+      'Guaranteed special item (Ultimate Scream Team 1, Trailblazers, or current TOTW)',
+      'Fits inside your 35,000 Coin balance (22,900 Coins)',
+      '1.50x Pristine Holographic multiplier cuts cost in half if you have 1x 88 Holo',
+    ],
+    cons: [
+      'High variance pack: pool includes low-tier 82–84 TOTWs',
+      'Repeatable only twice per week',
+    ],
+    squadAndFodderAdvice:
+      'GOOD VALUE PUNT: Complete if you have 1 duplicate 85+ in SBC Duplicate Storage to reduce coin cost to under 10k.',
+    category: 'Streamlined (Item Score)',
+    mode: 'STREAMLINED',
+    rewardDescription: '1x Guaranteed Ultimate Scream Team 1, Trailblazers, or TOTW Pack',
+    expiresInHours: 33, // 1d 09h
+    repeatableText: 'Repeatable: 2x Weekly Refresh @ 18:00 UK',
+    targetItemScore: 820,
+    currentProgressItemScore: 0,
+    eligibleRarityNote: 'Min 82 OVR Gold. Duplicate Storage & Holographic 1.25x/1.50x Multipliers Active.',
+    holographicBonusActive: true,
+    estimatedMarketCost: 22900,
+  },
+  {
+    id: 'sbc-upgrade-84-x5-pack',
+    title: '84+ x5 Ultimate Scream Upgrade (Streamlined)',
+    sbcGroup: 'UPGRADE_SBC',
+    rankInGroup: 4,
+    worthItScore: 88,
+    verdictLabel: 'DO WITH FODDER',
+    whyWorthIt:
+      'Ranked #4 Upgrade SBC: Best high-OVR pack generator during Ultimate Scream Team 1. Use untradeable 83s and 1x 85 Duplicate Storage card to craft for 0 coins.',
+    pros: [
+      'Huge volume: 5 cards all guaranteed 84 or higher',
+      'Prime source of 86–89 walkouts to complete 85 Moore Icon SBC',
+      'Can be crafted 3x daily',
+    ],
+    cons: [
+      'Costs 28,500 Coins if bought with liquid coins (freezes 81% of your 35k balance)',
+      'Requires submitting multiple 83–84 rated cards',
+    ],
+    squadAndFodderAdvice:
+      'FODDER RECYCLER: Never buy cards from the transfer market for this; only submit cards gained from the 81+ Player Pick.',
+    category: 'Streamlined (Item Score)',
+    mode: 'STREAMLINED',
+    rewardDescription: '84+ x5 Players Pack (Untradeable)',
+    expiresInHours: 90, // 3d 18h
+    repeatableText: 'Repeatable: 3x Daily @ 18:00 UK',
+    targetItemScore: 910,
+    currentProgressItemScore: 0,
+    eligibleRarityNote: 'Min 82 OVR Gold + Holographic 1.25x/1.50x Multipliers Active.',
+    holographicBonusActive: true,
+    estimatedMarketCost: 28500,
+  },
+  {
+    id: 'sbc-streamlined-87-hero-pack',
+    title: 'Max 88 Base Hero Player Pick (Streamlined Item Score)',
+    sbcGroup: 'UPGRADE_SBC',
+    rankInGroup: 5,
+    worthItScore: 71,
+    verdictLabel: 'DO WITH FODDER',
+    whyWorthIt:
+      'Ranked #5 Upgrade SBC: 1 of 3 Hero Pick gives a shot at top Heroes, but at 61,500 Coins you should NEVER spend liquid coins—only submit surplus Duplicate Storage.',
+    pros: [
+      'Pick 1 of 3 Base UT Heroes (e.g. Yaya Touré, Ramires, Ginola)',
+      'Heroes provide automatic +2 league chemistry',
+    ],
+    cons: [
+      'Costs 61,500 Coins on Xbox Series S (exceeds your 35,000 Coin wallet by 26.5k)',
+      'Many base Heroes are currently behind the power curve compared to Ultimate Scream',
+    ],
+    squadAndFodderAdvice:
+      'AVOID UNLESS SURPLUS FODDER: Do not start this SBC until you have already completed 85 Otamendi and Free 87 Jill Scott Objective.',
+    category: 'Streamlined (Item Score)',
+    mode: 'STREAMLINED',
+    rewardDescription: '1x Base UT Hero Player Pick (1 of 3, Max 88 OVR)',
+    expiresInHours: 57, // 2d 09h
+    repeatableText: 'Repeatable: 2x every 7 days (Partial Submissions Saved)',
+    targetItemScore: 1450,
+    currentProgressItemScore: 0,
+    eligibleRarityNote: 'Min Gold (75+ OVR). Regular Holographic = 1.25x Score; Pristine Holographic = 1.50x Score.',
+    holographicBonusActive: true,
+    estimatedMarketCost: 61500,
+  },
 ];
+
+/**
+ * LIVE ULTIMATE SCREAM TEAM 1 ROSTER, SBCs & OBJECTIVES (OCTOBER 2026 @ T=0)
+ * Grounded to the exact cards currently out in packs, SBCs, and Objectives on Xbox Series S.
+ */
+export const FC27_ULTIMATE_SCREAM_TEAM_1: LivePromoCardItem[] = [
+  // --- FREE LIVE OBJECTIVES (TOP PRIORITY FOR 35K COIN BUDGET) ---
+  {
+    id: 'us1-obj-jill-scott-87',
+    name: 'Jill Scott (Ultimate Scream Hero Objective)',
+    rating: 87,
+    position: 'CB',
+    altPositions: ['CDM', 'CM'],
+    club: 'UT Hero (WSL / Premier League)',
+    league: 'Barclays WSL / Premier League',
+    nation: 'England',
+    releaseSource: 'OBJECTIVE_FREE',
+    xboxSeriesSPrice: 0,
+    expiresInHours: 162, // 6d 18h
+    keyPlayStylesPlus: ['Intercept+', 'Bruiser+'],
+    keyRolePlusPlus: 'Stopper++ (CB) · Holding++ (CDM) · Box-to-Box++ (CM)',
+    worthItScore: 99,
+    tacticalNote:
+      'FREE OBJECTIVE MUST-GRIND: Shapeshifted CB / CDM / CM versatility with 85 Pace, 89 Defending, and Hero links. Saves your entire 35,000 Coin balance!',
+  },
+  {
+    id: 'us1-obj-veron-87',
+    name: 'Juan Sebastián Verón (Ultimate Scream Icon Objective)',
+    rating: 87,
+    position: 'CM',
+    altPositions: ['CDM', 'CAM'],
+    club: 'Icon',
+    league: 'Icon',
+    nation: 'Argentina',
+    releaseSource: 'OBJECTIVE_FREE',
+    xboxSeriesSPrice: 0,
+    expiresInHours: 162, // 6d 18h
+    keyPlayStylesPlus: ['Incisive Pass+', 'Long Ball Pass+'],
+    keyRolePlusPlus: 'Deep-Lying Playmaker++ (CM/CDM) · Playmaker++ (CM)',
+    worthItScore: 98,
+    tacticalNote:
+      'FREE ICON OBJECTIVE: Provides universal Icon chemistry + strong Argentina link to 85 Otamendi SBC. Elite 91 Passing & 89 Shot Power.',
+  },
+
+  // --- LIVE PLAYER SBCs ---
+  {
+    id: 'us1-sbc-otamendi-85',
+    name: 'Nicolás Otamendi (Ultimate Scream SBC)',
+    rating: 85,
+    position: 'CB',
+    altPositions: [],
+    club: 'SL Benfica',
+    league: 'Liga Portugal',
+    nation: 'Argentina',
+    releaseSource: 'PLAYER_SBC',
+    xboxSeriesSPrice: 24500,
+    expiresInHours: 162,
+    keyPlayStylesPlus: ['Anticipate+', 'Aerial+'],
+    keyRolePlusPlus: 'Stopper++ (CB) · Defender++ (CB)',
+    worthItScore: 96,
+    tacticalNote:
+      'Ranked #1 Player SBC: Scream pace boost (86 PAC, 88 DEF, 90 PHY). Perfect green nation link with Free 87 Objective Verón!',
+  },
+  {
+    id: 'us1-sbc-bobby-moore-85',
+    name: 'Bobby Moore (Ultimate Scream Icon SBC)',
+    rating: 85,
+    position: 'CB',
+    altPositions: ['CDM'],
+    club: 'Icon',
+    league: 'Icon',
+    nation: 'England',
+    releaseSource: 'PLAYER_SBC',
+    xboxSeriesSPrice: 48000,
+    expiresInHours: 330,
+    keyPlayStylesPlus: ['Intercept+', 'Jockey+'],
+    keyRolePlusPlus: 'Ball-Playing CB++ (CB) · Deep-Lying Playmaker++ (CDM)',
+    worthItScore: 94,
+    tacticalNote:
+      'Ranked #2 Player SBC: 91 Passing & 90 Defending with Scream 85 Pace boost. Craft using untradeable Duplicate Storage.',
+  },
+
+  // --- ULTIMATE SCREAM TEAM 1 PACK / XBOX SERIES S MARKET ROSTER ---
+  {
+    id: 'us1-raphinha-90',
+    name: 'Raphinha',
+    rating: 90,
+    position: 'RW',
+    altPositions: ['LW', 'RM'],
+    club: 'FC Barcelona',
+    league: 'LaLiga EA Sports',
+    nation: 'Brazil',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 895000,
+    keyPlayStylesPlus: ['Finesse Shot+', 'Rapid+', 'Quick Step+'],
+    keyRolePlusPlus: 'Inside Forward++ (RW/LW)',
+    worthItScore: 95,
+    tacticalNote: 'Ultimate Scream Team 1 Headliner: 96 Pace, 92 Dribbling, 90 Shooting with FC Barcelona links.',
+  },
+  {
+    id: 'us1-cristiano-ronaldo-89',
+    name: 'Cristiano Ronaldo',
+    rating: 89,
+    position: 'ST',
+    altPositions: [],
+    club: 'Al Nassr',
+    league: 'ROSHN Saudi League',
+    nation: 'Portugal',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 1240000,
+    keyPlayStylesPlus: ['Power Shot+', 'Aerial+', 'Acrobatic+'],
+    keyRolePlusPlus: 'Poacher++ (ST) · Advanced Forward++ (ST)',
+    worthItScore: 94,
+    tacticalNote: 'Ultimate Scream 91 Pace & 94 Finishing boost with 5-Star Skill Moves.',
+  },
+  {
+    id: 'us1-zola-89',
+    name: 'Gianfranco Zola',
+    rating: 89,
+    position: 'CAM',
+    altPositions: ['ST', 'CF'],
+    club: 'Icon',
+    league: 'Icon',
+    nation: 'Italy',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 780000,
+    keyPlayStylesPlus: ['Finesse Shot+', 'Technical+', 'Dead Ball+'],
+    keyRolePlusPlus: 'Shadow Striker++ (CAM) · False 9++ (ST)',
+    worthItScore: 95,
+    tacticalNote: 'S+ Tier Shadow Striker++ CAM under Title Update #3.1.',
+  },
+  {
+    id: 'us1-szoboszlai-88',
+    name: 'Dominik Szoboszlai',
+    rating: 88,
+    position: 'CAM',
+    altPositions: ['CM', 'RM'],
+    club: 'Liverpool',
+    league: 'Premier League',
+    nation: 'Hungary',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 315000,
+    keyPlayStylesPlus: ['Power Shot+', 'Incisive Pass+', 'Dead Ball+'],
+    keyRolePlusPlus: 'Playmaker++ (CAM) · Box-to-Box++ (CM)',
+    worthItScore: 92,
+    tacticalNote: '99 Shot Power Ultimate Scream stat spike with Premier League links.',
+  },
+  {
+    id: 'us1-jaap-stam-88',
+    name: 'Jaap Stam',
+    rating: 88,
+    position: 'CB',
+    altPositions: [],
+    club: 'UT Hero',
+    league: 'Premier League / Serie A',
+    nation: 'Netherlands',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 960000,
+    keyPlayStylesPlus: ['Bruiser+', 'Anticipate+', 'Intercept+'],
+    keyRolePlusPlus: 'Stopper++ (CB) · Defender++ (CB)',
+    worthItScore: 97,
+    tacticalNote: 'Most dominant physical CB in FC 27 Ultimate Scream Team 1 (88 PAC / 92 DEF / 94 PHY).',
+  },
+  {
+    id: 'us1-cole-palmer-87',
+    name: 'Cole Palmer',
+    rating: 87,
+    position: 'CAM',
+    altPositions: ['RW', 'RM'],
+    club: 'Chelsea',
+    league: 'Premier League',
+    nation: 'England',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 410000,
+    keyPlayStylesPlus: ['Finesse Shot+', 'Incisive Pass+'],
+    keyRolePlusPlus: 'Shadow Striker++ (CAM) · Inside Forward++ (RW)',
+    worthItScore: 93,
+    tacticalNote: 'Scream Pace boost to 89 PAC fixes his base card speed while keeping 92 Composure.',
+  },
+  {
+    id: 'us1-fabinho-87',
+    name: 'Fabinho (87 Version)',
+    rating: 87,
+    position: 'CDM',
+    altPositions: ['CM', 'CB'],
+    club: 'Al Ittihad',
+    league: 'ROSHN Saudi League',
+    nation: 'Brazil',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 54000,
+    keyPlayStylesPlus: ['Intercept+', 'Anticipate+'],
+    keyRolePlusPlus: 'Holding++ (CDM) · Centre-Half++ (CDM)',
+    worthItScore: 89,
+    tacticalNote: '87-rated Ultimate Scream version with 86 Pace boost and 90 Interceptions.',
+  },
+  {
+    id: 'us1-mandzukic-87',
+    name: 'Mario Mandžukić',
+    rating: 87,
+    position: 'ST',
+    altPositions: [],
+    club: 'UT Hero',
+    league: 'Bundesliga / Serie A',
+    nation: 'Croatia',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 68000,
+    keyPlayStylesPlus: ['Aerial+', 'Power Header+'],
+    keyRolePlusPlus: 'Target Forward++ (ST) · Poacher++ (ST)',
+    worthItScore: 88,
+    tacticalNote: '99 Heading Accuracy & 95 Jumping with Controlled Lengthy sprint speed.',
+  },
+  {
+    id: 'us1-kondogbia-86',
+    name: 'Geoffrey Kondogbia',
+    rating: 86,
+    position: 'CDM',
+    altPositions: ['CB', 'CM'],
+    club: 'Olympique de Marseille',
+    league: 'Ligue 1 McDonald\'s',
+    nation: 'Central African Republic',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 28500,
+    keyPlayStylesPlus: ['Bruiser+', 'Press Proven+'],
+    keyRolePlusPlus: 'Holding++ (CDM) · Stopper++ (CB)',
+    worthItScore: 94,
+    tacticalNote:
+      'TOP 35K BUDGET BUY (28,500 Coins on Xbox Series S): 94 Strength, 85 Pace, 88 Defending. Dominates central midfield!',
+  },
+  {
+    id: 'us1-calhanoglu-86',
+    name: 'Hakan Çalhanoğlu',
+    rating: 86,
+    position: 'CDM',
+    altPositions: ['CM'],
+    club: 'Lombardía FC (Inter)',
+    league: 'Serie A Enilive',
+    nation: 'Turkey',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 33000,
+    keyPlayStylesPlus: ['Incisive Pass+', 'Long Ball Pass+'],
+    keyRolePlusPlus: 'Deep-Lying Playmaker++ (CDM)',
+    worthItScore: 93,
+    tacticalNote:
+      'FITS 35K BUDGET (33,000 Coins on Xbox Series S): 5-Star Weak Foot with 93 Passing and Deep-Lying Playmaker++.',
+  },
+  {
+    id: 'us1-vobian-86',
+    name: 'Vobian',
+    rating: 86,
+    position: 'CAM',
+    altPositions: ['ST', 'RW'],
+    club: 'Ultimate Scream XI',
+    league: 'Bundesliga / Europe',
+    nation: 'Germany',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 14500,
+    keyPlayStylesPlus: ['Quick Step+', 'Technical+'],
+    keyRolePlusPlus: 'Shadow Striker++ (CAM) · Inside Forward++ (RW)',
+    worthItScore: 91,
+    tacticalNote:
+      '35K BUDGET HIDDEN GEM (14,500 Coins on Xbox Series S): Trading near discard floor (10.8k)—ideal zero-risk flip & super-sub.',
+  },
+  {
+    id: 'us1-tolisso-86',
+    name: 'Corentin Tolisso',
+    rating: 86,
+    position: 'CM',
+    altPositions: ['CDM'],
+    club: 'Olympique Lyonnais',
+    league: 'Ligue 1 McDonald\'s',
+    nation: 'France',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 21000,
+    keyPlayStylesPlus: ['Box-to-Box+', 'Relentless+'],
+    keyRolePlusPlus: 'Box-to-Box++ (CM)',
+    worthItScore: 92,
+    tacticalNote:
+      'FITS 35K BUDGET (21,000 Coins): All-85+ Gullit-Gang stats across all 6 face attributes with French links!',
+  },
+  {
+    id: 'us1-le-fee-86',
+    name: 'Enzo Le Fée',
+    rating: 86,
+    position: 'CM',
+    altPositions: ['CAM', 'CDM'],
+    club: 'AS Roma',
+    league: 'Serie A Enilive',
+    nation: 'France',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 16800,
+    keyPlayStylesPlus: ['Tiki Taka+', 'Technical+'],
+    keyRolePlusPlus: 'Playmaker++ (CM/CAM)',
+    worthItScore: 90,
+    tacticalNote: 'FITS 35K BUDGET (16,800 Coins): 93 Agility, 94 Balance, and French + Serie A links.',
+  },
+  {
+    id: 'us1-fabinho-86',
+    name: 'Fabinho (86 Version)',
+    rating: 86,
+    position: 'CDM',
+    altPositions: ['CB'],
+    club: 'Al Ittihad',
+    league: 'ROSHN Saudi League',
+    nation: 'Brazil',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 19500,
+    keyPlayStylesPlus: ['Intercept+'],
+    keyRolePlusPlus: 'Holding++ (CDM)',
+    worthItScore: 88,
+    tacticalNote: 'FITS 35K BUDGET (19,500 Coins): Affordable 86 version with Holding++ and Brazilian chemistry.',
+  },
+  {
+    id: 'us1-alonso-85',
+    name: 'Marcos Alonso',
+    rating: 85,
+    position: 'LB',
+    altPositions: ['CB', 'LM'],
+    club: 'RC Celta de Vigo',
+    league: 'LaLiga EA Sports',
+    nation: 'Spain',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 12200,
+    keyPlayStylesPlus: ['Whipped Pass+', 'Dead Ball+'],
+    keyRolePlusPlus: 'Falseback++ (LB) · Ball-Playing CB++ (CB)',
+    worthItScore: 91,
+    tacticalNote:
+      'LOW-RISK RENT & FLIP (12,200 Coins): 88 Pace Scream boost on a 6\'2" LaLiga Spanish defender near 10.5k discard floor.',
+  },
+  {
+    id: 'us1-chong-85',
+    name: 'Tahith Chong',
+    rating: 85,
+    position: 'RM',
+    altPositions: ['LM', 'CAM'],
+    club: 'Luton Town',
+    league: 'EFL Championship',
+    nation: 'Netherlands',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 11200,
+    keyPlayStylesPlus: ['Rapid+'],
+    keyRolePlusPlus: 'Winger++ (RM/LM)',
+    worthItScore: 87,
+    tacticalNote: '94 Pace super-sub trading right at Quick Sell floor (10,450 Coins) for zero-loss investment.',
+  },
+  {
+    id: 'us1-lukeba-85',
+    name: 'Castello Lukeba',
+    rating: 85,
+    position: 'CB',
+    altPositions: ['LB'],
+    club: 'RB Leipzig',
+    league: 'Bundesliga',
+    nation: 'France',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 29500,
+    keyPlayStylesPlus: ['Jockey+', 'Anticipate+'],
+    keyRolePlusPlus: 'Stopper++ (CB)',
+    worthItScore: 93,
+    tacticalNote: 'FITS 35K BUDGET (29,500 Coins): Left-footed French CB with 87 Pace and 88 Defending.',
+  },
+  {
+    id: 'us1-flint-85',
+    name: 'Aden Flint',
+    rating: 85,
+    position: 'CB',
+    altPositions: ['ST'],
+    club: 'Mansfield Town',
+    league: 'EFL League One',
+    nation: 'England',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 10900,
+    keyPlayStylesPlus: ['Aerial+', 'Power Header+'],
+    keyRolePlusPlus: 'Defender++ (CB)',
+    worthItScore: 86,
+    tacticalNote: '6\'6" aerial giant with 99 Strength and 84 Scream Pace boost at discard price (10.9k).',
+  },
+  {
+    id: 'us1-el-mala-85',
+    name: 'Said El Mala',
+    rating: 85,
+    position: 'ST',
+    altPositions: ['RW', 'CAM'],
+    club: '1. FC Köln / Viktoria',
+    league: 'Germany',
+    nation: 'Germany',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 11000,
+    keyPlayStylesPlus: ['Quick Step+'],
+    keyRolePlusPlus: 'Advanced Forward++ (ST)',
+    worthItScore: 87,
+    tacticalNote: 'Discard-floor 85 Ultimate Scream talent (11,000 Coins) — safe zero-loss Gallery & investment hold.',
+  },
+  {
+    id: 'us1-tverskov-83',
+    name: 'Jeppe Tverskov',
+    rating: 83,
+    position: 'CDM',
+    altPositions: ['CB', 'CM'],
+    club: 'San Diego FC',
+    league: 'MLS',
+    nation: 'Denmark',
+    releaseSource: 'PACKS_MARKET',
+    xboxSeriesSPrice: 10400,
+    keyPlayStylesPlus: ['Intercept+'],
+    keyRolePlusPlus: 'Holding++ (CDM)',
+    worthItScore: 89,
+    tacticalNote:
+      'EVOLUTION CHAIN TARGET (10,400 Coins): 83 OVR fits directly into active Max-84 Midfield Evolutions!',
+  },
+];
+
 
 export const FC27_GALLERY_SETS: FUTGallerySet[] = [
   {
@@ -1383,10 +2182,463 @@ export const FC27_GALLERY_SETS: FUTGallerySet[] = [
 ];
 
 export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
+  // =========================================================================
+  // 1. SPEED BUMP / THE ZOOM (PLAYSTYLES+ LAB & IN-PROGRESS IN MY EVOLUTIONS)
+  // =========================================================================
+  {
+    id: 'evo-speed-bump-the-zoom',
+    title: 'Speed Bump (The Zoom) — PlayStyles+ Lab',
+    promoName: 'PlayStyles+ Lab Series',
+    evolutionSection: 'PLAYSTYLES_PLUS_LAB',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 7,
+    claimWindowHours: 21,
+    isCurrentlyInProgress: true,
+    currentProgressStage: {
+      completedChallenges: 2,
+      totalChallenges: 4,
+      currentLevel: 2,
+      activePlayerName: 'Benjamin Pavard (80 OVR CB)',
+    },
+    eligibility: {
+      maxOvr: 80,
+      positions: ['CB'],
+      maxPlayStylesPlus: 1, // Enforced FC 27 3 PS+ Cap
+    },
+    detailedCriteria: {
+      maxOvr: 80,
+      position: 'CB (Centre-Back)',
+      maxPlayStyles: 7,
+      maxPace: 75,
+      disallowedPositions: ['CDM'],
+    },
+    challengeStages: [
+      {
+        levelNumber: 1,
+        title: 'Level 1 (1 Challenge)',
+        challengeCount: 1,
+        challenges: ['Play 1 match in Rivals, Champions, or Squad Battles (Min. Semi-Pro)'],
+        levelUpgrades: '+5 Pace, +3 Defending, +2 Physical',
+        playStyleReward: 'Bruiser (Base)',
+      },
+      {
+        levelNumber: 2,
+        title: 'Level 2 (2 Challenges)',
+        challengeCount: 2,
+        challenges: [
+          'Play 2 matches in Rivals, Champions, or Squad Battles (Min. Semi-Pro)',
+          'Keep 1 clean sheet with your active Evolution player in the Starting XI',
+        ],
+        levelUpgrades: '+5 Pace, +4 Physical, +3 Defending',
+        playStyleReward: 'Intercept+ (PlayStyle+)',
+      },
+      {
+        levelNumber: 3,
+        title: 'Level 3 (1 Challenge)',
+        challengeCount: 1,
+        challenges: [
+          'Play 1 match and Win 1 match in Rivals, Champions, or Squad Battles (Min. Semi-Pro)',
+        ],
+        levelUpgrades: '+5 Pace, +3 Defending, +5 Reactions, +4 Composure',
+        playStyleReward: 'Anticipate+ (PlayStyle+)',
+        roleReward: 'Stopper++ (CB) & Ball-Playing CB++ (CB)',
+      },
+    ],
+    categorizedCandidates: {
+      cheapOptions: [
+        {
+          playerName: 'Benjamin Pavard',
+          ovr: 80,
+          club: 'Lombardía FC (Inter Milan)',
+          league: 'Serie A Enilive',
+          nation: 'France',
+          price: 1400,
+          reason:
+            'YOUR CLUB BEST FIT: Already in your club inventory (0 Coins). 73 Pace, 82 Defending, zero CDM position, exactly 5 PlayStyles. Upgrades to 88 Pace, 88 Defending, 85 Physical with Anticipate+ and Intercept+!',
+          finalRating: 86,
+        },
+        {
+          playerName: 'Castello Lukeba',
+          ovr: 79,
+          club: 'RB Leipzig',
+          league: 'Bundesliga',
+          nation: 'France',
+          price: 2100,
+          reason:
+            'Top cheap market buy: Left-footed French CB with 74 Pace. Gains 89 Pace and Stopper++ with French links to Kondogbia and Tolisso.',
+          finalRating: 85,
+        },
+        {
+          playerName: 'Joe Gomez',
+          ovr: 79,
+          club: 'Liverpool',
+          league: 'Premier League',
+          nation: 'England',
+          price: 1800,
+          reason:
+            'English meta favorite: 75 Pace, 80 Defending, 79 Physical. Upgrades to an 90 Pace Premier League anchor linking with 85 Bobby Moore & 87 Jill Scott.',
+          finalRating: 85,
+        },
+        {
+          playerName: 'Malick Thiaw',
+          ovr: 79,
+          club: 'Milan',
+          league: 'Serie A Enilive',
+          nation: 'Germany',
+          price: 1200,
+          reason:
+            '6\'4" physical giant: 73 Pace, 81 Defending, 83 Strength. Dominates aerial duels with Lengthy AcceleRATE 2.0 sprint sustain.',
+          finalRating: 85,
+        },
+        {
+          playerName: 'Jakub Kiwior',
+          ovr: 78,
+          club: 'Arsenal',
+          league: 'Premier League',
+          nation: 'Poland',
+          price: 950,
+          reason:
+            'Budget 950-coin hidden gem: Left-footed Arsenal CB with 74 Pace and 80 Defending, perfect for high-line offside traps.',
+          finalRating: 84,
+        },
+      ],
+      bestSquadFitOptions: [
+        {
+          playerName: 'Iñigo Martínez',
+          ovr: 80,
+          club: 'FC Barcelona',
+          league: 'LaLiga EA Sports',
+          nation: 'Spain',
+          price: 1500,
+          reason:
+            'PERFECT SQUAD LINK: Strong links to verified 26–27 stars Rodri, Pedri, Lamine Yamal & Balde! Upgrades to 88 Pace with Stopper++.',
+          finalRating: 86,
+        },
+        {
+          playerName: 'Robin Le Normand',
+          ovr: 80,
+          club: 'Atlético de Madrid',
+          league: 'LaLiga EA Sports',
+          nation: 'Spain',
+          price: 1900,
+          reason:
+            'LaLiga & Spanish national chemistry: 82 Defending and 81 Physical baseline. Reaches 88 Defending and 85 Physical.',
+          finalRating: 86,
+        },
+        {
+          playerName: 'Ezri Konsa',
+          ovr: 79,
+          club: 'Aston Villa',
+          league: 'Premier League',
+          nation: 'England',
+          price: 2400,
+          reason:
+            'English national triangle: Green links to 87 Jill Scott Objective and 85 Bobby Moore Icon SBC for easy 33/33 squad chemistry.',
+          finalRating: 85,
+        },
+      ],
+      premiumSpecialOptions: [
+        {
+          playerName: '80 TOTW Team of the Week In-Form CB',
+          ovr: 80,
+          cardType: 'TOTW In-Form Special',
+          price: 14500,
+          reason:
+            'SUPERIOR STARTING STATS: Costs more coins (14.5k), but starts with upgraded inform sub-stats (+4 composure, +3 strength) and yields an 87-rated endgame defender!',
+          finalRating: 87,
+        },
+        {
+          playerName: '80 Trailblazers Special CB',
+          ovr: 80,
+          cardType: 'Trailblazers / Promo Special',
+          price: 18000,
+          reason:
+            'Starts with boosted passing and dribbling; final evolution reaches 88 Pace, 90 Defending, and 86 Physical with 2 PlayStyles+.',
+          finalRating: 87,
+        },
+      ],
+    },
+    branchA: {
+      branchName: 'Branch A: Stopper++ Aggressive Interceptor',
+      focusSummary:
+        'Maximizes Pace (+15 to 88), Standing Tackle (+8), Anticipate+, Intercept+, and Stopper++ aggressive step-up AI.',
+      statBoosts: { pac: 15, sho: 0, pas: 4, dri: 5, def: 8, phy: 7 },
+      addedPlayStylePlus: 'Anticipate+',
+      addedRolePlusPlus: 'Stopper++ (CB)',
+      projectedMetaScore: 96.4,
+    },
+    branchB: {
+      branchName: 'Branch B: Ball-Playing CB++ Transition Distributor',
+      focusSummary:
+        'Maximizes Long Ball Pass+, Vision (+10), Composure (+8), and Ball-Playing CB++ counter-attacking distribution.',
+      statBoosts: { pac: 14, sho: 0, pas: 9, dri: 7, def: 7, phy: 6 },
+      addedPlayStylePlus: 'Long Ball Pass+',
+      addedRolePlusPlus: 'Ball-Playing CB++ (CB)',
+      projectedMetaScore: 95.8,
+    },
+    recommendedClubFits: [
+      {
+        playerName: 'Benjamin Pavard',
+        currentOvr: 80,
+        finalOvr: 86,
+        club: 'Lombardía FC (Inter Milan)',
+        league: 'Serie A Enilive',
+        nation: 'France',
+        inUserClub: true,
+        marketPrice: 1400,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          'OWNED IN YOUR CLUB: 73 Pace, 82 Def, 0 CDM position. Upgrades to 88 PAC, 88 DEF, 85 PHY with Anticipate+ & Stopper++!',
+      },
+      {
+        playerName: 'Iñigo Martínez',
+        currentOvr: 80,
+        finalOvr: 86,
+        club: 'FC Barcelona',
+        league: 'LaLiga EA Sports',
+        nation: 'Spain',
+        inUserClub: false,
+        marketPrice: 1500,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          'Links perfectly to Rodri (FC Barcelona) & Pedri; costs only 1,500 Coins on Xbox Series S.',
+      },
+    ],
+  },
+
+  // =========================================================================
+  // 2. FUTURE STARS ACADEMY (NEWLY ADDED SECTION IN FC 27)
+  // =========================================================================
+  {
+    id: 'evo-future-stars-academy-playmaker',
+    title: 'Future Stars Academy: Midfield Maestro (Free / 0 Coins)',
+    promoName: 'Future Stars Academy',
+    evolutionSection: 'FUTURE_STARS_ACADEMY',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 21,
+    claimWindowHours: 48,
+    eligibility: {
+      maxOvr: 82,
+      positions: ['CM', 'CAM'],
+      maxPlayStylesPlus: 1,
+    },
+    detailedCriteria: {
+      maxOvr: 82,
+      position: 'CM or CAM',
+      maxPlayStyles: 6,
+      maxPace: 84,
+    },
+    branchA: {
+      branchName: 'Branch A: Incisive Playmaker++ Architect',
+      focusSummary:
+        'Adds Incisive Pass+, Vision (+9), Short Passing (+8), and Playmaker++ attack orchestration.',
+      statBoosts: { pac: 4, sho: 6, pas: 9, dri: 7, def: 3, phy: 5 },
+      addedPlayStylePlus: 'Incisive Pass+',
+      addedRolePlusPlus: 'Playmaker++ (CM/CAM)',
+      projectedMetaScore: 94.8,
+    },
+    branchB: {
+      branchName: 'Branch B: Shadow Striker++ Box Infiltrator',
+      focusSummary:
+        'Boosts Finishing (+9), Positioning (+10), Quick Step+, and Shadow Striker++ late penalty box arrivals.',
+      statBoosts: { pac: 6, sho: 9, pas: 5, dri: 6, def: 2, phy: 6 },
+      addedPlayStylePlus: 'Quick Step+',
+      addedRolePlusPlus: 'Shadow Striker++ (CAM)',
+      projectedMetaScore: 95.2,
+    },
+    recommendedClubFits: [
+      {
+        playerName: 'Arda Güler',
+        currentOvr: 81,
+        finalOvr: 87,
+        club: 'Real Madrid',
+        league: 'LaLiga EA Sports',
+        nation: 'Turkey',
+        inUserClub: false,
+        marketPrice: 3200,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          '0 Coin Evolution; links with Bellingham & Mbappé at Real Madrid; 95 Agility post-upgrade.',
+      },
+      {
+        playerName: 'Harvey Elliott',
+        currentOvr: 80,
+        finalOvr: 86,
+        club: 'Liverpool',
+        league: 'Premier League',
+        nation: 'England',
+        inUserClub: false,
+        marketPrice: 2400,
+        recommendedBranch: 'Branch B',
+        chemistryLinkReason:
+          'Premier League English link; gains Shadow Striker++ with 91 Finishing.',
+      },
+    ],
+  },
+
+  // =========================================================================
+  // 3. TRAINING CAMP (TRAINING CAMP SECTION)
+  // =========================================================================
+  {
+    id: 'evo-training-camp-passing',
+    title: 'Training Camp: Passing Mastery (Free / 0 Coins)',
+    promoName: 'Training Camp Hub',
+    evolutionSection: 'TRAINING_CAMP',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 30,
+    claimWindowHours: 72,
+    eligibility: {
+      maxOvr: 85,
+      positions: ['CM', 'CDM', 'CAM', 'LB', 'RB'],
+      maxPlayStylesPlus: 2,
+    },
+    branchA: {
+      branchName: 'Branch A: Tiki-Taka+ Short Passing Specialist',
+      focusSummary: 'Boosts Short Passing (+10), Vision (+8), Curve (+6), and adds Tiki-Taka+ for press resistance.',
+      statBoosts: { pac: 2, sho: 3, pas: 8, dri: 5, def: 4, phy: 3 },
+      addedPlayStylePlus: 'Tiki-Taka+',
+      addedRolePlusPlus: 'Deep-Lying Playmaker++ (CM/CDM)',
+      projectedMetaScore: 93.9,
+    },
+    branchB: {
+      branchName: 'Branch B: Long Ball Pass+ Direct Switch Specialist',
+      focusSummary: 'Boosts Long Passing (+11), Crossing (+9), and Long Ball Pass+ for diagonal wing switches.',
+      statBoosts: { pac: 2, sho: 2, pas: 9, dri: 4, def: 3, phy: 4 },
+      addedPlayStylePlus: 'Long Ball Pass+',
+      addedRolePlusPlus: 'Wide Playmaker++ (RM/LM)',
+      projectedMetaScore: 93.4,
+    },
+    recommendedClubFits: [
+      {
+        playerName: 'Enzo Le Fée',
+        currentOvr: 82,
+        finalOvr: 86,
+        club: 'AS Roma',
+        league: 'Serie A Enilive',
+        nation: 'France',
+        inUserClub: false,
+        marketPrice: 2800,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          '0 Coins to complete; reaches 96 Short Passing & 94 Vision for midfield possession play.',
+      },
+    ],
+  },
+
+  // =========================================================================
+  // 4. REWARD EVOS (REWARDS SECTION)
+  // =========================================================================
+  {
+    id: 'evo-rewards-champions-red-pick',
+    title: 'FUT Champions Red Pick Prestige Evolution (Reward Unlock)',
+    promoName: 'Weekend League Rewards',
+    evolutionSection: 'REWARD_EVOS',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 45,
+    eligibility: {
+      maxOvr: 88,
+      positions: ['ST', 'CF', 'RW', 'LW', 'CAM', 'CM', 'CB'],
+      maxPlayStylesPlus: 2,
+    },
+    branchA: {
+      branchName: 'Branch A: Red Champions Star Attacker',
+      focusSummary: 'Grants Red Champions card skin, +2 to all face stats, and Clinical Finisher++ role.',
+      statBoosts: { pac: 2, sho: 3, pas: 2, dri: 2, def: 1, phy: 2 },
+      addedPlayStylePlus: 'Trivela+',
+      addedRolePlusPlus: 'Poacher++ (ST) & Inside Forward++ (RW/LW)',
+      projectedMetaScore: 96.1,
+    },
+    branchB: {
+      branchName: 'Branch B: Red Champions Defensive Pillar',
+      focusSummary: 'Grants Red Champions card skin, +2 to all face stats, and Stopper++ role.',
+      statBoosts: { pac: 2, sho: 1, pas: 2, dri: 2, def: 3, phy: 3 },
+      addedPlayStylePlus: 'Slide Tackle+',
+      addedRolePlusPlus: 'Stopper++ (CB) & Holding++ (CDM)',
+      projectedMetaScore: 95.9,
+    },
+    recommendedClubFits: [
+      {
+        playerName: '87 Jill Scott (Free Objective)',
+        currentOvr: 87,
+        finalOvr: 89,
+        club: 'UT Hero',
+        league: 'Barclays WSL',
+        nation: 'England',
+        inUserClub: false,
+        marketPrice: 0,
+        recommendedBranch: 'Branch B',
+        chemistryLinkReason:
+          'Upgrade your free 87 Jill Scott into a 89 Red Champions version with +2 all stats for 0 coins!',
+      },
+    ],
+  },
+
+  // =========================================================================
+  // 5. COSMETIC EVOS (COSMETICS SECTION)
+  // =========================================================================
+  {
+    id: 'evo-cosmetics-holographic-prism',
+    title: 'Holographic Prism Dynamic Shell (Cosmetic)',
+    promoName: 'FUT Gallery Prestige',
+    evolutionSection: 'COSMETICS',
+    categoryTag: 'FREE',
+    costCoins: 0,
+    costFifaPoints: 0,
+    expiresInDays: 60,
+    eligibility: {
+      maxOvr: 99,
+      positions: ['ST', 'RW', 'LW', 'CAM', 'CM', 'CDM', 'CB', 'LB', 'RB', 'GK'],
+      maxPlayStylesPlus: 3,
+    },
+    branchA: {
+      branchName: 'Branch A: Animated Holographic Prism Foil',
+      focusSummary: 'Applies dynamic animated rainbow holographic shine to any player in your club.',
+      statBoosts: { pac: 0, sho: 0, pas: 0, dri: 0, def: 0, phy: 0 },
+      addedPlayStylePlus: 'Cosmetic Flare',
+      addedRolePlusPlus: 'No Stat Change (FUT Gallery Grade +150 Pts)',
+      projectedMetaScore: 99.0,
+    },
+    branchB: {
+      branchName: 'Branch B: Pristine Gold Vault Finish',
+      focusSummary: 'Applies Pristine Gold border and unlocks +200 FUT Gallery XP.',
+      statBoosts: { pac: 0, sho: 0, pas: 0, dri: 0, def: 0, phy: 0 },
+      addedPlayStylePlus: 'Pristine Foil',
+      addedRolePlusPlus: 'No Stat Change (FUT Gallery Grade +200 Pts)',
+      projectedMetaScore: 99.0,
+    },
+    recommendedClubFits: [
+      {
+        playerName: '90 Raphinha (Ultimate Scream)',
+        currentOvr: 90,
+        finalOvr: 90,
+        club: 'FC Barcelona',
+        league: 'LaLiga EA Sports',
+        nation: 'Brazil',
+        inUserClub: false,
+        marketPrice: 420000,
+        recommendedBranch: 'Branch A',
+        chemistryLinkReason:
+          'Applies premier animated rainbow holographic shine to the flagship Scream star card.',
+      },
+    ],
+  },
+
+  // =========================================================================
+  // 6. GENERAL ACTIVE EVOLUTIONS
+  // =========================================================================
   {
     id: 'evo-inside-forward-unleashed',
     title: 'Inside Forward Unleashed (Free / 0 Coins)',
     promoName: 'Season 2 Groundbreaker',
+    evolutionSection: 'ACTIVE_EVOS',
     categoryTag: 'FREE',
     costCoins: 0,
     costFifaPoints: 0,
@@ -1445,6 +2697,7 @@ export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
     id: 'evo-box-to-box-engine',
     title: 'Box-to-Box Midfield Engine (25k Coins)',
     promoName: 'Centurions Catalyst',
+    evolutionSection: 'ACTIVE_EVOS',
     categoryTag: 'AFFORDABLE_35K',
     costCoins: 25000,
     costFifaPoints: 250,
@@ -1503,6 +2756,7 @@ export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
     id: 'evo-la-masia-catalyst-branching',
     title: 'Titan Wingback & Midfield Catalyst (50k Coins)',
     promoName: 'Trailblazers Evolution',
+    evolutionSection: 'ACTIVE_EVOS',
     categoryTag: 'PAID_PREMIUM',
     costCoins: 50000,
     costFifaPoints: 500,
@@ -1510,7 +2764,7 @@ export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
     eligibility: {
       maxOvr: 84,
       positions: ['LB', 'RB', 'CM'],
-      maxPlayStylesPlus: 2, // Strictly <= 3 in FC 27
+      maxPlayStylesPlus: 2,
     },
     branchA: {
       branchName: 'Branch A: Attacking Wingback++ Specialist',
@@ -1541,77 +2795,6 @@ export const FC27_BRANCHING_EVOLUTIONS: BranchingEvolution[] = [
         recommendedBranch: 'Branch B',
         chemistryLinkReason:
           'Target for when coins reach 58,400; links FC Barcelona & Spain; caps at 2/3 PlayStyles+.',
-      },
-      {
-        playerName: 'Eduardo Camavinga',
-        currentOvr: 84,
-        finalOvr: 88,
-        club: 'Real Madrid',
-        league: 'LaLiga EA Sports',
-        nation: 'France',
-        inUserClub: false,
-        marketPrice: 19500,
-        recommendedBranch: 'Branch B',
-        chemistryLinkReason:
-          'Premium progressive target: Real Madrid & France links with Holding++ and 95.8 Synthesized Meta Rating.',
-      },
-    ],
-  },
-  {
-    id: 'evo-power-surge-defender',
-    title: 'Power Surge Defensive Anchor (Free / 0 Coins)',
-    promoName: 'Power Surge Series',
-    categoryTag: 'FREE',
-    costCoins: 0,
-    costFifaPoints: 0,
-    expiresInDays: 7,
-    eligibility: {
-      maxOvr: 82,
-      positions: ['CB', 'CDM'],
-      maxPlayStylesPlus: 1,
-    },
-    branchA: {
-      branchName: 'Branch A: Anticipate+ Stopper++ Enforcer',
-      focusSummary: 'Boosts Standing Tackle (+8), Anticipate+, and Stopper++ aggressive interception step.',
-      statBoosts: { pac: 4, sho: 1, pas: 5, dri: 4, def: 8, phy: 9 },
-      addedPlayStylePlus: 'Anticipate+',
-      addedRolePlusPlus: 'Stopper++ (Defend)',
-      projectedMetaScore: 94.0,
-    },
-    branchB: {
-      branchName: 'Branch B: Ball-Playing CB++ Long Passer',
-      focusSummary: 'Maximizes Long Ball Pass+, Vision (+10), and Composure (+8) for counter-attacking distribution.',
-      statBoosts: { pac: 3, sho: 2, pas: 9, dri: 6, def: 7, phy: 7 },
-      addedPlayStylePlus: 'Long Ball Pass+',
-      addedRolePlusPlus: 'Ball-Playing CB++ (Build-Up)',
-      projectedMetaScore: 93.5,
-    },
-    recommendedClubFits: [
-      {
-        playerName: 'Pau Cubarsí',
-        currentOvr: 80,
-        finalOvr: 85,
-        club: 'FC Barcelona',
-        league: 'LaLiga EA Sports',
-        nation: 'Spain',
-        inUserClub: false,
-        marketPrice: 2200,
-        recommendedBranch: 'Branch A',
-        chemistryLinkReason:
-          '0 Coin Free Evolution; card costs only 2,200 Coins; strong links to Rodri and Yamal; 94 Standing Tackle post-upgrade.',
-      },
-      {
-        playerName: 'Gonçalo Inácio',
-        currentOvr: 81,
-        finalOvr: 86,
-        club: 'Sporting CP',
-        league: 'Liga Portugal',
-        nation: 'Portugal',
-        inUserClub: false,
-        marketPrice: 1800,
-        recommendedBranch: 'Branch B',
-        chemistryLinkReason:
-          'Budget 1,800 Coin gem; left-footed Ball-Playing CB++ with Long Ball Pass+ for direct transition counters.',
       },
     ],
   },

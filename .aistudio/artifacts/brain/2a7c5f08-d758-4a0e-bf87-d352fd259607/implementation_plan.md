@@ -1,135 +1,192 @@
-# FC 27 UT App — Live Ultimate Scream Content Engine, Ranked Top-5 Player vs. Upgrade SBCs, Squad-Linked Tracker & `gemini-3.5-flash-lite` Router Plan
+# FC 27 UT App — Club Sync JSON Backup Export, AI Tactical Director & Photorealistic 3D Stadium Pitch Prototype Plan
 
-An authoritative **EA Sports FC 27 Ultimate Team (Xbox Series S Console Market)** tactical, squad, and market intelligence terminal anchored dynamically to **British Time (`Europe/London` BST/GMT at $T=0$, October 2026 — Ultimate Scream Team 1)**. This revision upgrades the fast model tier from `gemini-3.1-flash-lite` to **`gemini-3.5-flash-lite`**, centers the entire workspace around **dynamically tracking your Squad & Club Inventory against live expiring content**, splits the **SBC Hub into Ranked Top 5 Player SBCs vs. Top 5 Upgrade SBCs** (with live countdown timers, exact Xbox Series S coin costs, and "Worth-It" value scores), integrates the complete **Ultimate Scream Team 1 Promo Roster, SBCs (`85 Moore`, `85 Otamendi`) & Live Objectives (`87 Jill Scott CB/CDM/CM`, `87 Verón CM`)**, and unifies the **Console Investment Tracker**, **Standalone Tactical Command Chatbot**, **Live Audio HUD (`gemini-3.8-live`)**, and **Push-to-Talk Transcription (`gemini-3.5-transcribe`)**.
+An integrated capability prototype and architectural upgrade for the EA Sports FC 27 Ultimate Team Console Assistant (Xbox Series S). This update adds an **instant browser-based JSON backup export** in the Club Sync Modal (generating a timestamped `.json` file via client-side `Blob` with `application/json` MIME type), introduces an interactive **Three.js photorealistic 3D stadium pitch visualizer** with procedural player card totems, and showcases the **AI Tactical Director** prototype with transparent tiered model routing (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-3.5-transcribe`, and `gemini-3.8-live`).
 
 ---
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> **Confirmed User Revisions & Architectural Alignment**:
-> 1. **Model Router Upgrade (`gemini-3.5-flash-lite`)**:
->    - Replaces `gemini-3.1-flash-lite` with **`gemini-3.5-flash-lite`** across the Smart Model Router, Tactical Command Chatbot, and fast club/SBC evaluation endpoints for lower latency and stronger structured reasoning per token.
-> 2. **Split & Ranked SBC Hub (Top 5 Player SBCs vs. Top 5 Upgrade SBCs)**:
->    - The SBC view is divided into two side-by-side / toggleable leaderboards: **Top 5 Currently Available Player SBCs** and **Top 5 Currently Available Upgrade SBCs**, plus a **Live Objectives Tracker**.
->    - Every SBC and Objective displays: **Rank (`#1`–`#5` by Worth-It Value Score)**, **Exact Time Remaining Countdown** (anchored to $T=0$ 18:00 UK expiry), **Xbox Series S Coin Cost**, **Fodder Burn Fit** (against your logged club/duplicate storage), and a clear **Verdict (`MUST DO`, `FODDER ONLY`, `SKIP`)**.
-> 3. **Live October 2026 Grounding — Ultimate Scream Team 1 Promo, SBCs & Objectives**:
->    - Pre-loaded and live-updatable with the exact active **Ultimate Scream Team 1** release:
->      - **Promo Pack Roster**: `90 Raphinha`, `89 Cristiano Ronaldo`, `89 Gianfranco Zola`, `88 Dominik Szoboszlai`, `88 Jaap Stam`, `87 Fabinho`, `87 Cole Palmer`, `87 Mario Mandžukić`, `86 Geoffrey Kondogbia`, `86 Hakan Çalhanoğlu`, `86 Vobian`, `86 Corentin Tolisso`, `86 Enzo Le Fée`, `86 Fabinho`, `85 Marcos Alonso`, `85 Tahith Chong`, `85 Castello Lukeba`, `85 Aden Flint`, `85 Said El Mala`, `83 Jeppe Tverskov`.
->      - **Active Ultimate Scream Player SBCs**: `85 Bobby Moore (Ultimate Scream SBC)`, `85 Nicolás Otamendi (Ultimate Scream SBC)`, alongside active meta Player SBCs ranked #1–#5.
->      - **Active Ultimate Scream Objectives (Free Grind)**: `87 Jill Scott (Ultimate Scream Objective — CB / CDM / CM)` and `87 Juan Sebastián Verón (Ultimate Scream Objective — CM)`.
-> 4. **Squad-Centric Dynamic Sync & Zero-Guessing Invariant**:
->    - Keeps your confirmed **`35,000` Xbox Series S Coin balance** as the baseline budget while keeping unconfirmed personal club slots blank (`—`) until you log or sync your Starting XI and Club Inventory. Once a position or card is logged in your squad, every SBC, Evolution, Objective, and Market card dynamically calculates its **Net Upgrade Delta** over your current starter.
+> **Confirmed User Decisions (Phase 1 Clarifications)**:
+> 1. **AI Tactical Director Presentation**: Configured as a **Dedicated Tactical Director tab with model selector**, providing full-screen tactical analysis, live audio coaching, role persona selection, and explicit routing between speed, grounded search, and deep reasoning models.
+> 2. **Club Data JSON Export Behavior**: Triggered via an **instant one-click download with formatted timestamped filename** (`fc27_club_backup_YYYY-MM-DD_HHmmss.json`) directly inside the Club Sync Modal, wrapping the verified club state (coins, club name, division, custom players, squad cards, duplicate inventory, and investment ledger) in a typed `application/json` `Blob`.
+> 3. **Three.js 3D Pitch Visualization**: Prioritized with **photorealistic stadium turf and procedural 3D card pedestals**, featuring procedural grass shear, touchline markings, PBR stadium floodlighting, studio reflection (`RoomEnvironment`), and a non-occluding collapsible bottom dock HUD.
+
+- **Confirmed Model Roster**:
+  - `gemini-4-argon`: Complex tactical modeling, full squad chemistry rebuilds, and multi-scenario trade calculations (`ThinkingLevel.HIGH`).
+  - `gemini-3.8-flash`: General chat, tactical director multi-turn dialogue, and real-time live promo/SBC grounding via `googleSearch`.
+  - `gemini-3.5-flash-lite`: Low-latency instant queries, quick squad delta checks, and rapid card-swap evaluations.
+  - `gemini-3.5-transcribe`: Push-to-talk microphone audio transcription across all input fields.
+  - `gemini-3.8-live`: Real-time bidirectional voice coaching session with live waveform visualizer in the top HUD.
 
 ---
 
 ## 1. Overview & Core Concept
 
-- **What It Does**: Acts as a live, clock-synchronized Director of Football that tracks your exact **Starting XI & Club Inventory** against **what is live right now in EA Sports FC 27 Ultimate Team** (Ultimate Scream Team 1 promo cards, Ranked Top 5 Player SBCs, Ranked Top 5 Upgrade SBCs, Live Objectives, and Active Evolutions)—showing exactly **how much time is left**, **what each costs on Xbox Series S**, and **which ones are the best value to complete today**.
-- **Target Audience / Persona**: Competitive **Xbox Series S** Ultimate Team player managing a `35,000` Coin liquid budget across console and dual-screen **Asus ZenBook UX482** displays.
-- **Key Value**: Eliminates FOMO and wasted fodder by ranking every live SBC, Evolution, and Objective by true value-for-coins and direct fit for your squad before the 18:00 UK timer expires.
+- **What It Does**:
+  1. **Club Data Portability & Backup**: Enables users to back up their entire verified Xbox Series S Ultimate Team profile (35,000 Coins, logged squad, custom player cards, untradeables, duplicate storage, and active flips) with a single click, downloading a clean, schema-validated JSON file.
+  2. **Tactical Director Prototype**: An AI tactical command suite where users can select model tiers, query tactical directors with specialized FC 27 personas (e.g. Pep Gegenpress, Ancelotti Pragmatic, Modern Patch Meta), and inspect live token/latency telemetry.
+  3. **Photorealistic 3D Pitch Lab**: An interactive Three.js 3D stadium pitch rendering player cards on procedural physical totems with illuminated Role++ beacons, custom camera angles, and smooth damping.
+- **Target Audience**: Competitive FC 27 Ultimate Team console players who demand strict data ownership (offline JSON backups) and advanced tactical simulation tools.
+- **Key Value**: Zero data loss with immediate offline recovery, high-fidelity spatial squad visualization, and predictable model selection tailored to task complexity.
 
 ---
 
-## 2. 5-Tier Smart Model Routing Matrix (`gemini-3.5-flash-lite` Upgraded)
+## 2. User Experience & Visual Design
+
+### A. Club Sync Modal JSON Export Flow
+- **Visual Location**: Placed in the action row of the **Club Sync Modal** alongside existing import/sync buttons.
+- **Visual Appearance**: Clean obsidian button with a download icon, green hairline border (`border-[#00ff87]/40 hover:border-[#00ff87]`), and clear label: **"Export Club State JSON"**.
+- **Interaction**:
+  1. Clicking immediately serializes the current club state:
+     - `version: "1.0.0"`
+     - `exportedAt: ISO timestamp`
+     - `coins: 35000` (or user modified value)
+     - `clubName`, `fifaPoints`, `rivalsDivision`, `dailySp`, `galleryLevel`
+     - `squad`: Active 11-player formation, card IDs, ratings, positions, and chemistry
+     - `clubInventory`: Owned catalog players and custom unverified players
+     - `duplicateStorage`: Untradeable duplicate cards held for SBCs
+     - `investmentLedger`: Active 5% tax flip positions
+  2. Creates a `Blob` with `type: "application/json;charset=utf-8"`.
+  3. Generates a download URL via `URL.createObjectURL(blob)`, sets filename `fc27_club_state_YYYYMMDD_HHMMSS.json`, programmatic click, and cleans up with `URL.revokeObjectURL`.
+  4. Displays a non-intrusive success toast: *"Club state exported successfully (35,000 Coins & active squad logged)"*.
+
+### B. Dedicated AI Tactical Director Tab (`TACTICAL COMMAND`)
+- **Top Control Bar**:
+  - **Model Selector Pill Strip**:
+    - `gemini-3.5-flash-lite` — *Lightning Speed (~250ms)*: Rapid tactical tips, quick squad delta checks.
+    - `gemini-3.8-flash` (+ Search) — *Grounded Meta (~800ms)*: Live Ultimate Scream Team 1 drop updates, patch notes.
+    - `gemini-4-argon` — *Deep Tactical Reasoning (~2.8s)*: Exhaustive squad chemistry synthesis, Role++ optimization.
+  - **Tactical Persona Switcher**: *Meta Optimizer*, *Counter-Press Specialist*, *Low-Budget Architect (35k Budget)*.
+- **Chat Feed & Interaction**:
+  - Clear message bubbles with role avatars, model response receipts (showing model name, token latency, and routing justification).
+  - Push-to-talk mic button powered by `gemini-3.5-transcribe` for voice dictation.
+  - Quick tactical prompts: *"Analyze my Starting XI weakest link"*, *"Best Ultimate Scream upgrade under 35k coins"*, *"Evaluate 85 Otamendi SBC vs 87 Jill Scott Objective"*.
+
+### C. Photorealistic Three.js 3D Pitch Prototype
+- **3D Pitch Visuals**:
+  - Procedural turf with alternating mown grass stripes (procedural canvas texture, `SRGBColorSpace`, maximum anisotropy).
+  - White touchlines, penalty boxes, center circle, and goal nets using procedural geometry.
+  - 11 procedural card pedestals arranged in the active formation (4-2-1-3 or 4-3-3), featuring:
+    - Primary card totem: Beveled extruded polygon with holographic trim.
+    - Secondary Read: Floating position ring and rating badge.
+    - Accent: Glowing Role++ light pillar indicating active playstyle bonuses.
+- **Lighting & Atmosphere**:
+  - Three-point stadium floodlight rig: 4 corner directional spot panels with soft shadows, subtle cool blue ambient fill (`THREE.HemisphereLight`), and procedural studio reflection via `RoomEnvironment`.
+  - Atmospheric stadium night fog (`THREE.FogExp2`).
+- **Collapsible Bottom Dock HUD**:
+  - Zero viewport occlusion: All 3D controls (Camera Presets: *Broadcast High*, *Tactical Top-Down*, *Behind Goal*; Lighting Moods: *Night Match*, *Golden Hour*; Pedestal Elevation slider) grouped into a sleek glassmorphic bottom bar.
+  - "Cinema Mode" toggle collapses the dock completely for full-screen inspection.
+
+---
+
+## 3. Key Product Decisions & Trade-Offs
+
+| Decision | Chosen Approach | Rationale | Alternatives Considered |
+| :--- | :--- | :--- | :--- |
+| **JSON Export Engine** | Client-side `Blob` with `application/json` and `URL.createObjectURL` | Instant zero-latency download without server roundtrips; works completely offline; adheres strictly to privacy. | Server-side file generation via Express route (unnecessary network overhead and potential data leakage). |
+| **3D Rendering Approach** | Pure procedural geometry & textures via Three.js (r160+) | Zero broken image 404s, hermetic execution, crisp grazing angles with procedural canvas textures and `RoomEnvironment`. | Loading external `.gltf` or `.obj` models (fragile, subject to network blocks and missing assets). |
+| **Tactical Director Integration** | Dedicated full-screen tab with explicit model selector | Gives ample screen real estate for complex multi-turn chats, formatted code generation, and model telemetry without crowding the squad pitch. | Small floating modal or sidebar drawer (too narrow for deep tactical tables and multi-turn dialogue). |
+| **Model Tier Assignment** | Strict task-based routing (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`) | Maximizes speed for frequent queries while reserving deep thinking models for comprehensive squad overhauls. | Single model for all queries (either too slow for simple queries or insufficiently capable for complex tactical reasoning). |
+
+---
+
+## 4. Technical Architecture & Data Strategy
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                          UPGRADED 5-TIER SMART MODEL ROUTING MATRIX                             │
-├──────────────┬─────────────────────────┬──────────────┬───────────────┬─────────────────────────┤
-│ Tier         │ Model / Engine          │ Latency      │ Token Cost    │ Target Workload         │
-├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
-│ Tier 0       │ Local Deterministic TS  │ < 2 ms       │ $0.00         │ 5% EA Tax, SBC Score    │
-│              │ Engine                  │              │ (0 Tokens)    │ Math, Live Countdowns   │
-├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
-│ Tier 1 (Fast)│ gemini-3.5-flash-lite   │ ~200–380 ms  │ Lowest (~1x)  │ Fast SBC Worth-It Check,│
-│              │                         │              │               │ Quick Squad Delta & Q&A │
-├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
-│ Tier 2       │ gemini-3.8-flash        │ ~750–1300 ms │ Moderate (~3x)│ Live Promo/SBC/Evo Sync │
-│ (Grounded)   │ (+ googleSearch)        │              │               │ & Xbox Price Grounding  │
-├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
-│ Tier 3       │ gemini-4-argon          │ ~2.2–4.8 s   │ Premium (~15x)│ Full Squad Rebuild,     │
-│ (Deep)       │ (ThinkingLevel.HIGH)    │              │               │ Multi-Card Investment AI│
-├──────────────┼─────────────────────────┼──────────────┼───────────────┼─────────────────────────┤
-│ Audio / Live │ gemini-3.5-transcribe   │ ~300–550 ms  │ Audio / Stream│ Push-to-Talk Dictation  │
-│ Voice Tiers  │ & gemini-3.8-live       │ Sub-second   │ Rate          │ & Real-Time Voice HUD   │
-└──────────────┴─────────────────────────┴──────────────┴───────────────┴─────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                APPLICATION ARCHITECTURE                                 │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+ ┌───────────────────────────────────────────────────────────────────────────────────────┐
+ │                                   CLIENT (React 19)                                   │
+ │                                                                                       │
+ │  ┌─────────────────────┐   ┌───────────────────────┐   ┌───────────────────────────┐  │
+ │  │   Club Sync Modal   │   │ Tactical Director Tab │   │     3D Pitch Viewport     │  │
+ │  │ ┌─────────────────┐ │   │ ┌───────────────────┐ │   │ ┌───────────────────────┐ │  │
+ │  │ │ JSON Export Btn │ │   │ │ Model Selector    │ │   │ │ Three.js Canvas       │ │  │
+ │  │ │ (Blob download) │ │   │ │ - gemini-4-argon  │ │   │ │ - PBR Turf & Lighting │ │  │
+ │  │ └─────────────────┘ │   │ │ - gemini-3.8-flash│ │   │ │ - 11 Card Totems      │ │  │
+ │  └──────────┬──────────┘   │ │ - 3.5-flash-lite  │ │   │ │ - Collapsible HUD     │ │  │
+ │             │              │ └───────────────────┘ │   │ └───────────────────────┘ │  │
+ │             ▼              │ ┌───────────────────┐ │   └───────────────────────────┘  │
+ │   Browser Download Trigger │ │ Push-to-Talk Mic  │ │                                  │
+ │   fc27_club_state.json     │ └───────────────────┘ │   ┌───────────────────────────┐  │
+ │   (application/json)       └───────────┬───────────┘   │ Live Audio HUD            │  │
+ │                                        │               │ - gemini-3.8-live session │  │
+ └────────────────────────────────────────┼───────────────┴─────────────┬─────────────┘  │
+                                          │                             │                │
+                                          ▼                             ▼                │
+ ┌────────────────────────────────────────────────────────────────────────────────────┐  │
+ │                              SERVER PROXY (`server.ts`)                            │  │
+ │                                                                                    │  │
+ │   • POST /api/gemini/chat-stream  ──> GoogleGenAI SDK (modelRouter: argon/flash)   │  │
+ │   • POST /api/gemini/transcribe   ──> gemini-3.5-transcribe                        │  │
+ │   • WS   /live                    ──> ai.live.connect(model: "gemini-3.8-live")    │  │
+ └────────────────────────────────────────────────────────────────────────────────────┘  │
+                                          │                                              │
+                                          ▼                                              │
+ ┌────────────────────────────────────────────────────────────────────────────────────┐  │
+ │                            PERSISTENCE & VERIFIED DATA                             │  │
+ │   • Firestore Database: ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607  │  │
+ │   • Local Storage Fallback & Offline JSON State                                    │  │
+ └────────────────────────────────────────────────────────────────────────────────────┘  │
+```
+
+### Models Used & Specific Roles
+1. **`gemini-4-argon`**: High-complexity tactical modeling (`ThinkingLevel.HIGH`), squad chemistry overhauls, and deep multi-variable SBC/Evolution cost-benefit solvers.
+2. **`gemini-3.8-flash`**: General tactical queries, conversational chat feed, and live grounding via `googleSearch` for current Ultimate Scream Team 1 market values.
+3. **`gemini-3.5-flash-lite`**: High-frequency, sub-300ms calculations (e.g. quick single-player chemistry deltas, immediate tax verifications).
+4. **`gemini-3.5-transcribe`**: Unary and streaming speech-to-text for all push-to-talk mic buttons.
+5. **`gemini-3.8-live`**: Bidirectional real-time voice streaming over WebSocket for the Live Audio HUD coach.
+
+### Data Format for JSON Backup Export
+```json
+{
+  "exportMetadata": {
+    "app": "FC 27 UT App",
+    "version": "1.0.0",
+    "platform": "Xbox Series S",
+    "timestamp": "2026-10-25T18:00:00.000Z"
+  },
+  "clubState": {
+    "coins": 35000,
+    "clubName": null,
+    "fifaPoints": null,
+    "rivalsDivision": null,
+    "dailySp": null,
+    "galleryLevel": null
+  },
+  "squad": {
+    "formation": "4-2-1-3",
+    "startingXI": [],
+    "chemistryScore": 33
+  },
+  "inventory": {
+    "ownedCatalogPlayers": [],
+    "customPlayers": [],
+    "duplicateStorage": []
+  },
+  "investmentPortfolio": []
+}
 ```
 
 ---
 
-## 3. User Experience & Visual Design
+## 5. Planned Execution Steps
 
-### A. My Squad & Club Tracker (`CLUB & SQUAD`)
-- **Interactive Starting XI Pitch & Club Roster**:
-  - Slot your owned cards into your active formation (or dictate them quickly via **`gemini-3.5-transcribe`** Push-to-Talk). Unfilled slots remain cleanly blank (`—`) with zero guessing.
-  - Instantly flags your **Weakest Squad Links** and highlights which live **Ultimate Scream SBC (`85 Moore`, `85 Otamendi`)**, **Objective (`87 Jill Scott CB/CDM/CM`, `87 Verón CM`)**, **Evolution**, or **Market Buy ($\le 35,000$ Coins)** provides the highest Meta Score upgrade.
-
-### B. Split & Ranked SBC + Objectives Hub (`DUAL SBCS`)
-- **View Switcher & Live Sync Bar**:
-  - Button to **"Sync Live FC 27 SBCs & Objectives @ T=0 (`gemini-3.8-flash` + Search)"** so the board always reflects the exact day's 18:00 UK content drop.
-- **Column 1: Top 5 Ranked Player SBCs (Ranked `#1` to `#5` by Worth-It Score)**:
-  - Features active **Ultimate Scream Team 1 Player SBCs** (`85 Bobby Moore`, `85 Nicolás Otamendi`, plus live promo Player SBCs).
-  - Each card row displays:
-    - **Rank & Worth-It Score (`0–100`)**: Calculated from Xbox Series S coin price vs. meta performance, Role++ quality, and chemistry links.
-    - **Live Expiry Countdown**: Exact `Days : Hours : Minutes` remaining.
-    - **Xbox Series S Cost & Club Fodder Offset**: Shows full market cost alongside your net coin cost after applying your logged untradeable fodder / duplicate storage.
-    - **Squad Fit Verdict**: Shows whether the player improves your Starting XI (`STARTER UPGRADE`, `SUPER SUB`, or `SKIP`).
-- **Column 2: Top 5 Ranked Upgrade & Gamble SBCs (Ranked `#1` to `#5` by ROI)**:
-  - Ranks repeatable and limited upgrade SBCs (e.g., *Ultimate Scream 83+ Double Upgrade*, *80+ Player Pick (1 of 3)*, *Max 87 Hero/Promo Upgrade*, *Daily Gold Upgrade*, *84+ x5 Upgrade*).
-  - Evaluates **Pack Weight / Expected Return vs. Cost** and highlights **Zero-Coin Duplicate Storage Burns** utilizing `1.25x` / `1.50x` Holographic score multipliers.
-- **Column 3: Live Free Objectives Tracker (`87 Jill Scott` & `87 Verón`)**:
-  - Tracks live playable Objectives (`87 Jill Scott` with `CB / CDM / CM` versatility, `87 Juan Sebastián Verón CM`), showing XP/task requirements, time remaining, and why they save you liquid coins over paid SBCs.
-
-### C. Ultimate Scream Team 1 Live Promo & Console Investment Tracker (`INVESTMENTS & MARKET`)
-- **Ultimate Scream Team 1 Live Roster Catalog**:
-  - Filterable by budget (`All Ultimate Scream` vs. `Affordable Under 35,000 Coins` vs. `High-Tier Meta`):
-    - **Headliners**: `90 Raphinha`, `89 Cristiano Ronaldo`, `89 Gianfranco Zola`, `88 Szoboszlai`, `88 Jaap Stam`, `87 Fabinho`, `87 Cole Palmer`, `87 Mandžukić`.
-    - **Mid-Tier & Budget Beasts (35k Coin Target Zone)**: `86 Kondogbia`, `86 Çalhanoğlu`, `86 Vobian`, `86 Tolisso`, `86 Le Fée`, `86 Fabinho`, `85 Alonso`, `85 Chong`, `85 Lukeba`, `85 Flint`, `85 El Mala`, `83 Tverskov`.
-- **Console Investment Logger & Gemini Transfer Alerts**:
-  - Log player acquisitions with automatic **5% EA Tax Break-Even (`Buy / 0.95`)**, quantity, and target sell price.
-  - Run **Gemini Market Trend Analysis** to receive actionable `BUY WINDOW`, `HOLD`, or `SELL BEFORE 18:00 DROP` transfer alerts.
-
-### D. Standalone Tactical Command Tab, Live Audio HUD & Push-to-Talk
-- **Standalone `TACTICAL COMMAND` Tab**: Multi-turn chat interface with scrollable history, tactical role personas, and complexity routing across **`gemini-3.5-flash-lite`**, **`gemini-3.8-flash` (+ Search)**, and **`gemini-4-argon`**.
-- **Interactive Live Audio HUD (`gemini-3.8-live`)**: Top-bar real-time voice coaching session with live waveform visualizer.
-- **Push-to-Talk Mic Buttons (`gemini-3.5-transcribe`)**: Embedded in all search bars, squad slot inputs, investment forms, and the Club Sync modal.
-
----
-
-## 4. Technical Architecture & Data Flow
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│        LIVE TEMPORAL & PROMO ENGINE (T = 0 · Oct 2026 · Ultimate Scream Team 1)        │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│  • Active Promo Catalog: 90 Raphinha, 89 CR7, 89 Zola, 88 Szoboszlai, 88 Stam,         │
-│    87 Palmer, 87 Fabinho, 87 Mandžukić, 86 Kondogbia, 86 Çalhanoğlu, 86 Vobian,        │
-│    86 Tolisso, 86 Le Fée, 85 Alonso, 85 Chong, 85 Lukeba, 85 Flint, 85 El Mala,        │
-│    83 Tverskov                                                                         │
-│  • Active Player SBCs: 85 Moore, 85 Otamendi + Top 5 Ranked Player SBCs                │
-│  • Active Upgrade SBCs: Top 5 Ranked Repeatable/Upgrade SBCs                           │
-│  • Active Objectives: 87 Jill Scott (CB/CDM/CM), 87 Verón (CM)                         │
-└──────────────────────────────────────────┬─────────────────────────────────────────────┘
-                                           │
-                                           ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│           5-TIER GEMINI SERVER ROUTER (`server.ts` + `@google/genai` SDK)              │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│  • Tier 1 Fast: `gemini-3.5-flash-lite` (Replaces 3.1-flash-lite across all routes)    │
-│  • Tier 2 Grounded: `gemini-3.8-flash` + `googleSearch` (Live SBC/Promo/Price sync)    │
-│  • Tier 3 Deep: `gemini-4-argon` (`ThinkingLevel.HIGH` for Squad & Portfolio AI)       │
-│  • Audio Transcription: `gemini-3.5-transcribe` (`/api/gemini/transcribe`)             │
-│  • Live Voice API: `gemini-3.8-live` (`/api/gemini/live-session` + Web Audio HUD)      │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Planned Execution Steps:
-1. **Model Router Upgrade (`gemini-3.5-flash-lite`)**: Update `modelRouter.ts` and `server.ts` so Tier 1 uses `gemini-3.5-flash-lite` everywhere.
-2. **Ultimate Scream Team 1 Catalog, Ranked SBCs & Objectives Data (`fc27ConsoleData.ts`)**:
-   - Add all Ultimate Scream Team 1 players, `85 Moore` & `85 Otamendi` Player SBCs, Top 5 Player SBCs vs. Top 5 Upgrade SBCs with live countdown timers and Worth-It scores, and `87 Jill Scott (CB/CDM/CM)` & `87 Verón (CM)` Objectives.
-3. **Split Ranked SBC & Objectives View + Live Squad Tracker**:
-   - Upgrade the SBC tab to split **Top 5 Player SBCs**, **Top 5 Upgrade SBCs**, and **Live Objectives**, ranked by Worth-It Score and linked to your Starting XI & `35,000` Coin budget.
-4. **Investment Tracker, Standalone Tactical Command Tab, Live Audio HUD & Push-to-Talk**:
-   - Implement the full Console Investment Tracker with 5% tax math and Gemini transfer alerts, the standalone `TACTICAL COMMAND` multi-turn chat tab, the `LiveAudioHud`, and reusable `PushToTalkButton` components.
-5. **Verification**: Run `lint_applet` and `compile_applet` to verify zero errors.
+1. **Install Dependencies**: Install `three` and `@types/three` using `install_applet_package`.
+2. **Club Sync Modal JSON Export Feature**:
+   - Implement `handleExportClubDataJson` in `App.tsx` / `ClubSyncModal`: create a formatted JSON string, generate a Blob with `type: 'application/json'`, trigger browser download with timestamped filename `fc27_club_state_<YYYYMMDD_HHMMSS>.json`, and show visual feedback.
+   - Add the "Export Club Backup JSON" button to both the Launch Sync Modal and the standalone Club Sync view.
+3. **Three.js 3D Pitch Component (`src/components/ThreePitchVisualizer.tsx`)**:
+   - Build a procedural 3D soccer pitch with PBR turf, grass shear stripes, white pitch markings, and 4-corner floodlights.
+   - Assemble 11 procedural card pedestals positioned according to the active formation (4-2-1-3), with illuminated Role++ beacons.
+   - Add `RoomEnvironment` studio lighting, smooth damping controls (`OrbitControls` + lerping), software-WebGL fallback guards, and a collapsible bottom dock HUD.
+   - Add a 3D Pitch toggle button to the `MY_SQUAD` view allowing seamless switching between the 2D tactical board and the 3D stadium view.
+4. **AI Tactical Director Tab Prototype (`src/components/TacticalChatTab.tsx`)**:
+   - Enhance the Tactical Command Tab with an explicit **Model Selector** (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`), tactical persona filters, and live token latency/routing telemetry.
+   - Verify push-to-talk integration with `gemini-3.5-transcribe` and Live Audio HUD integration with `gemini-3.8-live`.
+5. **Verification & Build Validation**:
+   - Run `lint_applet` (`tsc --noEmit`) to verify strict type correctness.
+   - Run `compile_applet` to confirm the production bundle compiles with 0 errors.

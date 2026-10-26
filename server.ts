@@ -1,9 +1,11 @@
 import 'dotenv/config';
 import express from 'express';
+import { createServer as createHttpServer } from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI, ThinkingLevel, Type } from '@google/genai';
+import { WebSocketServer } from 'ws';
+import { GoogleGenAI, LiveServerMessage, Modality, ThinkingLevel, Type } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -106,7 +108,7 @@ export type RoutingOverrideMode =
   | 'TIER_3_ARGON_HIGH';
 
 interface ResolvedRouteDecision {
-  model: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon';
+  model: 'gemini-3.5-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon';
   tierLabel: string;
   useSearch: boolean;
   useHighThinking: boolean;
@@ -121,12 +123,12 @@ function resolveSmartModelRoute(
 ): ResolvedRouteDecision {
   if (overrideMode === 'TIER_1_LITE') {
     return {
-      model: 'gemini-3.1-flash-lite',
-      tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Manual Override)',
+      model: 'gemini-3.5-flash-lite',
+      tierLabel: 'Tier 1 · gemini-3.5-flash-lite (Manual Override)',
       useSearch: false,
       useHighThinking: false,
       routingReason:
-        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~180-350ms TTFT, 1x baseline cost).',
+        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~200-350ms TTFT, 1x baseline cost).',
       costBenchmarkSummary: 'Lowest Cost (1x) · Sub-350ms Latency',
     };
   }
@@ -165,14 +167,10 @@ function resolveSmartModelRoute(
     lower.includes('synthesize') ||
     lower.includes('synthesis') ||
     lower.includes('optimize') ||
-    lower.includes('35,000') ||
-    lower.includes('35k') ||
-    lower.includes('squad') ||
-    lower.includes('sbc') ||
-    lower.includes('forecast') ||
+    lower.includes('quad-action') ||
+    lower.includes('portfolio') ||
     lower.includes('arbitrage') ||
-    lower.includes('compare') ||
-    queryText.length > 160;
+    queryText.length > 180;
 
   const needsLiveWebVerification =
     lower.includes('price') ||
@@ -184,7 +182,10 @@ function resolveSmartModelRoute(
     lower.includes('drop') ||
     lower.includes('patch') ||
     lower.includes('title update') ||
-    lower.includes('antigravity') ||
+    lower.includes('ultimate scream') ||
+    lower.includes('scream') ||
+    lower.includes('sbc') ||
+    lower.includes('objective') ||
     lower.includes('verify') ||
     lower.includes('current') ||
     lower.includes('live');
@@ -196,7 +197,7 @@ function resolveSmartModelRoute(
       useSearch: false,
       useHighThinking: true,
       routingReason:
-        'Auto-routed to Tier 3 (Gemini 4 Argon HIGH): Multi-constraint tactical/financial optimization detected (35k Xbox Series S budget / Evolution branching / Role++ synthesis). Selected for highest constraint-satisfaction benchmark accuracy.',
+        'Auto-routed to Tier 3 (Gemini 4 Argon HIGH): Multi-constraint tactical/financial optimization detected (35k Xbox Series S budget / Evolution branching / Role++ synthesis).',
       costBenchmarkSummary: 'Tier 3 Frontier Reasoning · ThinkingLevel.HIGH',
     };
   }
@@ -208,18 +209,18 @@ function resolveSmartModelRoute(
       useSearch: true,
       useHighThinking: false,
       routingReason:
-        'Auto-routed to Tier 2 (Gemini 3.8 Flash + Search): Live T=0 FC 27 Xbox Series S market/patch/transfer verification required. Saves ~80% token cost and ~3.5s latency vs. Tier 3 Argon while grounding in live web data.',
+        'Auto-routed to Tier 2 (Gemini 3.8 Flash + Search): Live T=0 FC 27 Xbox Series S market/Ultimate Scream/SBC verification required.',
       costBenchmarkSummary: 'Tier 2 Balanced (~3x Cost) · Live Search Grounded',
     };
   }
 
   return {
-    model: 'gemini-3.1-flash-lite',
-    tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Auto-Routed · Ultra-Fast)',
+    model: 'gemini-3.5-flash-lite',
+    tierLabel: 'Tier 1 · gemini-3.5-flash-lite (Auto-Routed · Ultra-Fast)',
     useSearch: false,
     useHighThinking: false,
     routingReason:
-      'Auto-routed to Tier 1 (Gemini 3.1 Flash Lite): Single-step FC 27 mechanics lookup or structured parsing. Delivers sub-350ms latency at ~1/15th the cost of Tier 3 Argon.',
+      'Auto-routed to Tier 1 (Gemini 3.5 Flash Lite): Single-step FC 27 mechanics lookup or structured parsing. Delivers sub-350ms latency at ~1/15th the cost of Tier 3 Argon.',
     costBenchmarkSummary: 'Tier 1 Ultra-Low Cost (1x) · Sub-350ms Target',
   };
 }
@@ -571,6 +572,7 @@ ${resolvedQuery}`;
         routingMode,
         selectedModel,
         useSearchGrounding,
+        rolePersonaInstruction,
         clubContext,
         clientT0,
       } = req.body || {};
@@ -583,7 +585,8 @@ ${resolvedQuery}`;
       // and direct model selection
       let effectiveOverride: RoutingOverrideMode = routingMode || 'AUTO';
       if (!routingMode && selectedModel) {
-        if (selectedModel === 'gemini-3.1-flash-lite') effectiveOverride = 'TIER_1_LITE';
+        if (selectedModel === 'gemini-3.5-flash-lite' || selectedModel === 'gemini-3.1-flash-lite')
+          effectiveOverride = 'TIER_1_LITE';
         else if (selectedModel === 'gemini-3.8-flash') effectiveOverride = 'TIER_2_FLASH_SEARCH';
         else if (selectedModel === 'gemini-4-argon') effectiveOverride = 'TIER_3_ARGON_HIGH';
       }
@@ -612,8 +615,11 @@ ${resolvedQuery}`;
           }))
         : [{ role: 'user', parts: [{ text: `${clubContextPrefix}${lastUserMessage}` }] }];
 
+      const baseSys = getCoreSystemInstruction(clientT0);
       const config: Record<string, any> = {
-        systemInstruction: getCoreSystemInstruction(clientT0),
+        systemInstruction: rolePersonaInstruction
+          ? `${baseSys}\n\nACTIVE SPECIALIST ROLE PERSONA:\n${rolePersonaInstruction}`
+          : baseSys,
       };
 
       if (route.useHighThinking) {
@@ -629,10 +635,21 @@ ${resolvedQuery}`;
         config,
       });
 
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      const sources: { title: string; uri: string }[] = [];
+      if (Array.isArray(chunks)) {
+        for (const c of chunks) {
+          if (c.web?.uri && c.web?.title) {
+            sources.push({ title: c.web.title, uri: c.web.uri });
+          }
+        }
+      }
+
       const latencyMs = Math.round(performance.now() - startMs);
       res.json({
         text: response.text || 'No response generated.',
         modelUsed: route.model,
+        sources,
         t0Anchor: buildServerT0Context(),
         routingTelemetry: {
           tierLabel: route.tierLabel,
@@ -646,6 +663,146 @@ ${resolvedQuery}`;
       console.error('Error in /api/gemini/chat:', error);
       res.status(500).json({
         error: error?.message || 'Chat request failed.',
+      });
+    }
+  });
+
+  /**
+   * 4b. Intelligent Console Market Trend & Transfer Alert Endpoint (/api/gemini/market-analysis)
+   * Analyzes Xbox Series S market trends, Ultimate Scream Team 1 price swings, and user investments.
+   */
+  app.post('/api/gemini/market-analysis', async (req, res) => {
+    const startMs = performance.now();
+    try {
+      const { clientT0, userCoins, activeInvestments, analysisTier, clubContext } = req.body || {};
+      const resolvedCoins = typeof userCoins === 'number' ? userCoins : 35000;
+      const ai = getAiClient();
+
+      let modelToUse: 'gemini-3.5-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon' =
+        'gemini-3.8-flash';
+      let tierLabel = 'Tier 2 · gemini-3.8-flash + Google Search';
+      let routingReason =
+        'Grounded live search for EA Sports FC 27 Ultimate Scream Team 1 & Xbox Series S fodder price swings.';
+      const config: Record<string, any> = {
+        systemInstruction: getCoreSystemInstruction(clientT0),
+      };
+
+      if (analysisTier === 'ARGON_DEEP') {
+        modelToUse = 'gemini-4-argon';
+        tierLabel = 'Tier 3 · gemini-4-argon (ThinkingLevel.HIGH)';
+        routingReason =
+          'Deep multi-constraint portfolio risk & exit window forecast with 5% EA Tax protection.';
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
+      } else if (analysisTier === 'LITE_FAST') {
+        modelToUse = 'gemini-3.5-flash-lite';
+        tierLabel = 'Tier 1 · gemini-3.5-flash-lite (Fast Check)';
+        routingReason = 'Sub-350ms fast market & 5% EA tax audit.';
+      } else {
+        config.tools = [{ googleSearch: {} }];
+      }
+
+      const prompt = `At British Time T=0 (${clientT0 || 'October 2026 — Ultimate Scream Team 1'}):
+Analyze the EA Sports FC 27 Ultimate Team XBOX SERIES S Console Market for a trader with ${resolvedCoins.toLocaleString()} liquid Coins.
+User Logged Investments: ${JSON.stringify(activeInvestments || [])}
+User Club Context: ${JSON.stringify(clubContext || { coins: resolvedCoins })}
+
+Active Promo Context: Ultimate Scream Team 1 (90 Raphinha, 89 Cristiano Ronaldo, 89 Zola, 88 Szoboszlai, 88 Jaap Stam, 87 Palmer, 87 Fabinho, 87 Mandžukić, 86 Kondogbia, 86 Çalhanoğlu, 86 Vobian, 86 Tolisso, 86 Le Fée, 85 Alonso, 85 Chong, 85 Lukeba, 85 Flint, 85 El Mala, 83 Tverskov; Player SBCs: 85 Otamendi & 85 Bobby Moore; Free Objectives: 87 Jill Scott CB/CDM/CM & 87 Verón CM).
+
+Provide:
+1. Executive Market Trend Summary (how 18:00 UK supply and Ultimate Scream SBCs affect Xbox Series S prices today).
+2. Top 3 Profitable Trading Opportunities under ${resolvedCoins.toLocaleString()} Coins (exact Xbox Series S buy price, target sell price, and net profit after 5% EA tax).
+3. Actionable Transfer Alerts for any logged investments (BUY OPPORTUNITY, HOLD, TAKE PROFIT, or PANIC DROP WARNING).`;
+
+      const response = await ai.models.generateContent({
+        model: modelToUse,
+        contents: prompt,
+        config,
+      });
+
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      const sources: { title: string; uri: string }[] = [];
+      if (Array.isArray(chunks)) {
+        for (const c of chunks) {
+          if (c.web?.uri && c.web?.title) {
+            sources.push({ title: c.web.title, uri: c.web.uri });
+          }
+        }
+      }
+
+      const latencyMs = Math.round(performance.now() - startMs);
+      res.json({
+        marketSummary: response.text || 'Market trend scan complete.',
+        sources,
+        routingTelemetry: {
+          tierLabel,
+          modelUsed: modelToUse,
+          latencyMs,
+          routingReason,
+        },
+      });
+    } catch (error: any) {
+      console.error('Error in /api/gemini/market-analysis:', error);
+      res.status(500).json({
+        error: error?.message || 'Market trend analysis failed.',
+      });
+    }
+  });
+
+  /**
+   * 4c. Dynamic Live SBC & Objectives Ranking Endpoint (/api/gemini/fetch-live-sbcs)
+   * Uses gemini-3.8-flash + googleSearch to rank the Top 5 Player SBCs vs Top 5 Upgrade SBCs & Live Objectives at T=0.
+   */
+  app.post('/api/gemini/fetch-live-sbcs', async (req, res) => {
+    const startMs = performance.now();
+    try {
+      const { clientT0, userCoins, clubContext } = req.body || {};
+      const resolvedCoins = typeof userCoins === 'number' ? userCoins : 35000;
+      const ai = getAiClient();
+
+      const prompt = `At British Time T=0 (${clientT0 || 'October 2026 — Ultimate Scream Team 1'}):
+Search and rank the currently available EA Sports FC 27 Ultimate Team SBCs and Objectives on Xbox Series S for a player with ${resolvedCoins.toLocaleString()} Coins.
+User Club Context: ${JSON.stringify(clubContext || { coins: resolvedCoins })}
+
+Split your analysis into:
+1. TOP 5 CURRENTLY AVAILABLE PLAYER SBCs (Ranked #1 to #5 by Worth-It Value Score, including 85 Nicolás Otamendi Ultimate Scream SBC, 85 Bobby Moore Ultimate Scream Icon SBC, etc. State exact Xbox Series S cost, time remaining, and whether to complete or skip).
+2. TOP 5 CURRENTLY AVAILABLE UPGRADE SBCs (Ranked #1 to #5 by ROI & Duplicate Storage Fodder efficiency, including 81+ Player Pick, 83+ Double Upgrade, Party Bag Guarantee, etc.).
+3. MUST-GRIND FREE OBJECTIVES (Highlighting 87 Jill Scott CB/CDM/CM Objective and 87 Juan Sebastián Verón CM Objective).`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          systemInstruction: getCoreSystemInstruction(clientT0),
+          tools: [{ googleSearch: {} }],
+        },
+      });
+
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      const sources: { title: string; uri: string }[] = [];
+      if (Array.isArray(chunks)) {
+        for (const c of chunks) {
+          if (c.web?.uri && c.web?.title) {
+            sources.push({ title: c.web.title, uri: c.web.uri });
+          }
+        }
+      }
+
+      const latencyMs = Math.round(performance.now() - startMs);
+      res.json({
+        sbcReportText: response.text || 'Live SBC & Objectives ranking completed.',
+        sources,
+        routingTelemetry: {
+          tierLabel: 'Tier 2 · gemini-3.8-flash + Google Search Grounding',
+          modelUsed: 'gemini-3.8-flash',
+          latencyMs,
+          routingReason:
+            'Grounded live check of Top 5 Player SBCs vs Top 5 Upgrade SBCs and Ultimate Scream Objectives at T=0.',
+        },
+      });
+    } catch (error: any) {
+      console.error('Error in /api/gemini/fetch-live-sbcs:', error);
+      res.status(500).json({
+        error: error?.message || 'Failed to fetch live SBC rankings.',
       });
     }
   });
@@ -810,7 +967,97 @@ User Prompt: ${
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const httpServer = createHttpServer(app);
+
+  // 7. Real-Time Voice Conversation Bridge via Gemini Live API (gemini-3.8-live)
+  const wss = new WebSocketServer({ server: httpServer, path: '/live' });
+
+  wss.on('connection', async (clientWs) => {
+    let sessionPromise: Promise<any> | null = null;
+    try {
+      const ai = getAiClient();
+      sessionPromise = ai.live.connect({
+        model: 'gemini-3.8-live',
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
+          },
+          systemInstruction: getCoreSystemInstruction(),
+        },
+        callbacks: {
+          onmessage: (message: LiveServerMessage) => {
+            const parts = message.serverContent?.modelTurn?.parts;
+            if (Array.isArray(parts)) {
+              for (const part of parts) {
+                if (part.inlineData?.data && clientWs.readyState === clientWs.OPEN) {
+                  clientWs.send(JSON.stringify({ audio: part.inlineData.data }));
+                }
+                if (part.text && clientWs.readyState === clientWs.OPEN) {
+                  clientWs.send(JSON.stringify({ transcript: `AI: ${part.text}` }));
+                }
+              }
+            }
+            if (message.serverContent?.interrupted && clientWs.readyState === clientWs.OPEN) {
+              clientWs.send(JSON.stringify({ interrupted: true }));
+            }
+          },
+          onerror: (err: any) => {
+            if (clientWs.readyState === clientWs.OPEN) {
+              clientWs.send(
+                JSON.stringify({ error: err?.message || 'Gemini Live stream error.' })
+              );
+            }
+          },
+        },
+      });
+
+      clientWs.on('message', (rawData) => {
+        if (!sessionPromise) return;
+        sessionPromise
+          .then((session) => {
+            try {
+              const parsed = JSON.parse(rawData.toString());
+              if (parsed.audio) {
+                session.sendRealtimeInput({
+                  audio: { data: parsed.audio, mimeType: 'audio/pcm;rate=16000' },
+                });
+              } else if (parsed.text) {
+                session.sendRealtimeInput({
+                  text: parsed.text,
+                });
+              }
+            } catch (e) {
+              console.error('Error forwarding message to Live session:', e);
+            }
+          })
+          .catch((e) => {
+            console.error('Live session connection error:', e);
+          });
+      });
+
+      clientWs.on('close', () => {
+        if (sessionPromise) {
+          sessionPromise
+            .then((session) => {
+              try {
+                session.close();
+              } catch {
+                // ignore
+              }
+            })
+            .catch(() => {});
+        }
+      });
+    } catch (err: any) {
+      console.error('Failed to initialize gemini-3.8-live session:', err);
+      if (clientWs.readyState === clientWs.OPEN) {
+        clientWs.send(JSON.stringify({ error: err?.message || 'Live API failed to connect.' }));
+      }
+    }
+  });
+
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`FC 27 UT App (Xbox Series S Console Edition) listening on http://0.0.0.0:${PORT}`);
   });
 }
