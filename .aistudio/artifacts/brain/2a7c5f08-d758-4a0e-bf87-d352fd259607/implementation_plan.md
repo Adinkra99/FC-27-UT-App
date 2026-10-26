@@ -1,6 +1,6 @@
-# Google Search Grounding, Microphone Audio Transcription & Multi-Tier Gemini Chatbot Integration Plan
+# Live FUTBIN & FUT.GG Dynamic Database Search & Interactive Chemistry Style Meta Boost Tool Plan
 
-An end-to-end integration plan incorporating **Google Search live data grounding** (`gemini-3.8-flash`), **push-to-talk microphone audio transcription** (`gemini-3.5-transcribe`), and a **multi-turn Gemini Tactical Director chatbot** featuring tiered model routing (`gemini-4-argon`, `gemini-3.8-flash`, and `gemini-3.1-flash-lite`) into the EA Sports FC 27 Ultimate Team Console Assistant (Xbox Series S).
+An integrated enhancement plan introducing a **Live FUTBIN & FUT.GG Dynamic Database Search Engine with lowest Xbox Series S BIN synchronization** and an **Interactive Chemistry Style & Meta Boost Comparison Tool** calibrated to EA Sports FC 27 AcceleRATE 2.0 physics, 33/33 chemistry diamonds, and 31 Roles++.
 
 ---
 
@@ -8,59 +8,51 @@ An end-to-end integration plan incorporating **Google Search live data grounding
 
 > [!IMPORTANT]
 > **Confirmed User Decisions (Phase 1 Clarifications)**:
-> 1. **Chatbot Placement**: Incorporated in **both the Dedicated Tactical Command tab and the collapsible assistant drawer**, providing full-screen tactical analysis as well as quick sliding access from any tab without losing context.
-> 2. **Model Routing Strategy**: Implemented as **Smart auto-routing with an interactive manual model switcher**—automatically picking the optimal tier based on query complexity while letting the user explicitly lock into Frontier Reasoning (Argon), Grounded Live Meta (Flash + Search), or Lightning Speed (Flash Lite).
+> 1. **Next Primary Feature**: **Live FUTBIN and FUT.GG database search with lowest BIN sync**—enabling instant search across the verified FC 27 catalog and live Google Search grounding against FUTBIN and FUT.GG console cross-play market indices.
+> 2. **Core Prioritized Capability**: **Interactive chemistry style and meta boost comparison tool**—allowing players to simulate stat deltas (0–3 chemistry diamonds), test AcceleRATE 2.0 sprint curve transitions (e.g., Controlled to Controlled Lengthy), evaluate Role++ synergies, and compare styles side-by-side (e.g., Shadow vs. Anchor vs. Hunter).
 
-- **Confirmed Model Roster**:
-  - `gemini-4-argon`: Complex multi-constraint tactical modeling, full squad chemistry rebuilds, and multi-scenario trade calculations (`ThinkingLevel.HIGH`).
-  - `gemini-3.8-flash` (+ `googleSearch`): General conversational chat, real-time live promo/SBC grounding, Title Update #3.1 patch notes, and Xbox Series S market valuations.
-  - `gemini-3.1-flash-lite`: Ultra-fast (~200–350ms) low-latency lookups, instant player chemistry deltas, and 5% EA tax audits.
-  - `gemini-3.5-transcribe`: High-accuracy speech-to-text for microphone audio dictation across the chat input, investment logger, club sync, and Google Docs notes.
+- **Confirmed Architecture Additions**:
+  - **Live Database Sync Endpoint (`/api/database/sync-lowest-bin`)**: Powered by `gemini-3.8-flash` with `googleSearch` to verify real-time Xbox Series S lowest BINs, 24h market trends, and direct links to FUTBIN and FUT.GG card pages.
+  - **Deterministic Chemistry Boost Matrix Engine (`src/utils/fc27ChemistryEngine.ts`)**: Pure deterministic local calculation ($0.00 cost, <1ms) applying official FC 27 chemistry style stat multipliers (Hunter, Shadow, Anchor, Catalyst, Engine, Hawk, etc.) across 0, 1, 2, and 3 chemistry points.
+  - **Dynamic Database & Meta Lab View**: Integrated into the app navigation, featuring instant autocomplete, budget filtering (under 35,000 Coins), live BIN tickers, and the side-by-side comparison lab.
 
 ---
 
 ## 1. Overview & Core Concept
 
 - **What It Does**:
-  1. **Google Search Grounded Intelligence**: Delivers up-to-the-minute FC 27 console data (October 2026 Ultimate Scream Team 1 drop, live 18:00 UK market swings, Title Update #3.1 notes, and FotMob verified 2026/27 rosters) with clickable web citations.
-  2. **Hands-Free Audio Transcription**: Enables players to hold a push-to-talk microphone button on their console companion screen or laptop (ZenBook UX482) to dictate tactical queries, player trade entries, or club wallet changes directly into text.
-  3. **Multi-Turn Tactical Director Chat**: Maintains conversational history across turns with role personas (Meta Analyst, Budget Architect, Gegenpress Coach), transparent telemetry receipts (latency ms, model tier, cost factor), and full context injection (current 35k coins, Starting XI, and investment ledger).
-- **Target Audience**: Competitive FC 27 Ultimate Team console players who demand real-time transfer market accuracy and fast hands-free input.
-- **Key Value**: Eliminates outdated training-data hallucinations through live Google Search grounding, accelerates interaction with microphone audio transcription, and optimizes performance and cost through 3-tier model routing.
+  1. **Dynamic FUTBIN & FUT.GG Player Search**: Search any FC 27 player card by name, rating, position, club (2026/27 verified), or Role++, with real-time lowest BIN price verification on the Xbox Series S console market.
+  2. **Interactive Chemistry Style Comparison Lab**: Compare how different Chemistry Styles (Shadow, Hunter, Anchor, Engine, Catalyst, Hawk, etc.) modify a player's in-game stats across Pace, Shooting, Passing, Dribbling, Defending, and Physicality based on their active chemistry points (0–3 diamonds).
+  3. **AcceleRATE 2.0 & Role++ Dynamic Analysis**: Automatically computes whether adding a chemistry style shifts the player's sprint archetype (e.g., boosting Strength to push a Controlled player into Controlled Lengthy) and evaluates whether their assigned Role++ (e.g., Inside Forward++, Box-to-Box++, Deep-Lying Playmaker++) receives optimal stat scaling.
+  4. **Direct Workflow Integration**: One-click actions to "Add to Starting XI", "Log to Investment Tracker", "Export to Google Sheets Master Workbook", or "Analyze in Tactical Command".
+- **Target Audience**: Competitive FC 27 Ultimate Team console players optimizing player performance and transfer spending under a strict coin budget.
+- **Key Value**: Zero guessing on card stats and prices; instant mathematical visibility into optimal chemistry styles before committing coins on the transfer market.
 
 ---
 
 ## 2. User Experience & Visual Design
 
-### A. Dedicated Tactical Command Tab & Collapsible Drawer
-- **Dual Presentation**:
-  - **Full-Screen Tab (`TACTICAL_COMMAND`)**: Expansive multi-turn chat feed with rich markdown tables, model receipts, quick-prompt chips, and role persona switchers.
-  - **Collapsible Drawer (`AntigravityMcpAndChatDrawer`)**: Accessible from the bottom right or navigation bar on any view (Squad, Market, SBCs, Investments, Google Workspace Hub).
-- **Control Bar**:
-  - **Tier Selector Segmented Control**:
-    - `AUTO` — Smart classifier dynamically selects the best tier based on query keywords and complexity.
-    - `gemini-3.1-flash-lite` — *Lightning Speed (~250ms)*: Quick single-stat lookups and math checks.
-    - `gemini-3.8-flash` (+ Search) — *Live Meta Grounding (~750ms)*: Real-time web search for current SBCs, market drops, and Title Updates.
-    - `gemini-4-argon` — *Deep Tactical Reasoning (~3.2s)*: Multi-constraint chemistry optimization and branching evolution synthesis.
-  - **Tactical Persona Switcher**: *Meta Analyst*, *Budget Architect (35k)*, *Counter-Press Specialist*.
+### A. Dynamic Database Search & Live BIN Radar
+- **Search Bar & Filter Strip**:
+  - Instant client-side search with debounced live web sync trigger.
+  - Filters: *Position* (ATT, MID, DEF, GK), *Rating Range* (80–94), *Xbox Price Budget* (All, Under 35k Coins, Discard Floor), and *Roles++*.
+  - Live Sync Status Header: Displays current T=0 British Time, connected databases (*FUTBIN Console + FUT.GG*), and a 1-click "Refresh Market BINs" button.
+- **Player Card Grid & Data Badges**:
+  - High-density cards displaying OVR, 2026/27 club, 3 PlayStyles+ badges, and lowest Xbox BIN with green/red 24h price swing indicators.
+  - Direct external link icons to view the card on FUTBIN and FUT.GG.
 
-### B. Push-to-Talk Microphone Audio Transcription Flow
-- **Microphone Button (`PushToTalkButton`)**:
-  - Sleek button with microphone icon, tactile click, and pulsating recording indicator.
-  - Supports both click-to-toggle and press-and-hold recording modes.
-  - Captures audio via browser `MediaRecorder` (`audio/webm` or `audio/wav`), encodes to base64, and dispatches to `/api/gemini/transcribe`.
-  - Transcribes via `gemini-3.5-transcribe` and automatically inserts the text into the active chat input field or form input.
-- **Available Entry Points**:
-  - Chat input in Tactical Command & Drawer.
-  - Investment Acquisition Logger.
-  - Club Sync Onboarding Modal.
-  - Google Docs Note Appender.
-
-### C. Live Search Grounding Visual Citations
-- **Source Badges**:
-  - Below grounded model responses, a clean unboxed sources list displays verified web citations extracted from `groundingChunks` (e.g. *EA FC 27 Pitch Notes*, *FUTBIN Console Tracker*, *FotMob Transfers*).
-  - Clicking any citation opens the official web source in a secure new tab.
-  - Telemetry receipt displays model name, latency in milliseconds, and the search routing justification.
+### B. Interactive Chemistry Style & Meta Boost Comparison Tool
+- **Chemistry Diamond Controller**:
+  - Segmented selector for 0, 1, 2, or 3 Chemistry Diamonds, dynamically adjusting the boost intensity (0 = base stats; 1 = 33% boost; 2 = 66% boost; 3 = 100% full boost).
+- **Dual Comparison Columns (Style A vs. Style B)**:
+  - Select two chemistry styles side-by-side (e.g., **Shadow** vs. **Anchor** on Alejandro Balde, or **Hunter** vs. **Engine** on Lamine Yamal).
+  - Clean visual diff bars: Green `+8` badges and visual progress bars showing modified face and sub-stats (Acceleration, Sprint Speed, Interceptions, Defensive Awareness, Physical Strength).
+  - Net In-Game Rating (IG Rating) recalculation (e.g., 83 Balde -> 88 LB with Shadow vs. 87 LWB with Anchor).
+- **AcceleRATE 2.0 Shift Radar**:
+  - Badges displaying base archetype vs. boosted archetype (e.g., *Controlled -> Controlled Lengthy*).
+  - Explicit physical formula readout: `(Strength ${str} - Agility ${agi} = ${diff} >= 14, Height ${height}cm >= 181cm)`.
+- **Role++ Synergy Verdict**:
+  - Direct assessment of the player's 31 Role++ assignment under Title Update #3.1 (e.g., *"Shadow grants maximum +8 sprint speed and +8 tackle recovery, elevating Falseback++ recovery runs by +14%"*).
 
 ---
 
@@ -68,10 +60,9 @@ An end-to-end integration plan incorporating **Google Search live data grounding
 
 | Decision | Chosen Approach | Rationale | Alternatives Considered |
 | :--- | :--- | :--- | :--- |
-| **Chatbot Placement** | Full-screen Tactical Command tab + sliding drawer | Gives users deep focus for complex squad overhauls while allowing quick queries while browsing the market or squad. | Drawer only (too cramped for deep markdown tables) or Full-screen tab only (forces tab context switching). |
-| **Model Tier Strategy** | Smart Auto-routing with manual pill override | Eliminates user hesitation for common queries while offering power users absolute control over deep reasoning vs. fast lookup. | Fixed single model (either too slow for simple queries or incapable of frontier reasoning). |
-| **Search Grounding Trigger** | Automatic keyword detection + manual toggle | Ensures queries asking for live prices, promos, SBCs, or patch notes get live Google Search data without adding unnecessary latency to basic math lookups. | Always searching (adds 400-800ms to every query) or never searching (results in stale pre-training data). |
-| **Audio Processing** | Server-side `gemini-3.5-transcribe` via Express endpoint | Complies strictly with zero client-side API key exposure; delivers fast, highly accurate transcription of soccer jargon and player names. | Browser Web Speech API (inconsistent browser support, poor recognition of player surnames and gaming terms). |
+| **Chemistry Math Engine** | Deterministic local TypeScript calculator (`fc27ChemistryEngine.ts`) | Sub-millisecond calculation speed, zero token cost, 100% mathematical precision without LLM hallucinations. | Querying Gemini for every chemistry style change (unnecessary 800ms latency and token cost for static formulas). |
+| **Live BIN Verification** | Hybrid cached database + on-demand `gemini-3.8-flash` Google Search sync | Delivers instant UI responsiveness on search while providing verified, up-to-the-minute Xbox Series S prices on click. | Scraping without search grounding (blocked by anti-bot measures / CORS) or pure mock data (lacks real market fidelity). |
+| **Comparison Presentation** | Side-by-side dual style selector (Style A vs. Style B) | Allows competitive players to instantly resolve the most common dilemma in Ultimate Team (e.g. "Do I give Camavinga a Shadow or an Engine?"). | Single style preview only (requires toggling back and forth and memorizing numbers). |
 
 ---
 
@@ -85,60 +76,51 @@ An end-to-end integration plan incorporating **Google Search live data grounding
  ┌───────────────────────────────────────────────────────────────────────────────────────┐
  │                                   CLIENT (React 19)                                   │
  │                                                                                       │
- │  ┌───────────────────────────────────┐       ┌─────────────────────────────────────┐  │
- │  │      Tactical Command View        │       │     Collapsible Drawer Widget       │  │
- │  │  • Multi-turn Message Thread      │       │  • Floating Quick-Access Drawer     │  │
- │  │  • Model Tier Selector Strip      │       │  • Shared Chat History State        │  │
- │  │  • Tactical Persona Switcher      │       │  • Push-to-Talk Mic Dictation       │  │
- │  │  • Push-to-Talk Mic Dictation     │       │  • Telemetry Receipts & Sources     │  │
- │  │  • Grounded Web Sources Display   │       └──────────────────┬──────────────────┘  │
- │  └─────────────────┬─────────────────┘                          │                     │
- └────────────────────┼────────────────────────────────────────────┼─────────────────────┘
-                      │                                            │
-                      ▼                                            ▼
- ┌───────────────────────────────────────────────────────────────────────────────────────┐
- │                              SERVER PROXY (`server.ts`)                               │
- │                                                                                       │
- │  • POST /api/gemini/chat                                                              │
- │    ├─ gemini-3.1-flash-lite  (Fast checks, sub-350ms, ThinkingLevel.MINIMAL)          │
- │    ├─ gemini-3.8-flash       (General chat + { tools: [{ googleSearch: {} }] })       │
- │    └─ gemini-4-argon         (Deep reasoning, ThinkingLevel.HIGH)                     │
- │                                                                                       │
- │  • POST /api/gemini/transcribe                                                        │
- │    └─ gemini-3.5-transcribe  (Audio base64 input -> Text transcript)                  │
- │                                                                                       │
- │  • POST /api/gemini/discover-t0-versions & fetch-patch-notes                          │
- │    └─ gemini-3.8-flash       ({ tools: [{ googleSearch: {} }] } grounded at T=0)      │
- └────────────────────────────────────────┬──────────────────────────────────────────────┘
-                                          │
-                                          ▼
- ┌───────────────────────────────────────────────────────────────────────────────────────┐
- │                                 EXTERNAL SERVICES                                     │
- │  • Google GenAI SDK (@google/genai) with server-side API key                          │
- │  • Google Search Grounding Index                                                      │
- │  • Firestore Database: ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607       │
- └───────────────────────────────────────────────────────────────────────────────────────┘
+ │  ┌─────────────────────────────────────────────────────────────────────────────────┐  │
+ │  │               Dynamic Database & Meta Lab View (`DynamicDatabaseView`)          │  │
+ │  │                                                                                 │  │
+ │  │  ┌────────────────────────────────────┐  ┌───────────────────────────────────┐  │  │
+ │  │  │ Search & Live BIN Radar            │  │ Chemistry Style Comparison Lab    │  │  │
+ │  │  │ • Instant Catalog & Web Filter     │  │ • 0–3 Chemistry Diamonds Selector │  │  │
+ │  │  │ • Under 35k Coins Filter           │  │ • Dual Style Diff (A vs B)        │  │  │
+ │  │  │ • FUTBIN & FUT.GG Direct Links     │  │ • AcceleRATE 2.0 Transition Check │  │  │
+ │  │  │ • Lowest Xbox BIN Live Badge       │  │ • Role++ Synergy Evaluation       │  │  │
+ │  │  └─────────────────┬──────────────────┘  └─────────────────┬─────────────────┘  │  │
+ │  └────────────────────┼───────────────────────────────────────┼────────────────────┘  │
+ └───────────────────────┼───────────────────────────────────────┼───────────────────────┘
+                         │                                       │
+                         ▼                                       ▼
+ ┌──────────────────────────────────────────────────┐  ┌─────────────────────────────────┐
+ │            SERVER PROXY (`server.ts`)            │  │   LOCAL DETERMINISTIC ENGINE    │
+ │  POST /api/database/sync-lowest-bin              │  │   `fc27ChemistryEngine.ts`      │
+ │  • gemini-3.8-flash + googleSearch               │  │   • 24 Official Chem Styles     │
+ │  • Real-time Xbox Series S Lowest BIN Extraction │  │   • Sub-stat calculation (<1ms) │
+ │  • FUTBIN & FUT.GG Page Links                    │  │   • AcceleRATE 2.0 Shift Math   │
+ └──────────────────────────────────────────────────┘  └─────────────────────────────────┘
 ```
 
-### Models Used & Specific Roles
-1. **`gemini-4-argon`**: Frontier reasoning (`ThinkingLevel.HIGH`) for complex tactical chemistry rebuilds, multi-stage evolution paths, and portfolio risk calculations.
-2. **`gemini-3.8-flash`**: General chat, multi-turn reasoning, and real-time live grounding via `googleSearch` tool for current Ultimate Scream Team 1 prices, Title Update #3.1 notes, and 18:00 UK supply swings.
-3. **`gemini-3.1-flash-lite`**: Ultra-fast (~200–350ms) low-cost single-step queries, 5% EA tax verification, and instant chemistry delta checks.
-4. **`gemini-3.5-transcribe`**: Dedicated audio speech-to-text model for all microphone inputs.
+### Chemistry Styles Implemented
+- **Pace + Shot**: Hunter (+8 PAC, +8 SHO), Catalyst (+8 PAC, +8 PAS), Shadow (+8 PAC, +8 DEF), Hawk (+4 PAC, +8 SHO, +4 PHY), Engine (+4 PAC, +8 DRI, +8 PAS), Anchor (+4 PAC, +8 DEF, +8 PHY).
+- **Finishing & Attacking**: Sniper, Finisher, Deadeye, Marksman.
+- **Midfield & Defense**: Artist, Architect, Powerhouse, Maestro, Sentinel, Guardian, Gladiator, Backbone.
+- **Goalkeeper**: Glove, Shield, Cat, Wall.
 
 ---
 
 ## 5. Planned Execution Steps
 
-1. **Verify Server Endpoints in `server.ts`**:
-   - Ensure `/api/gemini/chat` properly supports the model router with `gemini-3.1-flash-lite`, `gemini-3.8-flash` (with `{ tools: [{ googleSearch: {} }] }` and grounding metadata extraction), and `gemini-4-argon` (`ThinkingLevel.HIGH`).
-   - Ensure `/api/gemini/transcribe` accurately routes base64 audio to `gemini-3.5-transcribe`.
-2. **Synchronize Tactical Command Tab & Assistant Drawer**:
-   - Update `TacticalChatTab.tsx` and `AntigravityMcpAndChatDrawer.tsx` to provide a unified experience: model switcher buttons (`gemini-3.1-flash-lite`, `gemini-3.8-flash + Search`, `gemini-4-argon`, and `AUTO`), role persona selection, and live token latency/source telemetry.
-   - Wire push-to-talk microphone button (`gemini-3.5-transcribe`) directly to the chat input in both views.
-   - Display grounded search citations cleanly with clickable web links.
-3. **Audio Dictation across Key App Forms**:
-   - Confirm `PushToTalkButton` works across the chat input, Investment Tracker, Club Sync Modal, and Google Docs note creator.
-4. **Verification & Build Validation**:
-   - Run `lint_applet` (`tsc --noEmit`) to verify zero type errors.
-   - Run `compile_applet` to confirm the production build compiles cleanly.
+1. **Build Deterministic Chemistry & Meta Engine (`src/utils/fc27ChemistryEngine.ts`)**:
+   - Define exact official FC 27 stat deltas for all 24 Chemistry Styles across 0, 1, 2, and 3 chemistry points.
+   - Implement AcceleRATE 2.0 physical archetype calculator (Explosive, Controlled Explosive, Controlled, Controlled Lengthy, Lengthy) based on Acceleration, Sprint Speed, Strength, Agility, and Height.
+   - Implement Role++ synergy scorer evaluating in-game rating boosts for each player's active role.
+2. **Implement Server-Side Live BIN Sync Endpoint (`server.ts`)**:
+   - Add `POST /api/database/sync-lowest-bin` using `gemini-3.8-flash` with `googleSearch` to verify real-time Xbox Series S prices and FUTBIN/FUT.GG URLs.
+3. **Build Dynamic Database & Meta Lab Component (`src/components/DynamicDatabaseView.tsx`)**:
+   - Fast responsive search bar with 35k budget filter and instant player card list.
+   - Dual-column Chemistry Style Comparison interface with live visual diff bars, AcceleRATE 2.0 badges, and Role++ synergy feedback.
+   - Action buttons: "Add to Starting XI", "Log to Investment Ledger", "Sync to Google Sheet", and "Open on FUTBIN / FUT.GG".
+4. **Integrate into Main App Navigation (`src/App.tsx`)**:
+   - Add "Dynamic Database & Chem Lab" to the desktop sidebar navigation and mobile pill bar.
+5. **Verification & Build Validation**:
+   - Run `lint_applet` (`tsc --noEmit`) to verify strict type safety.
+   - Run `compile_applet` to confirm the production build compiles cleanly with zero errors.

@@ -42,6 +42,7 @@ import { InvestmentTrackerTab, ConsoleInvestmentPosition } from './components/In
 import { TacticalChatTab } from './components/TacticalChatTab';
 import { SquadTrackerView } from './components/SquadTrackerView';
 import { GoogleWorkspaceHub } from './components/GoogleWorkspaceHub';
+import { DynamicDatabaseView } from './components/DynamicDatabaseView';
 import {
   Shield,
   TrendingUp,
@@ -71,12 +72,14 @@ import {
   Download,
   FileSpreadsheet,
   FileText,
+  Database,
 } from 'lucide-react';
 import type { User } from 'firebase/auth';
 
 type PrincipalDomain = 'MENUS' | 'GAMEPLAY';
 type ActiveTab =
   | 'MY_SQUAD'
+  | 'DYNAMIC_DATABASE'
   | 'CLUB_SYNC'
   | 'DUAL_SBCS'
   | 'EVOLUTIONS'
@@ -985,6 +988,12 @@ export function App() {
                   icon: Shield,
                 },
                 {
+                  id: 'DYNAMIC_DATABASE',
+                  label: 'FUTBIN & Chem Lab',
+                  domain: principalDomain,
+                  icon: Database,
+                },
+                {
                   id: 'CLUB_SYNC',
                   label: 'My Xbox Club (Zero-Guess)',
                   domain: 'MENUS' as PrincipalDomain,
@@ -1130,6 +1139,7 @@ export function App() {
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs font-semibold">
               {[
                 { id: 'MY_SQUAD', label: 'My Squad (4-2-1-3)' },
+                { id: 'DYNAMIC_DATABASE', label: 'FUTBIN & Chem' },
                 { id: 'DUAL_SBCS', label: 'Ranked SBCs' },
                 { id: 'EVOLUTIONS', label: 'Evos Hub' },
                 { id: 'CLUB_SYNC', label: 'My Club' },
@@ -2359,6 +2369,46 @@ export function App() {
               startingXI={players.slice(0, 11)}
               trackedInvestments={trackedInvestments}
               onOpenSyncModal={() => setShowLaunchSyncModal(true)}
+            />
+          )}
+
+          {/* TAB 8: DYNAMIC FUTBIN & FUT.GG DATABASE & CHEMISTRY STYLE LAB */}
+          {activeTab === 'DYNAMIC_DATABASE' && (
+            <DynamicDatabaseView
+              t0Anchor={t0Anchor}
+              catalogPlayers={players}
+              userCoins={coins}
+              onAddToSquad={(player) => {
+                setPlayers((prev) =>
+                  prev.map((p) => (p.id === player.id ? { ...p, inClubInventory: true } : p))
+                );
+                setActiveTab('MY_SQUAD');
+                setCloudStatusBanner(
+                  `Added ${player.rating} ${player.name} (${player.position}) to your active squad inventory.`
+                );
+              }}
+              onLogInvestment={(player, targetPrice) => {
+                setTrackedInvestments((prev) => [
+                  {
+                    id: `inv-${Date.now()}`,
+                    playerName: player.name,
+                    rating: player.rating,
+                    rarity: player.rarity,
+                    buyPrice: player.consolePrice,
+                    targetSellPrice: targetPrice,
+                    currentXboxPrice: player.consolePrice,
+                    quantity: 1,
+                    status: 'active',
+                    notes: 'Logged from FUTBIN & FUT.GG Database Lab.',
+                  },
+                  ...prev,
+                ]);
+                setActiveTab('INVESTMENTS');
+                setCloudStatusBanner(
+                  `Logged ${player.rating} ${player.name} to your Console Investment Portfolio.`
+                );
+              }}
+              onNavigateToTab={(tabId) => setActiveTab(tabId as ActiveTab)}
             />
           )}
         </main>
