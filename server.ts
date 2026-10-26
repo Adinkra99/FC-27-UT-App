@@ -108,7 +108,7 @@ export type RoutingOverrideMode =
   | 'TIER_3_ARGON_HIGH';
 
 interface ResolvedRouteDecision {
-  model: 'gemini-3.5-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon';
+  model: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon';
   tierLabel: string;
   useSearch: boolean;
   useHighThinking: boolean;
@@ -123,13 +123,13 @@ function resolveSmartModelRoute(
 ): ResolvedRouteDecision {
   if (overrideMode === 'TIER_1_LITE') {
     return {
-      model: 'gemini-3.5-flash-lite',
-      tierLabel: 'Tier 1 · gemini-3.5-flash-lite (Manual Override)',
+      model: 'gemini-3.1-flash-lite',
+      tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Manual Override)',
       useSearch: false,
       useHighThinking: false,
       routingReason:
-        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~200-350ms TTFT, 1x baseline cost).',
-      costBenchmarkSummary: 'Lowest Cost (1x) · Sub-350ms Latency',
+        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~150-300ms TTFT, lowest token cost).',
+      costBenchmarkSummary: 'Lowest Cost (1x) · Sub-300ms Latency',
     };
   }
 
@@ -215,13 +215,13 @@ function resolveSmartModelRoute(
   }
 
   return {
-    model: 'gemini-3.5-flash-lite',
-    tierLabel: 'Tier 1 · gemini-3.5-flash-lite (Auto-Routed · Ultra-Fast)',
+    model: 'gemini-3.1-flash-lite',
+    tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Auto-Routed · Ultra-Fast)',
     useSearch: false,
     useHighThinking: false,
     routingReason:
-      'Auto-routed to Tier 1 (Gemini 3.5 Flash Lite): Single-step FC 27 mechanics lookup or structured parsing. Delivers sub-350ms latency at ~1/15th the cost of Tier 3 Argon.',
-    costBenchmarkSummary: 'Tier 1 Ultra-Low Cost (1x) · Sub-350ms Target',
+      'Auto-routed to Tier 1 (Gemini 3.1 Flash Lite): Single-step FC 27 mechanics lookup or structured parsing. Delivers sub-300ms latency at minimal token cost.',
+    costBenchmarkSummary: 'Tier 1 Ultra-Low Cost (1x) · Sub-300ms Target',
   };
 }
 

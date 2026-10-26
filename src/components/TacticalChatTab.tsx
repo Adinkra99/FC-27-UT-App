@@ -98,7 +98,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
       personaUsed: 'DIRECTOR_OF_FOOTBALL',
       text: `Tactical Command Online at T=0 (${t0Anchor.britishFullFormatted}).\n\nI am calibrated to your **35,000 Xbox Series S Coin balance** and the live **Ultimate Scream Team 1** release (**90 Raphinha, 89 Cristiano Ronaldo, 89 Zola, 88 Szoboszlai, 88 Jaap Stam, 87 Palmer, 87 Mandžukić, 86 Kondogbia, 86 Çalhanoğlu, 86 Vobian, 86 Tolisso, 86 Le Fée, 85 Alonso, 85 Chong, 85 Lukeba, 85 Flint, 85 El Mala, 83 Tverskov**, plus **85 Moore & 85 Otamendi SBCs** and **Free 87 Jill Scott CB/CDM/CM & 87 Verón CM Objectives**).\n\nSelect a specialist role or model routing tier above, or ask any squad, SBC, Evolution, or market question below.`,
       telemetry: {
-        tierLabel: 'System Ready · 5-Tier Smart Router (gemini-3.5-flash-lite / 3.8-flash / 4-argon)',
+        tierLabel: 'System Ready · 3-Tier Smart Router (gemini-3.1-flash-lite / 3.8-flash / 4-argon)',
         modelUsed: 'gemini-3.8-flash',
         latencyMs: 1,
         routingReason: 'Multi-turn conversation thread initialized with zero-guessing club state.',
@@ -226,7 +226,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
             >
               <div className="font-bold text-[#00ff87]">AUTO (Dynamic Complexity Router)</div>
               <div className="text-[11px] text-slate-400 font-sans mt-0.5">
-                Routes fast checks to 3.5-flash-lite, live web queries to 3.8-flash + Search, and
+                Routes fast checks to 3.1-flash-lite, live web queries to 3.8-flash + Search, and
                 complex multi-constraint puzzles to 4-argon.
               </div>
             </button>
@@ -242,10 +242,10 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
             >
               <div className="font-bold flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span>Fast Tier · gemini-3.5-flash-lite</span>
+                <span>Fast Tier · gemini-3.1-flash-lite</span>
               </div>
               <div className="text-[11px] text-slate-400 font-sans mt-0.5">
-                ~220–380ms latency · 1x lowest token cost · Quick SBC & rule checks.
+                ~180–300ms latency · 1x lowest token cost · Fast lookups & quick single-stat checks.
               </div>
             </button>
 

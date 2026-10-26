@@ -15,6 +15,7 @@ import {
   Sliders,
   Zap,
   Search,
+  ArrowUpRight,
 } from 'lucide-react';
 
 export type ClientRoutingMode =
@@ -55,6 +56,7 @@ interface ChatMessage {
   t0Stamp?: string;
   telemetry?: RoutingTelemetryReceipt;
   genUiWidget?: GenUiWidgetSpec | null;
+  sources?: { title: string; uri: string }[];
 }
 
 interface AntigravityMcpAndChatDrawerProps {
@@ -469,6 +471,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
               text: data.text,
               t0Stamp: t0Anchor.britishTimeFormatted,
               telemetry: data.routingTelemetry,
+              sources: data.sources,
             },
           ]);
         }
@@ -586,7 +589,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
               </tr>
               <tr>
                 <td className="py-2 pr-3 font-bold text-white">
-                  Tier 1 · gemini-3.5-flash-lite
+                  Tier 1 · gemini-3.1-flash-lite
                 </td>
                 <td className="py-2 px-3 tabular-nums">~180ms – 350ms</td>
                 <td className="py-2 px-3 text-[#00ff87]">1x (Ultra-Low)</td>
@@ -866,6 +869,26 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
                 )}
 
                 <div className="whitespace-pre-wrap">{msg.text}</div>
+
+                {msg.sources && msg.sources.length > 0 && (
+                  <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-mono text-slate-400">
+                      Grounded Sources:
+                    </span>
+                    {msg.sources.map((s, i) => (
+                      <a
+                        key={i}
+                        href={s.uri}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] font-mono text-[#00ff87] hover:underline inline-flex items-center gap-1"
+                      >
+                        <span>{s.title}</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    ))}
+                  </div>
+                )}
 
                 {msg.genUiWidget && (
                   <InteractiveGenUiWidgetCard

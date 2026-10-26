@@ -19,6 +19,7 @@ import {
   TrendingUp,
   FileSpreadsheet,
 } from 'lucide-react';
+import { PushToTalkButton } from './PushToTalkButton';
 import { User } from 'firebase/auth';
 import {
   GoogleDocItem,
@@ -847,10 +848,19 @@ export function GoogleWorkspaceHub({
 
             {/* Append Note to Selected Doc */}
             <div className="bg-[#0b1320] border border-[#1e293b] rounded-xl p-5">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-3">
-                <Plus className="w-3.5 h-3.5 text-[#38bdf8]" />
-                Append Note to Selected Doc
-              </h3>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Plus className="w-3.5 h-3.5 text-[#38bdf8]" />
+                  Append Note to Selected Doc
+                </h3>
+                <PushToTalkButton
+                  compact
+                  label="Dictate Note"
+                  onTranscript={(text) => {
+                    setDocNoteBody((prev) => (prev ? `${prev} ${text}` : text));
+                  }}
+                />
+              </div>
 
               <div className="space-y-3">
                 <div>
