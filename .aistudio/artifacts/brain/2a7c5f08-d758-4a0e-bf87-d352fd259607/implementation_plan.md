@@ -1,126 +1,119 @@
-# Live FUTBIN & FUT.GG Dynamic Database Search & Interactive Chemistry Style Meta Boost Tool Plan
+# Cannons n Pecks — FC 27 Dynamic Club Sync & Multi-Model Commander Overhaul
 
-An integrated enhancement plan introducing a **Live FUTBIN & FUT.GG Dynamic Database Search Engine with lowest Xbox Series S BIN synchronization** and an **Interactive Chemistry Style & Meta Boost Comparison Tool** calibrated to EA Sports FC 27 AcceleRATE 2.0 physics, 33/33 chemistry diamonds, and 31 Roles++.
-
----
+A comprehensive grounding and sync overhaul for **Cannons n Pecks** (Est. September 2009, 17 years old) on EA Sports FC 27. Replaces speculative placeholders with strict verified-or-blank values (`—`), introduces a multi-channel sync terminal for the FC Companion Web App (via Browser DevTools & local helper extension bridge) alongside FUTBIN and FUT.GG account sync, and replaces outdated legacy model telemetry with a dynamic **Gemini Multi-Model Intelligence Commander** (powered by Gemini 3.8 Flash, 3.5 Flash-Lite, 3.5 Transcribe, 3.8 Live, and Python code execution for complex math).
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> **Confirmed User Decisions (Phase 1 Clarifications)**:
-> 1. **Next Primary Feature**: **Live FUTBIN and FUT.GG database search with lowest BIN sync**—enabling instant search across the verified FC 27 catalog and live Google Search grounding against FUTBIN and FUT.GG console cross-play market indices.
-> 2. **Core Prioritized Capability**: **Interactive chemistry style and meta boost comparison tool**—allowing players to simulate stat deltas (0–3 chemistry diamonds), test AcceleRATE 2.0 sprint curve transitions (e.g., Controlled to Controlled Lengthy), evaluate Role++ synergies, and compare styles side-by-side (e.g., Shadow vs. Anchor vs. Hunter).
-
-- **Confirmed Architecture Additions**:
-  - **Live Database Sync Endpoint (`/api/database/sync-lowest-bin`)**: Powered by `gemini-3.8-flash` with `googleSearch` to verify real-time Xbox Series S lowest BINs, 24h market trends, and direct links to FUTBIN and FUT.GG card pages.
-  - **Deterministic Chemistry Boost Matrix Engine (`src/utils/fc27ChemistryEngine.ts`)**: Pure deterministic local calculation ($0.00 cost, <1ms) applying official FC 27 chemistry style stat multipliers (Hunter, Shadow, Anchor, Catalyst, Engine, Hawk, etc.) across 0, 1, 2, and 3 chemistry points.
-  - **Dynamic Database & Meta Lab View**: Integrated into the app navigation, featuring instant autocomplete, budget filtering (under 35,000 Coins), live BIN tickers, and the side-by-side comparison lab.
+> **Confirmed Choices from Phase 1:**
+> - **Club Identity & Grounding**: Club Name set to **Cannons n Pecks** (Est. Sep 2009, 17 years old). All unverified metrics (Rivals Division, Champs Finals, Fodder count) start strictly blank (`—`) until entered or imported.
+> - **Club Metric Card Refactoring**: In the club banner, "Club Value" is transformed directly into live **Coins** with direct inline editing and quick presets.
+> - **FC Companion App Sync Method**: Browser DevTools console scraper script & local helper extension bridge, with one-tap JSON/Clipboard import and step-by-step guidance.
+> - **Third-Party Tracker Sync**: Dedicated FUTBIN & FUT.GG profile sync drawer to keep squads and club status reflecting the user's actual accounts.
+> - **AI Architecture**: Replaced legacy "Gemini 1.5 Pro" with a dynamic **Gemini Multi-Model Commander** auto-routing between `gemini-3.8-flash` (primary workhorse), `gemini-3.1-flash-lite` (low-latency, zero-cost fast checks), `gemini-3.5-transcribe` (voice input), `gemini-3.8-live` (two-way voice stream), and Python code execution for complex SBC and market math.
 
 ---
 
-## 1. Overview & Core Concept
+### 1. Overview & Core Concept
 
-- **What It Does**:
-  1. **Dynamic FUTBIN & FUT.GG Player Search**: Search any FC 27 player card by name, rating, position, club (2026/27 verified), or Role++, with real-time lowest BIN price verification on the Xbox Series S console market.
-  2. **Interactive Chemistry Style Comparison Lab**: Compare how different Chemistry Styles (Shadow, Hunter, Anchor, Engine, Catalyst, Hawk, etc.) modify a player's in-game stats across Pace, Shooting, Passing, Dribbling, Defending, and Physicality based on their active chemistry points (0–3 diamonds).
-  3. **AcceleRATE 2.0 & Role++ Dynamic Analysis**: Automatically computes whether adding a chemistry style shifts the player's sprint archetype (e.g., boosting Strength to push a Controlled player into Controlled Lengthy) and evaluates whether their assigned Role++ (e.g., Inside Forward++, Box-to-Box++, Deep-Lying Playmaker++) receives optimal stat scaling.
-  4. **Direct Workflow Integration**: One-click actions to "Add to Starting XI", "Log to Investment Tracker", "Export to Google Sheets Master Workbook", or "Analyze in Tactical Command".
-- **Target Audience**: Competitive FC 27 Ultimate Team console players optimizing player performance and transfer spending under a strict coin budget.
-- **Key Value**: Zero guessing on card stats and prices; instant mathematical visibility into optimal chemistry styles before committing coins on the transfer market.
-
----
-
-## 2. User Experience & Visual Design
-
-### A. Dynamic Database Search & Live BIN Radar
-- **Search Bar & Filter Strip**:
-  - Instant client-side search with debounced live web sync trigger.
-  - Filters: *Position* (ATT, MID, DEF, GK), *Rating Range* (80–94), *Xbox Price Budget* (All, Under 35k Coins, Discard Floor), and *Roles++*.
-  - Live Sync Status Header: Displays current T=0 British Time, connected databases (*FUTBIN Console + FUT.GG*), and a 1-click "Refresh Market BINs" button.
-- **Player Card Grid & Data Badges**:
-  - High-density cards displaying OVR, 2026/27 club, 3 PlayStyles+ badges, and lowest Xbox BIN with green/red 24h price swing indicators.
-  - Direct external link icons to view the card on FUTBIN and FUT.GG.
-
-### B. Interactive Chemistry Style & Meta Boost Comparison Tool
-- **Chemistry Diamond Controller**:
-  - Segmented selector for 0, 1, 2, or 3 Chemistry Diamonds, dynamically adjusting the boost intensity (0 = base stats; 1 = 33% boost; 2 = 66% boost; 3 = 100% full boost).
-- **Dual Comparison Columns (Style A vs. Style B)**:
-  - Select two chemistry styles side-by-side (e.g., **Shadow** vs. **Anchor** on Alejandro Balde, or **Hunter** vs. **Engine** on Lamine Yamal).
-  - Clean visual diff bars: Green `+8` badges and visual progress bars showing modified face and sub-stats (Acceleration, Sprint Speed, Interceptions, Defensive Awareness, Physical Strength).
-  - Net In-Game Rating (IG Rating) recalculation (e.g., 83 Balde -> 88 LB with Shadow vs. 87 LWB with Anchor).
-- **AcceleRATE 2.0 Shift Radar**:
-  - Badges displaying base archetype vs. boosted archetype (e.g., *Controlled -> Controlled Lengthy*).
-  - Explicit physical formula readout: `(Strength ${str} - Agility ${agi} = ${diff} >= 14, Height ${height}cm >= 181cm)`.
-- **Role++ Synergy Verdict**:
-  - Direct assessment of the player's 31 Role++ assignment under Title Update #3.1 (e.g., *"Shadow grants maximum +8 sprint speed and +8 tackle recovery, elevating Falseback++ recovery runs by +14%"*).
+- **What It Does**: Transforms the FC NEXUS 27 terminal into an accurate, grounded command center for **Cannons n Pecks**. Gives the user three reliable channels to feed dynamic club changes:
+  1. Direct inline typing for coins, divisions, and squad changes.
+  2. Browser DevTools console snippet or helper extension bridge to extract real-time data from the EA FC 27 Companion Web App without manual re-entry.
+  3. FUTBIN and FUT.GG account sync to pull external squad builds and market watchlists.
+  4. Dynamic Multi-Model Commander that selects the optimal Gemini model based on speed, context size, math rigor, and cost.
+- **Target Persona**: Ultimate Team veteran managing a 17-year-old club profile who needs real-time tactical advice, precise SBC mathematical solutions, and instant coin tracking without AI hallucinations.
+- **Key Value**: Zero guessing. Real numbers. Modern Gemini 3.8 / 3.5 Flash-Lite speed and cost efficiency.
 
 ---
 
-## 3. Key Product Decisions & Trade-Offs
+### 2. User Experience & Visual Design
 
-| Decision | Chosen Approach | Rationale | Alternatives Considered |
-| :--- | :--- | :--- | :--- |
-| **Chemistry Math Engine** | Deterministic local TypeScript calculator (`fc27ChemistryEngine.ts`) | Sub-millisecond calculation speed, zero token cost, 100% mathematical precision without LLM hallucinations. | Querying Gemini for every chemistry style change (unnecessary 800ms latency and token cost for static formulas). |
-| **Live BIN Verification** | Hybrid cached database + on-demand `gemini-3.8-flash` Google Search sync | Delivers instant UI responsiveness on search while providing verified, up-to-the-minute Xbox Series S prices on click. | Scraping without search grounding (blocked by anti-bot measures / CORS) or pure mock data (lacks real market fidelity). |
-| **Comparison Presentation** | Side-by-side dual style selector (Style A vs. Style B) | Allows competitive players to instantly resolve the most common dilemma in Ultimate Team (e.g. "Do I give Camavinga a Shadow or an Engine?"). | Single style preview only (requires toggling back and forth and memorizing numbers). |
+#### A. Grounded Club Meta Banner (Cannons n Pecks)
+- **Title**: `CANNONS N PECKS` (Clean bold display typography).
+- **Club Longevity Badge**: `EST. SEP 2009 · 17 YRS` (Honoring the 17-year legacy since age 10).
+- **Primary Metric Replacement**: The previous "Club Value" card is replaced with direct **Club Coins**, displaying exact figures or blank (`—`) with an inline quick-tuner.
+- **Strict Blank-State Policy**: Any unverified metric (such as Weekend League Champs record, Rivals Division, or duplicate queue count) displays clean unboxed `—` with a subtle tap-to-verify affordance, eliminating fabricated stats.
+
+#### B. Dynamic Sync Hub Drawer & Walkthrough Modal
+- **Companion App DevTools Bridge**:
+  - Provides a 1-click copyable DevTools snippet (`extract-fc-club.js`) that runs in the Companion Web App console to instantly export club coins, active squad roster, transfer list, and unassigned duplicate count as clean JSON.
+  - One-tap paste and live import parser.
+- **FUTBIN & FUT.GG Account Linker**:
+  - Input fields for FUTBIN and FUT.GG club/squad share URLs and profile usernames.
+  - Automatically fetches public squad formations, chemistry ratings, and target investments.
+- **Manual Quick-Entry Form**: Fast inline updates for coins, division, and squad players.
+
+#### C. Gemini Multi-Model Intelligence Commander
+- Replaces obsolete legacy telemetry with the **Gemini 3.8 Flash / 3.5 Flash-Lite Engine**:
+  - **Dynamic Task Auto-Selector**:
+    - *Simple Telemetry & SBC Score Lookups*: `gemini-3.1-flash-lite` (sub-100ms, ultra-low cost).
+    - *Tactical Chat & Squad Synergy Advice*: `gemini-3.8-flash` (balanced reasoning and speed).
+    - *Voice Transcription*: `gemini-3.5-transcribe` (fast speech-to-text for push-to-talk).
+    - *Two-Way Live Voice Stream*: `gemini-3.8-live` via WebSocket.
+    - *Complex Market Math & Rating Formulations*: Code execution / `gemini-4-argon` for multi-variable optimization.
+  - **Live Model HUD**: Displays current active model name, real-time latency (ms), input/output token count, and calculated micro-cost ($0.000X).
 
 ---
 
-## 4. Technical Architecture & Data Strategy
+### 3. Key Product Decisions & Trade-Offs
+
+| Decision | Chosen Approach | Rationale & Trade-Offs |
+| :--- | :--- | :--- |
+| **Club Identity** | Set to `Cannons n Pecks`, `EST. SEP 2009` (17 Yrs) | Respects user's actual 17-year UT club profile. |
+| **Unverified Metrics** | Display strictly blank `—` until imported | Eradicates hallucinated game stats, matching user's explicit law of accuracy. |
+| **Club Value vs Coins** | Replace "Club Value" with live "Coins" | Reflects user's direct request; coins are the primary actionable currency. |
+| **Companion App Sync** | Browser DevTools snippet + Local Extension Bridge | Safe, zero-ban, browser-native extraction without exposing EA credentials to third parties. |
+| **FUTBIN & FUT.GG** | Profile URL & Public Squad Sync | Seamless integration with tools the user actively uses to manage their club state. |
+| **Model Selection** | Dynamic Auto-Router (`gemini-3.8-flash` & `3.5-flash-lite`) | Maximizes speed and reduces cost while retaining deep reasoning for complex tactical queries. |
+
+---
+
+### 4. Technical Architecture & Data Strategy
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│                                APPLICATION ARCHITECTURE                                 │
-└─────────────────────────────────────────────────────────────────────────────────────────┘
-
- ┌───────────────────────────────────────────────────────────────────────────────────────┐
- │                                   CLIENT (React 19)                                   │
- │                                                                                       │
- │  ┌─────────────────────────────────────────────────────────────────────────────────┐  │
- │  │               Dynamic Database & Meta Lab View (`DynamicDatabaseView`)          │  │
- │  │                                                                                 │  │
- │  │  ┌────────────────────────────────────┐  ┌───────────────────────────────────┐  │  │
- │  │  │ Search & Live BIN Radar            │  │ Chemistry Style Comparison Lab    │  │  │
- │  │  │ • Instant Catalog & Web Filter     │  │ • 0–3 Chemistry Diamonds Selector │  │  │
- │  │  │ • Under 35k Coins Filter           │  │ • Dual Style Diff (A vs B)        │  │  │
- │  │  │ • FUTBIN & FUT.GG Direct Links     │  │ • AcceleRATE 2.0 Transition Check │  │  │
- │  │  │ • Lowest Xbox BIN Live Badge       │  │ • Role++ Synergy Evaluation       │  │  │
- │  │  └─────────────────┬──────────────────┘  └─────────────────┬─────────────────┘  │  │
- │  └────────────────────┼───────────────────────────────────────┼────────────────────┘  │
- └───────────────────────┼───────────────────────────────────────┼───────────────────────┘
-                         │                                       │
-                         ▼                                       ▼
- ┌──────────────────────────────────────────────────┐  ┌─────────────────────────────────┐
- │            SERVER PROXY (`server.ts`)            │  │   LOCAL DETERMINISTIC ENGINE    │
- │  POST /api/database/sync-lowest-bin              │  │   `fc27ChemistryEngine.ts`      │
- │  • gemini-3.8-flash + googleSearch               │  │   • 24 Official Chem Styles     │
- │  • Real-time Xbox Series S Lowest BIN Extraction │  │   • Sub-stat calculation (<1ms) │
- │  • FUTBIN & FUT.GG Page Links                    │  │   • AcceleRATE 2.0 Shift Math   │
- └──────────────────────────────────────────────────┘  └─────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                   FC NEXUS 27 — CANNONS N PECKS HUB                   │
+├────────────────────────────────────────────────────────────────────────┤
+│  Top Bar: Cannons n Pecks (Est. Sep 2009) · Coins: [Live / —] · 2.4k FP│
+├───────────────────┬────────────────────────────────┬───────────────────┤
+│ 1. Dynamic Sync   │ 2. Grounded Views              │ 3. AI Commander   │
+│ ┌───────────────┐ │ ┌────────────────────────────┐ │ ┌───────────────┐ │
+│ │DevTools Script│ │ │Hub (Grounded Coins/Div)    │ │ │Gemini 3.8     │ │
+│ │Extension Port │ │ │Squad Builder (4-2-1-3)     │ │ │Flash (Chat)   │ │
+│ │FUTBIN / FUT.GG│ │ │Market & Sniper Radar       │ │ │Gemini 3.5     │ │
+│ │Inline Inputs  │ │ │SBC Solver (Score Matrix)   │ │ │Lite (Fast)    │ │
+│ └───────┬───────┘ │ └─────────────┬──────────────┘ │ └───────┬───────┘ │
+└─────────┼─────────────────────────┼──────────────────────────┼─────────┘
+          │                         │                          │
+          ▼                         ▼                          ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ Server Backend (server.ts) & Firebase Firestore Persistence            │
+│  - /api/gemini/model-commander (Auto-routes by task complexity)        │
+│  - /api/companion/parse-export (Validates DevTools JSON payloads)      │
+│  - /api/tracker/sync-futbin (Extracts public FUTBIN/FUT.GG squads)     │
+│  - Firestore DB: ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607│
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Chemistry Styles Implemented
-- **Pace + Shot**: Hunter (+8 PAC, +8 SHO), Catalyst (+8 PAC, +8 PAS), Shadow (+8 PAC, +8 DEF), Hawk (+4 PAC, +8 SHO, +4 PHY), Engine (+4 PAC, +8 DRI, +8 PAS), Anchor (+4 PAC, +8 DEF, +8 PHY).
-- **Finishing & Attacking**: Sniper, Finisher, Deadeye, Marksman.
-- **Midfield & Defense**: Artist, Architect, Powerhouse, Maestro, Sentinel, Guardian, Gladiator, Backbone.
-- **Goalkeeper**: Glove, Shield, Cat, Wall.
+### Component & State Mutation Flow
 
----
-
-## 5. Planned Execution Steps
-
-1. **Build Deterministic Chemistry & Meta Engine (`src/utils/fc27ChemistryEngine.ts`)**:
-   - Define exact official FC 27 stat deltas for all 24 Chemistry Styles across 0, 1, 2, and 3 chemistry points.
-   - Implement AcceleRATE 2.0 physical archetype calculator (Explosive, Controlled Explosive, Controlled, Controlled Lengthy, Lengthy) based on Acceleration, Sprint Speed, Strength, Agility, and Height.
-   - Implement Role++ synergy scorer evaluating in-game rating boosts for each player's active role.
-2. **Implement Server-Side Live BIN Sync Endpoint (`server.ts`)**:
-   - Add `POST /api/database/sync-lowest-bin` using `gemini-3.8-flash` with `googleSearch` to verify real-time Xbox Series S prices and FUTBIN/FUT.GG URLs.
-3. **Build Dynamic Database & Meta Lab Component (`src/components/DynamicDatabaseView.tsx`)**:
-   - Fast responsive search bar with 35k budget filter and instant player card list.
-   - Dual-column Chemistry Style Comparison interface with live visual diff bars, AcceleRATE 2.0 badges, and Role++ synergy feedback.
-   - Action buttons: "Add to Starting XI", "Log to Investment Ledger", "Sync to Google Sheet", and "Open on FUTBIN / FUT.GG".
-4. **Integrate into Main App Navigation (`src/App.tsx`)**:
-   - Add "Dynamic Database & Chem Lab" to the desktop sidebar navigation and mobile pill bar.
-5. **Verification & Build Validation**:
-   - Run `lint_applet` (`tsc --noEmit`) to verify strict type safety.
-   - Run `compile_applet` to confirm the production build compiles cleanly with zero errors.
+1. **State Store (`src/App.tsx`)**:
+   - `clubName`: `'Cannons n Pecks'`
+   - `clubEst`: `'September 2009'` (17 Years Old)
+   - `coins`: Verified number or `null` (`—`)
+   - `rivalsDivision`: Verified string or `null` (`—`)
+   - `champsRecord`: Verified string or `null` (`—`)
+   - `inventoryCount`: Verified number or `null` (`—`)
+   - `activeModelRoute`: `'AUTO' | '3.8-FLASH' | '3.5-LITE' | 'ARGON-MATH'`
+2. **Companion App Sync Flow**:
+   - User opens the Sync Drawer -> clicks "Copy DevTools Script" -> pastes into console at `ea.com/ea-sports-fc/ultimate-team/web-app` -> copies output -> pastes into FC Nexus terminal -> state updates instantly with verified coins, cards, and duplicate count.
+3. **FUTBIN / FUT.GG Sync Flow**:
+   - User inputs their squad share URL or account username -> server fetches squad composition and imports player cards into personal club inventory.
+4. **Multi-Model Commander Execution**:
+   - Front-end query triggers `/api/gemini/model-commander`.
+   - Router evaluates complexity:
+     - Math / SBC Rating Solver -> Python execution / deep reasoning.
+     - General chat / tactical questions -> `gemini-3.8-flash`.
+     - Price check / quick lookups -> `gemini-3.1-flash-lite`.
+     - Audio -> `gemini-3.5-transcribe` or `gemini-3.8-live`.
+   - Telemetry returned with latency ms, tokens, and cost.
