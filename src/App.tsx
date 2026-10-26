@@ -44,6 +44,7 @@ import { SquadTrackerView } from './components/SquadTrackerView';
 import { GoogleWorkspaceHub } from './components/GoogleWorkspaceHub';
 import { DynamicDatabaseView } from './components/DynamicDatabaseView';
 import { HubView } from './components/HubView';
+import { ClubSyncHubModal } from './components/ClubSyncHubModal';
 import {
   Shield,
   TrendingUp,
@@ -127,13 +128,20 @@ export function App() {
   const [simulatedEvoName, setSimulatedEvoName] = useState<string | null>(null);
   const [screenPadTickerOpen, setScreenPadTickerOpen] = useState<boolean>(true);
 
-  // 3. PERSONAL CLUB STATE (Initialized with confirmed Cyber Apex FC 1.42M Coins & Elite Division)
-  const [coins, setCoins] = useState<number | null>(1420000);
-  const [clubName, setClubName] = useState<string | null>('CYBER APEX FC');
-  const [fifaPoints, setFifaPoints] = useState<number | null>(2400);
-  const [rivalsDivision, setRivalsDivision] = useState<string | null>('Elite Division');
-  const [dailySp, setDailySp] = useState<number | null>(850);
-  const [galleryLevel, setGalleryLevel] = useState<number | null>(18);
+  // 3. PERSONAL CLUB STATE: Cannons n Pecks (Est. Sep 2009 · 17 Yrs). Strict Zero-Guessing: Unconfirmed metrics start BLANK (null / '—')
+  const [coins, setCoins] = useState<number | null>(null);
+  const [clubName, setClubName] = useState<string | null>('Cannons n Pecks');
+  const [clubEstablished, setClubEstablished] = useState<string>('September 2009');
+  const [clubAgeYears, setClubAgeYears] = useState<number>(17);
+  const [fifaPoints, setFifaPoints] = useState<number | null>(null);
+  const [rivalsDivision, setRivalsDivision] = useState<string | null>(null);
+  const [dailySp, setDailySp] = useState<number | null>(null);
+  const [galleryLevel, setGalleryLevel] = useState<number | null>(null);
+  const [champsRecord, setChampsRecord] = useState<string | null>(null);
+
+  // Gemini Multi-Model Intelligence Commander Active Routing Profile
+  const [activeModelRoute, setActiveModelRoute] = useState<string>('AUTO');
+  const [showSyncHubModal, setShowSyncHubModal] = useState<boolean>(false);
 
   // FC 27 Xbox Series S Reference Catalog (all inClubInventory & inDuplicateStorage start FALSE)
   const [players, setPlayers] = useState<FC27ConsolePlayer[]>(FC27_CONSOLE_PLAYERS);
@@ -167,12 +175,12 @@ export function App() {
   >('MANUAL_VOICE');
 
   // Form inputs inside the Sync Modal
-  const [draftCoins, setDraftCoins] = useState<string>('1420000');
-  const [draftClubName, setDraftClubName] = useState<string>('CYBER APEX FC');
-  const [draftFifaPoints, setDraftFifaPoints] = useState<string>('2400');
-  const [draftRivalsDivision, setDraftRivalsDivision] = useState<string>('Elite Division');
-  const [draftGalleryLevel, setDraftGalleryLevel] = useState<string>('18');
-  const [draftDailySp, setDraftDailySp] = useState<string>('850');
+  const [draftCoins, setDraftCoins] = useState<string>('');
+  const [draftClubName, setDraftClubName] = useState<string>('Cannons n Pecks');
+  const [draftFifaPoints, setDraftFifaPoints] = useState<string>('');
+  const [draftRivalsDivision, setDraftRivalsDivision] = useState<string>('');
+  const [draftGalleryLevel, setDraftGalleryLevel] = useState<string>('');
+  const [draftDailySp, setDraftDailySp] = useState<string>('');
   const [jsonImportText, setJsonImportText] = useState<string>('');
 
   // Voice dictation in Sync Modal
@@ -901,14 +909,14 @@ export function App() {
                   ? `${(coins / 1000).toFixed(0)}K`
                   : coins !== null
                   ? coins.toLocaleString()
-                  : '1.42M'}
+                  : '—'}
               </span>
             </button>
 
             <div className="flex items-center gap-1 bg-surface-container-high/80 px-2.5 py-1.5 rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] border border-white/5">
               <span className="material-symbols-outlined text-primary-container text-[16px]">diamond</span>
               <span className="font-data-tabular text-data-tabular text-primary-container font-bold">
-                {fifaPoints !== null ? `${(fifaPoints / 1000).toFixed(1).replace(/\.0$/, '')}K` : '2.4K'}
+                {fifaPoints !== null ? `${(fifaPoints / 1000).toFixed(1).replace(/\.0$/, '')}K` : '—'}
               </span>
             </div>
 
@@ -960,8 +968,17 @@ export function App() {
               else if (tab === 'ai-studio') setActiveTab('TACTICAL_COMMAND');
             }}
             coins={coins}
+            clubName={clubName}
+            rivalsDivision={rivalsDivision}
+            fifaPoints={fifaPoints}
+            dailySp={dailySp}
+            galleryLevel={galleryLevel}
+            champsRecord={champsRecord}
             onUpdateCoins={(newCoins) => setCoins(newCoins)}
+            onOpenSyncModal={() => setShowSyncHubModal(true)}
             onShowNotice={(msg) => setCloudStatusBanner(msg)}
+            activeModelRoute={activeModelRoute}
+            onChangeModelRoute={(route: string) => setActiveModelRoute(route)}
           />
         )}
 
@@ -2773,6 +2790,29 @@ export function App() {
           </div>
         </div>
       )}
+
+      {/* MODAL 3: Dedicated Cannons n Pecks Dynamic Ingestion & Multi-Model Intelligence Commander Hub */}
+      <ClubSyncHubModal
+        isOpen={showSyncHubModal}
+        onClose={() => setShowSyncHubModal(false)}
+        coins={coins}
+        clubName={clubName}
+        rivalsDivision={rivalsDivision}
+        fifaPoints={fifaPoints}
+        champsRecord={champsRecord}
+        onSaveClubState={(state) => {
+          setClubName(state.clubName);
+          setCoins(state.coins);
+          setRivalsDivision(state.rivalsDivision);
+          setFifaPoints(state.fifaPoints);
+          if (state.champsRecord !== undefined) setChampsRecord(state.champsRecord);
+          if (state.coins !== null) setDraftCoins(String(state.coins));
+          if (state.clubName) setDraftClubName(state.clubName);
+        }}
+        onShowNotice={(msg) => setCloudStatusBanner(msg)}
+        activeModelRoute={activeModelRoute}
+        onChangeModelRoute={(route) => setActiveModelRoute(route)}
+      />
     </div>
   );
 }
