@@ -1,86 +1,179 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --font-display: 'Outfit', sans-serif;
-    --font-sans: 'Plus Jakarta Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-  }
+@theme {
+  --color-background: #111319;
+  --color-surface: #111319;
+  --color-surface-dim: #111319;
+  --color-surface-bright: #37393f;
+  --color-surface-container-lowest: #0c0e13;
+  --color-surface-container-low: #191c21;
+  --color-surface-container: #1d2025;
+  --color-surface-container-high: #282a30;
+  --color-surface-container-highest: #33353b;
+  --color-surface-variant: #33353b;
+  --color-on-surface: #e2e2ea;
+  --color-on-surface-variant: #b9cbb9;
+  --color-on-background: #e2e2ea;
 
-  body {
-    font-family: var(--font-sans);
-    background-color: #090d16;
-    color: #f1f5f9;
+  --color-primary: #f1ffef;
+  --color-primary-container: #00ff87;
+  --color-primary-fixed: #60ff98;
+  --color-primary-fixed-dim: #00e478;
+  --color-on-primary: #003919;
+  --color-on-primary-container: #007138;
+  --color-on-primary-fixed: #00210c;
+  --color-on-primary-fixed-variant: #005227;
+
+  --color-secondary: #bdf4ff;
+  --color-secondary-container: #00e3fd;
+  --color-secondary-fixed: #9cf0ff;
+  --color-secondary-fixed-dim: #00daf3;
+  --color-on-secondary: #00363d;
+  --color-on-secondary-container: #00616d;
+  --color-on-secondary-fixed: #001f24;
+  --color-on-secondary-fixed-variant: #004f58;
+
+  --color-tertiary: #fffaf8;
+  --color-tertiary-container: #ffda8f;
+  --color-tertiary-fixed: #ffdf9f;
+  --color-tertiary-fixed-dim: #f9bd22;
+  --color-on-tertiary: #402d00;
+  --color-on-tertiary-container: #7e5d00;
+  --color-on-tertiary-fixed: #261a00;
+  --color-on-tertiary-fixed-variant: #5c4300;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  --color-outline: #849585;
+  --color-outline-variant: #3b4b3d;
+
+  --font-label-caps: "Space Grotesk", sans-serif;
+  --font-display-hero: "Space Grotesk", sans-serif;
+  --font-headline-lg: "Space Grotesk", sans-serif;
+  --font-headline-md: "Inter", sans-serif;
+  --font-headline-xl: "Space Grotesk", sans-serif;
+  --font-body-base: "Inter", sans-serif;
+  --font-body-sm: "Inter", sans-serif;
+  --font-body-lg: "Inter", sans-serif;
+  --font-stat-badge: "Space Grotesk", sans-serif;
+  --font-data-tabular: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  html, body {
+    width: 100vw;
     margin: 0;
     padding: 0;
-    -webkit-font-smoothing: antialiased;
+    background-color: #111319;
+    color: #e2e2ea;
+    font-family: 'Inter', sans-serif;
   }
-
-  h1, h2, h3, h4, .font-display {
-    font-family: var(--font-display);
-    text-wrap: balance;
+  body {
+    overscroll-behavior: none;
+    min-height: max(884px, 100dvh);
   }
-
-  .font-mono, .tabular-nums {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+  }
+  .pt-safe {
+    padding-top: max(env(safe-area-inset-top, 0px), 0px);
   }
 }
 
-/* Official Google Sign-In Material Button Styling */
-.gsi-material-button {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -webkit-appearance: none;
-  background-color: #131314;
-  background-image: none;
-  border: 1px solid #8e918f;
-  border-radius: 8px;
-  box-sizing: border-box;
-  color: #e3e3e3;
-  cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px;
-  height: 38px;
-  letter-spacing: 0.25px;
-  outline: none;
-  overflow: hidden;
-  padding: 0 12px;
-  position: relative;
-  text-align: center;
-  transition: background-color .2s, border-color .2s;
-  vertical-align: middle;
-  white-space: nowrap;
-  width: auto;
-}
-
-.gsi-material-button .gsi-material-button-icon {
-  height: 18px;
-  margin-right: 8px;
-  min-width: 18px;
-  width: 18px;
-}
-
-.gsi-material-button .gsi-material-button-content-wrapper {
+/* Material Symbols Outlined Icon Styling */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
   align-items: center;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  height: 100%;
-  justify-content: space-between;
-  position: relative;
-  width: 100%;
+  justify-content: center;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
 }
 
-.gsi-material-button .gsi-material-button-contents {
-  flex-grow: 1;
+/* Custom Spacing Tokens */
+.px-space-md { padding-left: 1rem; padding-right: 1rem; }
+.py-space-md { padding-top: 1rem; padding-bottom: 1rem; }
+.p-space-md { padding: 1rem; }
+.px-space-sm { padding-left: 0.5rem; padding-right: 0.5rem; }
+.py-space-sm { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.p-space-sm { padding: 0.5rem; }
+.px-space-xs { padding-left: 0.25rem; padding-right: 0.25rem; }
+.py-space-xs { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.p-space-xs { padding: 0.25rem; }
+.space-y-space-md > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+.space-y-space-sm > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+.space-y-space-xs > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem; }
+.space-x-space-sm > :not([hidden]) ~ :not([hidden]) { margin-left: 0.5rem; }
+.space-x-space-xs > :not([hidden]) ~ :not([hidden]) { margin-left: 0.25rem; }
+.gap-space-sm { gap: 0.5rem; }
+.gap-space-xs { gap: 0.25rem; }
+.gap-space-md { gap: 1rem; }
+.mb-space-xs { margin-bottom: 0.25rem; }
+
+/* Custom Typography Utility Tokens */
+.font-label-caps, .text-label-caps {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.font-data-tabular, .text-data-tabular {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.font-headline-md, .text-headline-md {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: -0.01em;
   font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+.font-headline-lg, .text-headline-lg {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+.font-headline-xl, .text-headline-xl {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 32px;
+  line-height: 36px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+.font-body-base, .text-body-base {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+.font-body-sm, .text-body-sm {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
 }
 
-.gsi-material-button:hover {
-  background-color: #1f2937;
-  border-color: #00ff87;
+/* Hide scrollbars for clean mobile/desktop interface */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  scrollbar-width: none;
 }

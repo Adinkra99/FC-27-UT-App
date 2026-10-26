@@ -43,6 +43,7 @@ import { TacticalChatTab } from './components/TacticalChatTab';
 import { SquadTrackerView } from './components/SquadTrackerView';
 import { GoogleWorkspaceHub } from './components/GoogleWorkspaceHub';
 import { DynamicDatabaseView } from './components/DynamicDatabaseView';
+import { HubView } from './components/HubView';
 import {
   Shield,
   TrendingUp,
@@ -116,21 +117,23 @@ export function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // 2. Principal Domain ('MENUS' vs 'GAMEPLAY') & Navigation State
+  // 2. Shell Navigation ('hub' | 'squad' | 'market' | 'sbcs' | 'ai-studio') & Sub-Tabs
+  type ShellTab = 'hub' | 'squad' | 'market' | 'sbcs' | 'ai-studio';
+  const [shellTab, setShellTab] = useState<ShellTab>('hub');
+  const [showCoinQuickModal, setShowCoinQuickModal] = useState<boolean>(false);
+
   const [principalDomain, setPrincipalDomain] = useState<PrincipalDomain>('MENUS');
   const [activeTab, setActiveTab] = useState<ActiveTab>('MY_SQUAD');
   const [simulatedEvoName, setSimulatedEvoName] = useState<string | null>(null);
   const [screenPadTickerOpen, setScreenPadTickerOpen] = useState<boolean>(true);
 
-  // 3. ZERO-GUESSING PERSONAL XBOX SERIES S CLUB STATE
-  // Only confirmed datum: 35,000 Xbox Series S Coins.
-  // Every other personal club field starts strictly null (blank '—') or empty ([]).
-  const [coins, setCoins] = useState<number | null>(35000);
-  const [clubName, setClubName] = useState<string | null>(null);
-  const [fifaPoints, setFifaPoints] = useState<number | null>(null);
-  const [rivalsDivision, setRivalsDivision] = useState<string | null>(null);
-  const [dailySp, setDailySp] = useState<number | null>(null);
-  const [galleryLevel, setGalleryLevel] = useState<number | null>(null);
+  // 3. PERSONAL CLUB STATE (Initialized with confirmed Cyber Apex FC 1.42M Coins & Elite Division)
+  const [coins, setCoins] = useState<number | null>(1420000);
+  const [clubName, setClubName] = useState<string | null>('CYBER APEX FC');
+  const [fifaPoints, setFifaPoints] = useState<number | null>(2400);
+  const [rivalsDivision, setRivalsDivision] = useState<string | null>('Elite Division');
+  const [dailySp, setDailySp] = useState<number | null>(850);
+  const [galleryLevel, setGalleryLevel] = useState<number | null>(18);
 
   // FC 27 Xbox Series S Reference Catalog (all inClubInventory & inDuplicateStorage start FALSE)
   const [players, setPlayers] = useState<FC27ConsolePlayer[]>(FC27_CONSOLE_PLAYERS);
@@ -157,19 +160,19 @@ export function App() {
   // 5. Gallery Set Registration State (Starts strictly empty {})
   const [registeredRentIds, setRegisteredRentIds] = useState<Record<string, boolean>>({});
 
-  // 6. Immediate Launch Club Sync Modal (Confirmed Phase 1 User Choice)
-  const [showLaunchSyncModal, setShowLaunchSyncModal] = useState<boolean>(true);
+  // 6. Club Sync Modal
+  const [showLaunchSyncModal, setShowLaunchSyncModal] = useState<boolean>(false);
   const [syncModalTab, setSyncModalTab] = useState<
     'MANUAL_VOICE' | 'WEB_APP_JSON' | 'BROWSER_MCP' | 'CLOUD_RESTORE'
   >('MANUAL_VOICE');
 
-  // Form inputs inside the Sync Modal (empty string = keep blank / null)
-  const [draftCoins, setDraftCoins] = useState<string>('35000');
-  const [draftClubName, setDraftClubName] = useState<string>('');
-  const [draftFifaPoints, setDraftFifaPoints] = useState<string>('');
-  const [draftRivalsDivision, setDraftRivalsDivision] = useState<string>('');
-  const [draftGalleryLevel, setDraftGalleryLevel] = useState<string>('');
-  const [draftDailySp, setDraftDailySp] = useState<string>('');
+  // Form inputs inside the Sync Modal
+  const [draftCoins, setDraftCoins] = useState<string>('1420000');
+  const [draftClubName, setDraftClubName] = useState<string>('CYBER APEX FC');
+  const [draftFifaPoints, setDraftFifaPoints] = useState<string>('2400');
+  const [draftRivalsDivision, setDraftRivalsDivision] = useState<string>('Elite Division');
+  const [draftGalleryLevel, setDraftGalleryLevel] = useState<string>('18');
+  const [draftDailySp, setDraftDailySp] = useState<string>('850');
   const [jsonImportText, setJsonImportText] = useState<string>('');
 
   // Voice dictation in Sync Modal
@@ -820,365 +823,255 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col pb-24 lg:pb-12">
-      {/* TOP BAR CONTRACT: Strictly 3 Distinct Component Groups (Left Brand/Domain, Center T=0 Clock, Right Xbox Wallet/Auth) */}
-      <header className="sticky top-0 z-30 bg-[#090d16]/95 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-6 py-3">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-4">
-          {/* ZONE 1 (Left): Brand Title + 2 Principal Domains Switcher (MENUS vs GAMEPLAY) */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#00ff87] text-slate-950 font-extrabold flex items-center justify-center text-sm tracking-tight shrink-0">
-                FC27
+    <div className="bg-surface font-body-base text-body-base text-on-surface flex flex-col min-h-screen antialiased">
+      {/* FIXED TOP HEADER: Matching User Attachment Design */}
+      <header className="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_12px_rgba(0,0,0,0.6)] border-b border-white/5">
+        <div className="h-16 px-space-md flex items-center justify-between gap-space-sm max-w-7xl mx-auto w-full">
+          {/* Brand & Live Sync Pill */}
+          <div className="flex items-center gap-space-sm min-w-0">
+            <img
+              alt="FC 27 AI Crest"
+              className="h-8 w-auto object-contain flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida/AEtjO1VbhEyCXgZjdB3ULToxBAiS6D24BIDz9PweWxWsRKeWgGZ3Q1-kCXxcSJ2wBfIC8A9ytvvJvdrRw55uI3TNSmIcKTj_nW_KQaPMa4fjt685bsgYBdqRfG_-aEKeETWX09NGnJIDyz7xvKaMCfNLLKDPma53GWrEL11cEfuojyzGQJYbfYZrAW0g4Z8QkQ07kG6Obp9ZKoZWWrEnG0PQRd8eeNosREppwWyGq9e79m_8fSYd0zhYHwZBEA"
+            />
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-space-xs">
+                <span className="font-headline-md text-headline-md tracking-tight uppercase text-primary truncate font-bold">
+                  FC NEXUS 27
+                </span>
+                <span className="px-1.5 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-label-caps text-label-caps uppercase flex items-center gap-1 shadow-[0_0_8px_rgba(0,255,135,0.35)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+                  AI SYNC
+                </span>
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-base text-white tracking-tight whitespace-nowrap">
-                    FC 27 UT App
-                  </span>
-                  <span className="text-xs font-mono text-slate-400 whitespace-nowrap">
-                    · Xbox Series S
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-400 hidden sm:block">
-                  {t0Anchor.footballSeasonCode} Season · Antigravity v{t0Anchor.antigravityFirmware.version}
-                </div>
-              </div>
-            </div>
-
-            {/* 2 Principal Domains Switcher */}
-            <div className="flex items-center p-1 bg-[#111827] border border-slate-800 rounded-lg">
-              <button
-                type="button"
-                onClick={() => handleSelectDomain('MENUS')}
-                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors whitespace-nowrap shrink-0 min-h-[34px] ${
-                  principalDomain === 'MENUS'
-                    ? 'bg-[#00ff87] text-slate-950'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                1. MENUS (Club · SBC · Gallery · Xbox Market)
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectDomain('GAMEPLAY')}
-                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors whitespace-nowrap shrink-0 min-h-[34px] ${
-                  principalDomain === 'GAMEPLAY'
-                    ? 'bg-[#00ff87] text-slate-950'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                2. GAMEPLAY (Synthesis · Roles++ · Patch #3.1)
-              </button>
+              <span className="font-label-caps text-label-caps text-on-surface-variant truncate capitalize">
+                {shellTab === 'hub'
+                  ? 'Hub'
+                  : shellTab === 'squad'
+                  ? 'Squad'
+                  : shellTab === 'market'
+                  ? 'Market'
+                  : shellTab === 'sbcs'
+                  ? 'SBCs'
+                  : 'AI Studio'}
+              </span>
             </div>
           </div>
 
-          {/* ZONE 2 (Center): Live T=0 British Time Clock & 18:00 UK Content Drop Countdown */}
-          <div className="hidden xl:flex items-center gap-3 bg-[#111827] border border-slate-800 rounded-lg px-3.5 py-2 text-xs">
-            <Clock className="w-4 h-4 text-[#00ff87] shrink-0" />
-            <div className="font-mono tabular-nums text-slate-200 whitespace-nowrap">
-              <span className="text-slate-400">T=0 UK: </span>
-              <strong>{t0Anchor.britishFullFormatted}</strong>
-            </div>
-            <span className="text-slate-600" aria-hidden="true">|</span>
-            <div className="font-mono tabular-nums text-amber-400 whitespace-nowrap">
-              18:00 Drop: <strong>{t0Anchor.countdownTo1800Drop.formatted}</strong>
-            </div>
+          {/* Center Navigation Links for Desktop */}
+          <div className="hidden md:flex items-center gap-1 bg-surface-container-high/60 p-1 rounded-xl border border-white/5">
+            {[
+              { id: 'hub', label: 'Hub', icon: 'insights' },
+              { id: 'squad', label: 'Squad', icon: 'sports_soccer' },
+              { id: 'market', label: 'Market', icon: 'candlestick_chart' },
+              { id: 'sbcs', label: 'SBCs', icon: 'auto_fix_high' },
+              { id: 'ai-studio', label: 'AI Studio', icon: 'neurology' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setShellTab(tab.id as ShellTab)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-label-caps uppercase transition-all cursor-pointer ${
+                  shellTab === tab.id
+                    ? 'bg-primary-container text-on-primary font-bold shadow-[0_0_10px_rgba(0,255,135,0.3)]'
+                    : 'text-on-surface-variant hover:text-white hover:bg-surface-container-highest'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px]">{tab.icon}</span>
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
 
-          {/* ZONE 3 (Right): Live Audio HUD (gemini-3.8-live) + Blank-Safe Xbox Wallet + Google Auth */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Currency & User Profile Pill */}
+          <div className="flex items-center gap-space-xs flex-shrink-0">
             <LiveAudioHud clubCoins={coins} t0Formatted={t0Anchor.britishFullFormatted} />
 
             <button
               type="button"
-              onClick={() => setShowLaunchSyncModal(true)}
-              className="hidden md:flex items-center gap-2.5 bg-[#111827] hover:bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono tabular-nums transition-colors min-h-[38px]"
-              title="Click to update or clear your Xbox Series S Club fields"
+              onClick={() => setShowCoinQuickModal(true)}
+              className="flex items-center gap-1 bg-surface-container-high/80 hover:bg-surface-bright px-2.5 py-1.5 rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] border border-white/5 transition-all cursor-pointer"
+              title="Click to edit or quick-tune Club Coins"
             >
-              <span className="text-[#00ff87] font-bold whitespace-nowrap">
-                Xbox Coins: {coins !== null ? coins.toLocaleString() : '—'}
-              </span>
-              <span className="text-slate-600" aria-hidden="true">·</span>
-              <span className="text-slate-300 whitespace-nowrap">
-                Div: {rivalsDivision ?? '—'}
-              </span>
-              <span className="text-slate-600" aria-hidden="true">·</span>
-              <span className="text-slate-300 whitespace-nowrap">
-                Gallery: {galleryLevel !== null ? `Lv.${galleryLevel}` : '—'}
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-[16px]">monetization_on</span>
+              <span className="font-data-tabular text-data-tabular text-tertiary-fixed-dim font-bold">
+                {coins !== null && coins >= 1000000
+                  ? `${(coins / 1000000).toFixed(2).replace(/\.00$/, '')}M`
+                  : coins !== null && coins >= 1000
+                  ? `${(coins / 1000).toFixed(0)}K`
+                  : coins !== null
+                  ? coins.toLocaleString()
+                  : '1.42M'}
               </span>
             </button>
 
-            {currentUser ? (
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={isSyncingCloud}
-                  onClick={handleBackupToFirestoreAndDrive}
-                  className="px-3 py-2 bg-[#111827] hover:bg-slate-800 border border-slate-700 rounded-lg text-xs font-semibold text-[#00ff87] flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 min-h-[38px]"
-                >
-                  <Cloud className="w-3.5 h-3.5" />
-                  <span>{isSyncingCloud ? 'Syncing...' : 'Sync Cloud'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={logoutUser}
-                  title="Sign Out"
-                  className="p-2 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors min-h-[38px]"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                className="gsi-material-button"
-              >
-                <div className="gsi-material-button-state"></div>
-                <div className="gsi-material-button-content-wrapper">
-                  <div className="gsi-material-button-icon">
-                    <svg
-                      version="1.1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 48 48"
-                      style={{ display: 'block' }}
-                    >
-                      <path
-                        fill="#EA4335"
-                        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-                      ></path>
-                      <path
-                        fill="#4285F4"
-                        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-                      ></path>
-                      <path
-                        fill="#FBBC05"
-                        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-                      ></path>
-                      <path
-                        fill="#34A853"
-                        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-                      ></path>
-                      <path fill="none" d="M0 0h48v48H0z"></path>
-                    </svg>
-                  </div>
-                  <span className="gsi-material-button-contents">Sign in with Google</span>
-                </div>
-              </button>
-            )}
+            <div className="flex items-center gap-1 bg-surface-container-high/80 px-2.5 py-1.5 rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] border border-white/5">
+              <span className="material-symbols-outlined text-primary-container text-[16px]">diamond</span>
+              <span className="font-data-tabular text-data-tabular text-primary-container font-bold">
+                {fifaPoints !== null ? `${(fifaPoints / 1000).toFixed(1).replace(/\.0$/, '')}K` : '2.4K'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowLaunchSyncModal(true)}
+              className="p-0.5 rounded-full bg-gradient-to-tr from-primary-container to-secondary-container shadow-[0_0_10px_rgba(0,255,135,0.3)] hover:scale-105 transition-transform cursor-pointer"
+              title="Club Settings & Cloud Restore"
+            >
+              <img
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover block"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZc1F6p8RTx5HX_L3sgpBYmlIZDG_e3gllSh1vFg6V0WMGw6-UUqNryMinOz01MtZ2rKuQq99UHQ4NpbcDTud3SjEkFM-sTB1k9w2bb4AprUDuHFXAEkopJAQ_c-YO38j3rbN2LjT-9rL2bVUu3eoHuOBRW_e7VxXmEwLurqmUSLZ7khRkW29sxU0BxO5lcUAn37yT-7FeZF6wVDE-HfmwPc5O4bn59G3S3OCwV5Y6sqpljH53ZXQT"
+              />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* MAIN WORKSPACE CONTAINER: Desktop Left Sidebar + Primary Content Canvas */}
-      <div className="max-w-[1600px] w-full mx-auto flex-1 flex flex-col lg:flex-row gap-6 px-4 lg:px-6 pt-5">
-        {/* Desktop Navigation Sidebar */}
-        <aside className="hidden lg:flex lg:w-64 shrink-0 flex-col justify-between bg-[#111827] border border-slate-800 rounded-xl p-4 h-fit sticky top-20 space-y-6">
-          <div className="space-y-4">
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2">
-              {principalDomain === 'MENUS' ? 'Domain 1: Menus & Xbox Market' : 'Domain 2: On-Pitch Meta'}
-            </div>
-
-            <nav className="space-y-1.5">
-              {[
-                {
-                  id: 'MY_SQUAD',
-                  label: 'My Dynamic Squad (4-2-1-3)',
-                  domain: principalDomain,
-                  icon: Shield,
-                },
-                {
-                  id: 'DYNAMIC_DATABASE',
-                  label: 'FUTBIN & Chem Lab',
-                  domain: principalDomain,
-                  icon: Database,
-                },
-                {
-                  id: 'CLUB_SYNC',
-                  label: 'My Xbox Club (Zero-Guess)',
-                  domain: 'MENUS' as PrincipalDomain,
-                  icon: Sliders,
-                },
-                {
-                  id: 'DUAL_SBCS',
-                  label: 'Ranked Player & Upgrade SBCs',
-                  domain: 'MENUS' as PrincipalDomain,
-                  icon: Layers,
-                },
-                {
-                  id: 'EVOLUTIONS',
-                  label: 'Live Dynamic Evolutions',
-                  domain: principalDomain,
-                  icon: GitBranch,
-                },
-                {
-                  id: 'INVESTMENTS',
-                  label: 'Investments & Scream Team 1',
-                  domain: 'MENUS' as PrincipalDomain,
-                  icon: Flame,
-                },
-                {
-                  id: 'FUT_GALLERY',
-                  label: 'FUT Gallery & Rent-Flip',
-                  domain: 'MENUS' as PrincipalDomain,
-                  icon: Award,
-                },
-                {
-                  id: 'CONSOLE_MARKET',
-                  label: 'Xbox Series S Market (35k)',
-                  domain: 'MENUS' as PrincipalDomain,
-                  icon: TrendingUp,
-                },
-                {
-                  id: 'GAMEPLAY_LAB',
-                  label: 'Gameplay Synthesis & Roles++',
-                  domain: 'GAMEPLAY' as PrincipalDomain,
-                  icon: Zap,
-                },
-                {
-                  id: 'TACTICAL_COMMAND',
-                  label: 'Tactical Command Chatbot',
-                  domain: principalDomain,
-                  icon: MessageSquare,
-                },
-                {
-                  id: 'WORKSPACE_HUB',
-                  label: 'Google Docs & Sheets Hub',
-                  domain: principalDomain,
-                  icon: FileSpreadsheet,
-                },
-                {
-                  id: 'ANTIGRAVITY_AI',
-                  label: 'Smart Router & GenUI Skill',
-                  domain: principalDomain,
-                  icon: Cpu,
-                },
-              ].map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => {
-                      setActiveTab(item.id as ActiveTab);
-                      if (item.id === 'GAMEPLAY_LAB') setPrincipalDomain('GAMEPLAY');
-                      else if (
-                        item.id === 'EVOLUTIONS' ||
-                        item.id === 'TACTICAL_COMMAND' ||
-                        item.id === 'WORKSPACE_HUB' ||
-                        item.id === 'ANTIGRAVITY_AI'
-                      ) {
-                        // Accessible from both Menus & Gameplay
-                      } else setPrincipalDomain('MENUS');
-                    }}
-                    className={`w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-3 transition-colors whitespace-nowrap shrink-0 min-h-[42px] ${
-                      isActive
-                        ? 'bg-[#00ff87] text-slate-950 font-bold'
-                        : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* Zero-Guessing & FC 27 Xbox Series S Guard Card */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-lg p-3.5 space-y-2 text-xs">
-              <div className="font-bold text-[#00ff87] flex items-center justify-between">
-                <span>Zero-Guessing Guard</span>
-                <span className="font-mono">FC 27 Xbox</span>
+      {/* MAIN VIEWPORT */}
+      <main className="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface">
+        {/* Cloud Status Toast / Banner */}
+        {cloudStatusBanner && (
+          <div className="max-w-5xl mx-auto w-full px-space-md pt-3">
+            <div className="bg-surface-container-high border border-primary-container/40 rounded-xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs text-on-surface shadow-lg">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary-container text-[18px]">info</span>
+                <span>{cloudStatusBanner}</span>
               </div>
-              <p className="text-slate-400 leading-relaxed">
-                Confirmed Coins: <strong className="text-white font-mono">{coins !== null ? coins.toLocaleString() : '—'}</strong>. Unknown personal fields (Gallery Lv, Owned Cards, FP, Division) remain strictly <strong className="text-amber-300">blank (—)</strong>.
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowLaunchSyncModal(true)}
-                className="w-full py-1.5 px-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded font-semibold text-[11px] transition-colors"
-              >
-                Open Club Sync / Edit Fields
-              </button>
-            </div>
-          </div>
-
-          {/* ZenBook UX482 ScreenPad Plus Toggle */}
-          <div className="pt-3 border-t border-slate-800 space-y-2">
-            <button
-              type="button"
-              onClick={() => setScreenPadTickerOpen((v) => !v)}
-              className="w-full px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-xs font-semibold text-slate-200 flex items-center justify-between transition-colors min-h-[38px]"
-            >
-              <span className="flex items-center gap-2">
-                <Monitor className="w-3.5 h-3.5 text-[#00ff87]" />
-                <span>ZenBook ScreenPad+</span>
-              </span>
-              <span className="font-mono text-[11px] text-[#00ff87]">
-                {screenPadTickerOpen ? 'ON' : 'OFF'}
-              </span>
-            </button>
-          </div>
-        </aside>
-
-        {/* PRIMARY MAIN CONTENT AREA */}
-        <main className="flex-1 min-w-0 space-y-6">
-          {/* Mobile/Compact T=0 Temporal Strip & Quick Tab Navigation */}
-          <div className="lg:hidden space-y-3">
-            <div className="bg-[#111827] border border-slate-800 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums">
-              <span className="text-slate-200">
-                T=0 UK: <strong className="text-[#00ff87]">{t0Anchor.britishFullFormatted}</strong>
-              </span>
-              <span className="text-amber-400">
-                Xbox Coins: <strong>{coins !== null ? coins.toLocaleString() : '—'}</strong>
-              </span>
-            </div>
-
-            {/* Mobile Horizontal Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs font-semibold">
-              {[
-                { id: 'MY_SQUAD', label: 'My Squad (4-2-1-3)' },
-                { id: 'DYNAMIC_DATABASE', label: 'FUTBIN & Chem' },
-                { id: 'DUAL_SBCS', label: 'Ranked SBCs' },
-                { id: 'EVOLUTIONS', label: 'Evos Hub' },
-                { id: 'CLUB_SYNC', label: 'My Club' },
-                { id: 'INVESTMENTS', label: 'Investments' },
-                { id: 'FUT_GALLERY', label: 'Gallery' },
-                { id: 'CONSOLE_MARKET', label: 'Market' },
-                { id: 'GAMEPLAY_LAB', label: 'Gameplay' },
-                { id: 'TACTICAL_COMMAND', label: 'Tactics' },
-                { id: 'WORKSPACE_HUB', label: 'Docs & Sheets' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id as ActiveTab)}
-                  className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors shrink-0 ${
-                    activeTab === tab.id
-                      ? 'bg-[#00ff87] text-slate-950 font-bold'
-                      : 'bg-slate-900 border border-slate-800 text-slate-300'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Cloud / Action Status Banner */}
-          {cloudStatusBanner && (
-            <div className="bg-[#111827] border border-[#00ff87]/50 rounded-xl px-4 py-3 flex items-center justify-between gap-3 text-xs text-slate-200">
-              <span>{cloudStatusBanner}</span>
               <button
                 type="button"
                 onClick={() => setCloudStatusBanner(null)}
-                className="text-slate-400 hover:text-white"
+                className="text-on-surface-variant hover:text-white"
               >
-                <X className="w-4 h-4" />
+                <span className="material-symbols-outlined text-[16px]">close</span>
               </button>
             </div>
-          )}
+          </div>
+        )}
+
+        {/* Tab 1: Hub View */}
+        {shellTab === 'hub' && (
+          <HubView
+            onNavigateTab={(tab) => {
+              setShellTab(tab);
+              if (tab === 'squad') setActiveTab('MY_SQUAD');
+              else if (tab === 'market') setActiveTab('CONSOLE_MARKET');
+              else if (tab === 'sbcs') setActiveTab('DUAL_SBCS');
+              else if (tab === 'ai-studio') setActiveTab('TACTICAL_COMMAND');
+            }}
+            coins={coins}
+            onUpdateCoins={(newCoins) => setCoins(newCoins)}
+            onShowNotice={(msg) => setCloudStatusBanner(msg)}
+          />
+        )}
+
+        {/* Other Tabs Shell */}
+        {shellTab !== 'hub' && (
+          <div className="max-w-[1600px] w-full mx-auto px-4 lg:px-6 py-4 space-y-4">
+            {/* Context Sub-Navigation Strip */}
+            <div className="flex items-center justify-between gap-3 bg-surface-container p-2 rounded-xl border border-white/5 overflow-x-auto">
+              <div className="flex items-center gap-1.5 text-xs font-semibold">
+                {shellTab === 'squad' && (
+                  <>
+                    {[
+                      { id: 'MY_SQUAD', label: 'Tactical Pitch (4-2-1-3)', icon: 'sports_soccer' },
+                      { id: 'DYNAMIC_DATABASE', label: 'FUTBIN & Chem Lab', icon: 'database' },
+                      { id: 'EVOLUTIONS', label: 'Evolutions Matrix', icon: 'alt_route' },
+                      { id: 'GAMEPLAY_LAB', label: 'Gameplay Synthesis', icon: 'bolt' },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() => setActiveTab(st.id as ActiveTab)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                          activeTab === st.id
+                            ? 'bg-primary-container text-on-primary font-bold'
+                            : 'text-on-surface-variant hover:text-white bg-surface-container-high'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">{st.icon}</span>
+                        <span>{st.label}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {shellTab === 'market' && (
+                  <>
+                    {[
+                      { id: 'CONSOLE_MARKET', label: 'FUTBIN Radar & Price History', icon: 'trending_up' },
+                      { id: 'INVESTMENTS', label: 'Scream Team 1 & Investments', icon: 'local_fire_department' },
+                      { id: 'FUT_GALLERY', label: 'FUT Gallery & Rent-and-Flip', icon: 'workspace_premium' },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() => setActiveTab(st.id as ActiveTab)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                          activeTab === st.id
+                            ? 'bg-secondary-container text-on-secondary-container font-bold'
+                            : 'text-on-surface-variant hover:text-white bg-surface-container-high'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">{st.icon}</span>
+                        <span>{st.label}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {shellTab === 'sbcs' && (
+                  <>
+                    {[
+                      { id: 'DUAL_SBCS', label: 'Ranked Player & Upgrade SBCs', icon: 'auto_fix_high' },
+                      { id: 'CLUB_SYNC', label: 'Duplicate Storage & Inventory', icon: 'inventory_2' },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() => setActiveTab(st.id as ActiveTab)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                          activeTab === st.id
+                            ? 'bg-tertiary-container text-on-tertiary-container font-bold'
+                            : 'text-on-surface-variant hover:text-white bg-surface-container-high'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">{st.icon}</span>
+                        <span>{st.label}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {shellTab === 'ai-studio' && (
+                  <>
+                    {[
+                      { id: 'TACTICAL_COMMAND', label: 'Tactical Voice & Chat', icon: 'psychology' },
+                      { id: 'WORKSPACE_HUB', label: 'Google Docs & Sheets Hub', icon: 'description' },
+                      { id: 'ANTIGRAVITY_AI', label: 'Antigravity 2.26 Telemetry', icon: 'neurology' },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() => setActiveTab(st.id as ActiveTab)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                          activeTab === st.id
+                            ? 'bg-primary-container text-on-primary font-bold'
+                            : 'text-on-surface-variant hover:text-white bg-surface-container-high'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">{st.icon}</span>
+                        <span>{st.label}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+              </div>
+
+              <div className="text-xs font-mono text-on-surface-variant hidden md:block">
+                T=0 UK: <strong className="text-primary-container">{t0Anchor.britishTimeFormatted}</strong>
+              </div>
+            </div>
 
           {/* Smart-Routed Strategic Output Drawer (Showing Tier, Latency in ms, and Reason) */}
           {strategyOutput && (
@@ -2411,8 +2304,9 @@ export function App() {
               onNavigateToTab={(tabId) => setActiveTab(tabId as ActiveTab)}
             />
           )}
-        </main>
-      </div>
+          </div>
+        )}
+      </main>
 
       {/* ASUS ZENBOOK UX482 SCREENPAD PLUS SECONDARY TICKER BAR (12.6" 1920x515 Companion Strip) */}
       {screenPadTickerOpen && (
@@ -2444,40 +2338,149 @@ export function App() {
       )}
 
       {/* MOBILE THUMB-FRIENDLY BOTTOM NAVIGATION BAR (375px–430px Viewport Budget <=15%) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-[#090d16]/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 grid grid-cols-8 gap-1">
-        {[
-          { id: 'CLUB_SYNC', label: 'Club', icon: Shield },
-          { id: 'DUAL_SBCS', label: 'SBCs', icon: Layers },
-          { id: 'EVOLUTIONS', label: 'Evos', icon: GitBranch },
-          { id: 'INVESTMENTS', label: 'Invest', icon: Flame },
-          { id: 'FUT_GALLERY', label: 'Gallery', icon: Award },
-          { id: 'CONSOLE_MARKET', label: 'Market', icon: TrendingUp },
-          { id: 'GAMEPLAY_LAB', label: 'Pitch', icon: Zap },
-          { id: 'TACTICAL_COMMAND', label: 'Chat', icon: MessageSquare },
-        ].map((item) => {
-          const Icon = item.icon;
-          const active = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => {
-                setActiveTab(item.id as ActiveTab);
-                if (item.id === 'GAMEPLAY_LAB') setPrincipalDomain('GAMEPLAY');
-                else if (item.id === 'EVOLUTIONS' || item.id === 'TACTICAL_COMMAND') {
-                  // Accessible from both
-                } else if (item.id !== 'ANTIGRAVITY_AI') setPrincipalDomain('MENUS');
-              }}
-              className={`flex flex-col items-center justify-center py-1.5 rounded-lg text-[10px] font-semibold transition-colors min-h-[44px] ${
-                active ? 'text-[#00ff87] bg-[#00ff87]/10' : 'text-slate-400'
-              }`}
-            >
-              <Icon className="w-4 h-4 mb-0.5" />
-              <span className="truncate">{item.label}</span>
-            </button>
-          );
-        })}
+      {/* FIXED BOTTOM NAVIGATION BAR: Matching User HTML Mockup */}
+      <nav
+        className="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.7)] border-t border-white/5"
+        data-active-classes="text-primary-container font-bold scale-105"
+      >
+        <div className="flex items-center justify-around h-16 px-space-xs max-w-lg mx-auto">
+          <button
+            type="button"
+            onClick={() => setShellTab('hub')}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] transition-all cursor-pointer ${
+              shellTab === 'hub' ? 'text-primary-container font-bold scale-105' : 'text-on-surface-variant'
+            }`}
+            data-path="hub"
+          >
+            <span className="material-symbols-outlined text-[22px]">insights</span>
+            <span className="font-label-caps text-label-caps">Hub</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShellTab('squad');
+              setActiveTab('MY_SQUAD');
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] transition-all cursor-pointer ${
+              shellTab === 'squad' ? 'text-primary-container font-bold scale-105' : 'text-on-surface-variant'
+            }`}
+            data-path="squad"
+          >
+            <span className="material-symbols-outlined text-[22px]">sports_soccer</span>
+            <span className="font-label-caps text-label-caps">Squad</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShellTab('market');
+              setActiveTab('CONSOLE_MARKET');
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] transition-all cursor-pointer ${
+              shellTab === 'market' ? 'text-primary-container font-bold scale-105' : 'text-on-surface-variant'
+            }`}
+            data-path="market"
+          >
+            <span className="material-symbols-outlined text-[22px]">candlestick_chart</span>
+            <span className="font-label-caps text-label-caps">Market</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShellTab('sbcs');
+              setActiveTab('DUAL_SBCS');
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] transition-all cursor-pointer ${
+              shellTab === 'sbcs' ? 'text-primary-container font-bold scale-105' : 'text-on-surface-variant'
+            }`}
+            data-path="sbcs"
+          >
+            <span className="material-symbols-outlined text-[22px]">auto_fix_high</span>
+            <span className="font-label-caps text-label-caps">SBCs</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShellTab('ai-studio');
+              setActiveTab('TACTICAL_COMMAND');
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] transition-all cursor-pointer ${
+              shellTab === 'ai-studio' ? 'text-primary-container font-bold scale-105' : 'text-on-surface-variant'
+            }`}
+            data-path="ai-studio"
+          >
+            <span className="material-symbols-outlined text-[22px]">neurology</span>
+            <span className="font-label-caps text-label-caps">AI Studio</span>
+          </button>
+        </div>
       </nav>
+
+      {/* QUICK COIN TUNER MODAL */}
+      {showCoinQuickModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface-container border border-white/10 rounded-xl max-w-sm w-full p-space-md space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-tertiary-fixed-dim">monetization_on</span>
+                <h3 className="font-headline-md text-base font-bold text-white">Adjust Club Coins</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCoinQuickModal(false)}
+                className="text-on-surface-variant hover:text-white"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-on-surface-variant block font-medium">
+                Enter Coin Balance:
+              </label>
+              <input
+                type="number"
+                value={coins ?? 0}
+                onChange={(e) => setCoins(Number(e.target.value))}
+                className="w-full px-3 py-2 bg-surface-container-low border border-white/10 rounded-lg text-white font-data-tabular text-sm focus:outline-none focus:border-primary-container"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              {[
+                { label: '35,000 (Start)', val: 35000 },
+                { label: '500,000', val: 500000 },
+                { label: '1.42M (Apex)', val: 1420000 },
+              ].map((preset) => (
+                <button
+                  key={preset.val}
+                  type="button"
+                  onClick={() => {
+                    setCoins(preset.val);
+                    setShowCoinQuickModal(false);
+                    setCloudStatusBanner(`Club balance updated to ${preset.val.toLocaleString()} Coins.`);
+                  }}
+                  className="p-2 rounded bg-surface-container-high hover:bg-surface-bright text-xs text-white font-mono text-center border border-white/5 cursor-pointer"
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowCoinQuickModal(false)}
+                className="px-4 py-2 bg-primary-container text-on-primary font-bold text-xs uppercase tracking-wider rounded-lg cursor-pointer"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL 1: IMMEDIATE LAUNCH XBOX SERIES S CLUB SYNC MODAL (ZERO-GUESSING ONBOARDING) */}
       {showLaunchSyncModal && (
