@@ -41,6 +41,7 @@ import { PushToTalkButton } from './components/PushToTalkButton';
 import { InvestmentTrackerTab, ConsoleInvestmentPosition } from './components/InvestmentTrackerTab';
 import { TacticalChatTab } from './components/TacticalChatTab';
 import { SquadTrackerView } from './components/SquadTrackerView';
+import { GoogleWorkspaceHub } from './components/GoogleWorkspaceHub';
 import {
   Shield,
   TrendingUp,
@@ -68,6 +69,8 @@ import {
   MessageSquare,
   Flame,
   Download,
+  FileSpreadsheet,
+  FileText,
 } from 'lucide-react';
 import type { User } from 'firebase/auth';
 
@@ -82,7 +85,8 @@ type ActiveTab =
   | 'CONSOLE_MARKET'
   | 'GAMEPLAY_LAB'
   | 'TACTICAL_COMMAND'
-  | 'ANTIGRAVITY_AI';
+  | 'ANTIGRAVITY_AI'
+  | 'WORKSPACE_HUB';
 
 interface UnverifiedCustomPlayer {
   id: string;
@@ -1029,6 +1033,12 @@ export function App() {
                   icon: MessageSquare,
                 },
                 {
+                  id: 'WORKSPACE_HUB',
+                  label: 'Google Docs & Sheets Hub',
+                  domain: principalDomain,
+                  icon: FileSpreadsheet,
+                },
+                {
                   id: 'ANTIGRAVITY_AI',
                   label: 'Smart Router & GenUI Skill',
                   domain: principalDomain,
@@ -1047,6 +1057,7 @@ export function App() {
                       else if (
                         item.id === 'EVOLUTIONS' ||
                         item.id === 'TACTICAL_COMMAND' ||
+                        item.id === 'WORKSPACE_HUB' ||
                         item.id === 'ANTIGRAVITY_AI'
                       ) {
                         // Accessible from both Menus & Gameplay
@@ -1127,6 +1138,7 @@ export function App() {
                 { id: 'CONSOLE_MARKET', label: 'Market' },
                 { id: 'GAMEPLAY_LAB', label: 'Gameplay' },
                 { id: 'TACTICAL_COMMAND', label: 'Tactics' },
+                { id: 'WORKSPACE_HUB', label: 'Docs & Sheets' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -2304,6 +2316,7 @@ export function App() {
               }
               catalogPlayers={players}
               clubContextForAi={clubContextForAi}
+              onNavigateToTab={(tabId) => setActiveTab(tabId as ActiveTab)}
             />
           )}
 
@@ -2331,6 +2344,21 @@ export function App() {
               t0Anchor={t0Anchor}
               clubContextForAi={clubContextForAi}
               onVoiceClubCommand={handleVoiceClubCommand}
+            />
+          )}
+
+          {/* TAB 7: GOOGLE WORKSPACE 1P SUITE — GOOGLE DOCS (v1) & GOOGLE SHEETS (v4) */}
+          {activeTab === 'WORKSPACE_HUB' && (
+            <GoogleWorkspaceHub
+              currentUser={currentUser}
+              hasDriveToken={hasDriveToken}
+              userCoins={coins}
+              clubName={clubName}
+              rivalsDivision={rivalsDivision}
+              activeFormation="4-2-1-3"
+              startingXI={players.slice(0, 11)}
+              trackedInvestments={trackedInvestments}
+              onOpenSyncModal={() => setShowLaunchSyncModal(true)}
             />
           )}
         </main>

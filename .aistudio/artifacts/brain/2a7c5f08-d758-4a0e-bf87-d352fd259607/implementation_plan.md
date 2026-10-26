@@ -1,6 +1,6 @@
-# FC 27 UT App — Club Sync JSON Backup Export, AI Tactical Director & Photorealistic 3D Stadium Pitch Prototype Plan
+# Google Search Grounding, Microphone Audio Transcription & Multi-Tier Gemini Chatbot Integration Plan
 
-An integrated capability prototype and architectural upgrade for the EA Sports FC 27 Ultimate Team Console Assistant (Xbox Series S). This update adds an **instant browser-based JSON backup export** in the Club Sync Modal (generating a timestamped `.json` file via client-side `Blob` with `application/json` MIME type), introduces an interactive **Three.js photorealistic 3D stadium pitch visualizer** with procedural player card totems, and showcases the **AI Tactical Director** prototype with transparent tiered model routing (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-3.5-transcribe`, and `gemini-3.8-live`).
+An end-to-end integration plan incorporating **Google Search live data grounding** (`gemini-3.8-flash`), **push-to-talk microphone audio transcription** (`gemini-3.5-transcribe`), and a **multi-turn Gemini Tactical Director chatbot** featuring tiered model routing (`gemini-4-argon`, `gemini-3.8-flash`, and `gemini-3.1-flash-lite`) into the EA Sports FC 27 Ultimate Team Console Assistant (Xbox Series S).
 
 ---
 
@@ -8,75 +8,59 @@ An integrated capability prototype and architectural upgrade for the EA Sports F
 
 > [!IMPORTANT]
 > **Confirmed User Decisions (Phase 1 Clarifications)**:
-> 1. **AI Tactical Director Presentation**: Configured as a **Dedicated Tactical Director tab with model selector**, providing full-screen tactical analysis, live audio coaching, role persona selection, and explicit routing between speed, grounded search, and deep reasoning models.
-> 2. **Club Data JSON Export Behavior**: Triggered via an **instant one-click download with formatted timestamped filename** (`fc27_club_backup_YYYY-MM-DD_HHmmss.json`) directly inside the Club Sync Modal, wrapping the verified club state (coins, club name, division, custom players, squad cards, duplicate inventory, and investment ledger) in a typed `application/json` `Blob`.
-> 3. **Three.js 3D Pitch Visualization**: Prioritized with **photorealistic stadium turf and procedural 3D card pedestals**, featuring procedural grass shear, touchline markings, PBR stadium floodlighting, studio reflection (`RoomEnvironment`), and a non-occluding collapsible bottom dock HUD.
+> 1. **Chatbot Placement**: Incorporated in **both the Dedicated Tactical Command tab and the collapsible assistant drawer**, providing full-screen tactical analysis as well as quick sliding access from any tab without losing context.
+> 2. **Model Routing Strategy**: Implemented as **Smart auto-routing with an interactive manual model switcher**—automatically picking the optimal tier based on query complexity while letting the user explicitly lock into Frontier Reasoning (Argon), Grounded Live Meta (Flash + Search), or Lightning Speed (Flash Lite).
 
 - **Confirmed Model Roster**:
-  - `gemini-4-argon`: Complex tactical modeling, full squad chemistry rebuilds, and multi-scenario trade calculations (`ThinkingLevel.HIGH`).
-  - `gemini-3.8-flash`: General chat, tactical director multi-turn dialogue, and real-time live promo/SBC grounding via `googleSearch`.
-  - `gemini-3.5-flash-lite`: Low-latency instant queries, quick squad delta checks, and rapid card-swap evaluations.
-  - `gemini-3.5-transcribe`: Push-to-talk microphone audio transcription across all input fields.
-  - `gemini-3.8-live`: Real-time bidirectional voice coaching session with live waveform visualizer in the top HUD.
+  - `gemini-4-argon`: Complex multi-constraint tactical modeling, full squad chemistry rebuilds, and multi-scenario trade calculations (`ThinkingLevel.HIGH`).
+  - `gemini-3.8-flash` (+ `googleSearch`): General conversational chat, real-time live promo/SBC grounding, Title Update #3.1 patch notes, and Xbox Series S market valuations.
+  - `gemini-3.1-flash-lite`: Ultra-fast (~200–350ms) low-latency lookups, instant player chemistry deltas, and 5% EA tax audits.
+  - `gemini-3.5-transcribe`: High-accuracy speech-to-text for microphone audio dictation across the chat input, investment logger, club sync, and Google Docs notes.
 
 ---
 
 ## 1. Overview & Core Concept
 
 - **What It Does**:
-  1. **Club Data Portability & Backup**: Enables users to back up their entire verified Xbox Series S Ultimate Team profile (35,000 Coins, logged squad, custom player cards, untradeables, duplicate storage, and active flips) with a single click, downloading a clean, schema-validated JSON file.
-  2. **Tactical Director Prototype**: An AI tactical command suite where users can select model tiers, query tactical directors with specialized FC 27 personas (e.g. Pep Gegenpress, Ancelotti Pragmatic, Modern Patch Meta), and inspect live token/latency telemetry.
-  3. **Photorealistic 3D Pitch Lab**: An interactive Three.js 3D stadium pitch rendering player cards on procedural physical totems with illuminated Role++ beacons, custom camera angles, and smooth damping.
-- **Target Audience**: Competitive FC 27 Ultimate Team console players who demand strict data ownership (offline JSON backups) and advanced tactical simulation tools.
-- **Key Value**: Zero data loss with immediate offline recovery, high-fidelity spatial squad visualization, and predictable model selection tailored to task complexity.
+  1. **Google Search Grounded Intelligence**: Delivers up-to-the-minute FC 27 console data (October 2026 Ultimate Scream Team 1 drop, live 18:00 UK market swings, Title Update #3.1 notes, and FotMob verified 2026/27 rosters) with clickable web citations.
+  2. **Hands-Free Audio Transcription**: Enables players to hold a push-to-talk microphone button on their console companion screen or laptop (ZenBook UX482) to dictate tactical queries, player trade entries, or club wallet changes directly into text.
+  3. **Multi-Turn Tactical Director Chat**: Maintains conversational history across turns with role personas (Meta Analyst, Budget Architect, Gegenpress Coach), transparent telemetry receipts (latency ms, model tier, cost factor), and full context injection (current 35k coins, Starting XI, and investment ledger).
+- **Target Audience**: Competitive FC 27 Ultimate Team console players who demand real-time transfer market accuracy and fast hands-free input.
+- **Key Value**: Eliminates outdated training-data hallucinations through live Google Search grounding, accelerates interaction with microphone audio transcription, and optimizes performance and cost through 3-tier model routing.
 
 ---
 
 ## 2. User Experience & Visual Design
 
-### A. Club Sync Modal JSON Export Flow
-- **Visual Location**: Placed in the action row of the **Club Sync Modal** alongside existing import/sync buttons.
-- **Visual Appearance**: Clean obsidian button with a download icon, green hairline border (`border-[#00ff87]/40 hover:border-[#00ff87]`), and clear label: **"Export Club State JSON"**.
-- **Interaction**:
-  1. Clicking immediately serializes the current club state:
-     - `version: "1.0.0"`
-     - `exportedAt: ISO timestamp`
-     - `coins: 35000` (or user modified value)
-     - `clubName`, `fifaPoints`, `rivalsDivision`, `dailySp`, `galleryLevel`
-     - `squad`: Active 11-player formation, card IDs, ratings, positions, and chemistry
-     - `clubInventory`: Owned catalog players and custom unverified players
-     - `duplicateStorage`: Untradeable duplicate cards held for SBCs
-     - `investmentLedger`: Active 5% tax flip positions
-  2. Creates a `Blob` with `type: "application/json;charset=utf-8"`.
-  3. Generates a download URL via `URL.createObjectURL(blob)`, sets filename `fc27_club_state_YYYYMMDD_HHMMSS.json`, programmatic click, and cleans up with `URL.revokeObjectURL`.
-  4. Displays a non-intrusive success toast: *"Club state exported successfully (35,000 Coins & active squad logged)"*.
+### A. Dedicated Tactical Command Tab & Collapsible Drawer
+- **Dual Presentation**:
+  - **Full-Screen Tab (`TACTICAL_COMMAND`)**: Expansive multi-turn chat feed with rich markdown tables, model receipts, quick-prompt chips, and role persona switchers.
+  - **Collapsible Drawer (`AntigravityMcpAndChatDrawer`)**: Accessible from the bottom right or navigation bar on any view (Squad, Market, SBCs, Investments, Google Workspace Hub).
+- **Control Bar**:
+  - **Tier Selector Segmented Control**:
+    - `AUTO` — Smart classifier dynamically selects the best tier based on query keywords and complexity.
+    - `gemini-3.1-flash-lite` — *Lightning Speed (~250ms)*: Quick single-stat lookups and math checks.
+    - `gemini-3.8-flash` (+ Search) — *Live Meta Grounding (~750ms)*: Real-time web search for current SBCs, market drops, and Title Updates.
+    - `gemini-4-argon` — *Deep Tactical Reasoning (~3.2s)*: Multi-constraint chemistry optimization and branching evolution synthesis.
+  - **Tactical Persona Switcher**: *Meta Analyst*, *Budget Architect (35k)*, *Counter-Press Specialist*.
 
-### B. Dedicated AI Tactical Director Tab (`TACTICAL COMMAND`)
-- **Top Control Bar**:
-  - **Model Selector Pill Strip**:
-    - `gemini-3.5-flash-lite` — *Lightning Speed (~250ms)*: Rapid tactical tips, quick squad delta checks.
-    - `gemini-3.8-flash` (+ Search) — *Grounded Meta (~800ms)*: Live Ultimate Scream Team 1 drop updates, patch notes.
-    - `gemini-4-argon` — *Deep Tactical Reasoning (~2.8s)*: Exhaustive squad chemistry synthesis, Role++ optimization.
-  - **Tactical Persona Switcher**: *Meta Optimizer*, *Counter-Press Specialist*, *Low-Budget Architect (35k Budget)*.
-- **Chat Feed & Interaction**:
-  - Clear message bubbles with role avatars, model response receipts (showing model name, token latency, and routing justification).
-  - Push-to-talk mic button powered by `gemini-3.5-transcribe` for voice dictation.
-  - Quick tactical prompts: *"Analyze my Starting XI weakest link"*, *"Best Ultimate Scream upgrade under 35k coins"*, *"Evaluate 85 Otamendi SBC vs 87 Jill Scott Objective"*.
+### B. Push-to-Talk Microphone Audio Transcription Flow
+- **Microphone Button (`PushToTalkButton`)**:
+  - Sleek button with microphone icon, tactile click, and pulsating recording indicator.
+  - Supports both click-to-toggle and press-and-hold recording modes.
+  - Captures audio via browser `MediaRecorder` (`audio/webm` or `audio/wav`), encodes to base64, and dispatches to `/api/gemini/transcribe`.
+  - Transcribes via `gemini-3.5-transcribe` and automatically inserts the text into the active chat input field or form input.
+- **Available Entry Points**:
+  - Chat input in Tactical Command & Drawer.
+  - Investment Acquisition Logger.
+  - Club Sync Onboarding Modal.
+  - Google Docs Note Appender.
 
-### C. Photorealistic Three.js 3D Pitch Prototype
-- **3D Pitch Visuals**:
-  - Procedural turf with alternating mown grass stripes (procedural canvas texture, `SRGBColorSpace`, maximum anisotropy).
-  - White touchlines, penalty boxes, center circle, and goal nets using procedural geometry.
-  - 11 procedural card pedestals arranged in the active formation (4-2-1-3 or 4-3-3), featuring:
-    - Primary card totem: Beveled extruded polygon with holographic trim.
-    - Secondary Read: Floating position ring and rating badge.
-    - Accent: Glowing Role++ light pillar indicating active playstyle bonuses.
-- **Lighting & Atmosphere**:
-  - Three-point stadium floodlight rig: 4 corner directional spot panels with soft shadows, subtle cool blue ambient fill (`THREE.HemisphereLight`), and procedural studio reflection via `RoomEnvironment`.
-  - Atmospheric stadium night fog (`THREE.FogExp2`).
-- **Collapsible Bottom Dock HUD**:
-  - Zero viewport occlusion: All 3D controls (Camera Presets: *Broadcast High*, *Tactical Top-Down*, *Behind Goal*; Lighting Moods: *Night Match*, *Golden Hour*; Pedestal Elevation slider) grouped into a sleek glassmorphic bottom bar.
-  - "Cinema Mode" toggle collapses the dock completely for full-screen inspection.
+### C. Live Search Grounding Visual Citations
+- **Source Badges**:
+  - Below grounded model responses, a clean unboxed sources list displays verified web citations extracted from `groundingChunks` (e.g. *EA FC 27 Pitch Notes*, *FUTBIN Console Tracker*, *FotMob Transfers*).
+  - Clicking any citation opens the official web source in a secure new tab.
+  - Telemetry receipt displays model name, latency in milliseconds, and the search routing justification.
 
 ---
 
@@ -84,10 +68,10 @@ An integrated capability prototype and architectural upgrade for the EA Sports F
 
 | Decision | Chosen Approach | Rationale | Alternatives Considered |
 | :--- | :--- | :--- | :--- |
-| **JSON Export Engine** | Client-side `Blob` with `application/json` and `URL.createObjectURL` | Instant zero-latency download without server roundtrips; works completely offline; adheres strictly to privacy. | Server-side file generation via Express route (unnecessary network overhead and potential data leakage). |
-| **3D Rendering Approach** | Pure procedural geometry & textures via Three.js (r160+) | Zero broken image 404s, hermetic execution, crisp grazing angles with procedural canvas textures and `RoomEnvironment`. | Loading external `.gltf` or `.obj` models (fragile, subject to network blocks and missing assets). |
-| **Tactical Director Integration** | Dedicated full-screen tab with explicit model selector | Gives ample screen real estate for complex multi-turn chats, formatted code generation, and model telemetry without crowding the squad pitch. | Small floating modal or sidebar drawer (too narrow for deep tactical tables and multi-turn dialogue). |
-| **Model Tier Assignment** | Strict task-based routing (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`) | Maximizes speed for frequent queries while reserving deep thinking models for comprehensive squad overhauls. | Single model for all queries (either too slow for simple queries or insufficiently capable for complex tactical reasoning). |
+| **Chatbot Placement** | Full-screen Tactical Command tab + sliding drawer | Gives users deep focus for complex squad overhauls while allowing quick queries while browsing the market or squad. | Drawer only (too cramped for deep markdown tables) or Full-screen tab only (forces tab context switching). |
+| **Model Tier Strategy** | Smart Auto-routing with manual pill override | Eliminates user hesitation for common queries while offering power users absolute control over deep reasoning vs. fast lookup. | Fixed single model (either too slow for simple queries or incapable of frontier reasoning). |
+| **Search Grounding Trigger** | Automatic keyword detection + manual toggle | Ensures queries asking for live prices, promos, SBCs, or patch notes get live Google Search data without adding unnecessary latency to basic math lookups. | Always searching (adds 400-800ms to every query) or never searching (results in stale pre-training data). |
+| **Audio Processing** | Server-side `gemini-3.5-transcribe` via Express endpoint | Complies strictly with zero client-side API key exposure; delivers fast, highly accurate transcription of soccer jargon and player names. | Browser Web Speech API (inconsistent browser support, poor recognition of player surnames and gaming terms). |
 
 ---
 
@@ -101,92 +85,60 @@ An integrated capability prototype and architectural upgrade for the EA Sports F
  ┌───────────────────────────────────────────────────────────────────────────────────────┐
  │                                   CLIENT (React 19)                                   │
  │                                                                                       │
- │  ┌─────────────────────┐   ┌───────────────────────┐   ┌───────────────────────────┐  │
- │  │   Club Sync Modal   │   │ Tactical Director Tab │   │     3D Pitch Viewport     │  │
- │  │ ┌─────────────────┐ │   │ ┌───────────────────┐ │   │ ┌───────────────────────┐ │  │
- │  │ │ JSON Export Btn │ │   │ │ Model Selector    │ │   │ │ Three.js Canvas       │ │  │
- │  │ │ (Blob download) │ │   │ │ - gemini-4-argon  │ │   │ │ - PBR Turf & Lighting │ │  │
- │  │ └─────────────────┘ │   │ │ - gemini-3.8-flash│ │   │ │ - 11 Card Totems      │ │  │
- │  └──────────┬──────────┘   │ │ - 3.5-flash-lite  │ │   │ │ - Collapsible HUD     │ │  │
- │             │              │ └───────────────────┘ │   │ └───────────────────────┘ │  │
- │             ▼              │ ┌───────────────────┐ │   └───────────────────────────┘  │
- │   Browser Download Trigger │ │ Push-to-Talk Mic  │ │                                  │
- │   fc27_club_state.json     │ └───────────────────┘ │   ┌───────────────────────────┐  │
- │   (application/json)       └───────────┬───────────┘   │ Live Audio HUD            │  │
- │                                        │               │ - gemini-3.8-live session │  │
- └────────────────────────────────────────┼───────────────┴─────────────┬─────────────┘  │
-                                          │                             │                │
-                                          ▼                             ▼                │
- ┌────────────────────────────────────────────────────────────────────────────────────┐  │
- │                              SERVER PROXY (`server.ts`)                            │  │
- │                                                                                    │  │
- │   • POST /api/gemini/chat-stream  ──> GoogleGenAI SDK (modelRouter: argon/flash)   │  │
- │   • POST /api/gemini/transcribe   ──> gemini-3.5-transcribe                        │  │
- │   • WS   /live                    ──> ai.live.connect(model: "gemini-3.8-live")    │  │
- └────────────────────────────────────────────────────────────────────────────────────┘  │
-                                          │                                              │
-                                          ▼                                              │
- ┌────────────────────────────────────────────────────────────────────────────────────┐  │
- │                            PERSISTENCE & VERIFIED DATA                             │  │
- │   • Firestore Database: ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607  │  │
- │   • Local Storage Fallback & Offline JSON State                                    │  │
- └────────────────────────────────────────────────────────────────────────────────────┘  │
+ │  ┌───────────────────────────────────┐       ┌─────────────────────────────────────┐  │
+ │  │      Tactical Command View        │       │     Collapsible Drawer Widget       │  │
+ │  │  • Multi-turn Message Thread      │       │  • Floating Quick-Access Drawer     │  │
+ │  │  • Model Tier Selector Strip      │       │  • Shared Chat History State        │  │
+ │  │  • Tactical Persona Switcher      │       │  • Push-to-Talk Mic Dictation       │  │
+ │  │  • Push-to-Talk Mic Dictation     │       │  • Telemetry Receipts & Sources     │  │
+ │  │  • Grounded Web Sources Display   │       └──────────────────┬──────────────────┘  │
+ │  └─────────────────┬─────────────────┘                          │                     │
+ └────────────────────┼────────────────────────────────────────────┼─────────────────────┘
+                      │                                            │
+                      ▼                                            ▼
+ ┌───────────────────────────────────────────────────────────────────────────────────────┐
+ │                              SERVER PROXY (`server.ts`)                               │
+ │                                                                                       │
+ │  • POST /api/gemini/chat                                                              │
+ │    ├─ gemini-3.1-flash-lite  (Fast checks, sub-350ms, ThinkingLevel.MINIMAL)          │
+ │    ├─ gemini-3.8-flash       (General chat + { tools: [{ googleSearch: {} }] })       │
+ │    └─ gemini-4-argon         (Deep reasoning, ThinkingLevel.HIGH)                     │
+ │                                                                                       │
+ │  • POST /api/gemini/transcribe                                                        │
+ │    └─ gemini-3.5-transcribe  (Audio base64 input -> Text transcript)                  │
+ │                                                                                       │
+ │  • POST /api/gemini/discover-t0-versions & fetch-patch-notes                          │
+ │    └─ gemini-3.8-flash       ({ tools: [{ googleSearch: {} }] } grounded at T=0)      │
+ └────────────────────────────────────────┬──────────────────────────────────────────────┘
+                                          │
+                                          ▼
+ ┌───────────────────────────────────────────────────────────────────────────────────────┐
+ │                                 EXTERNAL SERVICES                                     │
+ │  • Google GenAI SDK (@google/genai) with server-side API key                          │
+ │  • Google Search Grounding Index                                                      │
+ │  • Firestore Database: ai-studio-fc27utapp-2a7c5f08-d758-4a0e-bf87-d352fd259607       │
+ └───────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Models Used & Specific Roles
-1. **`gemini-4-argon`**: High-complexity tactical modeling (`ThinkingLevel.HIGH`), squad chemistry overhauls, and deep multi-variable SBC/Evolution cost-benefit solvers.
-2. **`gemini-3.8-flash`**: General tactical queries, conversational chat feed, and live grounding via `googleSearch` for current Ultimate Scream Team 1 market values.
-3. **`gemini-3.5-flash-lite`**: High-frequency, sub-300ms calculations (e.g. quick single-player chemistry deltas, immediate tax verifications).
-4. **`gemini-3.5-transcribe`**: Unary and streaming speech-to-text for all push-to-talk mic buttons.
-5. **`gemini-3.8-live`**: Bidirectional real-time voice streaming over WebSocket for the Live Audio HUD coach.
-
-### Data Format for JSON Backup Export
-```json
-{
-  "exportMetadata": {
-    "app": "FC 27 UT App",
-    "version": "1.0.0",
-    "platform": "Xbox Series S",
-    "timestamp": "2026-10-25T18:00:00.000Z"
-  },
-  "clubState": {
-    "coins": 35000,
-    "clubName": null,
-    "fifaPoints": null,
-    "rivalsDivision": null,
-    "dailySp": null,
-    "galleryLevel": null
-  },
-  "squad": {
-    "formation": "4-2-1-3",
-    "startingXI": [],
-    "chemistryScore": 33
-  },
-  "inventory": {
-    "ownedCatalogPlayers": [],
-    "customPlayers": [],
-    "duplicateStorage": []
-  },
-  "investmentPortfolio": []
-}
-```
+1. **`gemini-4-argon`**: Frontier reasoning (`ThinkingLevel.HIGH`) for complex tactical chemistry rebuilds, multi-stage evolution paths, and portfolio risk calculations.
+2. **`gemini-3.8-flash`**: General chat, multi-turn reasoning, and real-time live grounding via `googleSearch` tool for current Ultimate Scream Team 1 prices, Title Update #3.1 notes, and 18:00 UK supply swings.
+3. **`gemini-3.1-flash-lite`**: Ultra-fast (~200–350ms) low-cost single-step queries, 5% EA tax verification, and instant chemistry delta checks.
+4. **`gemini-3.5-transcribe`**: Dedicated audio speech-to-text model for all microphone inputs.
 
 ---
 
 ## 5. Planned Execution Steps
 
-1. **Install Dependencies**: Install `three` and `@types/three` using `install_applet_package`.
-2. **Club Sync Modal JSON Export Feature**:
-   - Implement `handleExportClubDataJson` in `App.tsx` / `ClubSyncModal`: create a formatted JSON string, generate a Blob with `type: 'application/json'`, trigger browser download with timestamped filename `fc27_club_state_<YYYYMMDD_HHMMSS>.json`, and show visual feedback.
-   - Add the "Export Club Backup JSON" button to both the Launch Sync Modal and the standalone Club Sync view.
-3. **Three.js 3D Pitch Component (`src/components/ThreePitchVisualizer.tsx`)**:
-   - Build a procedural 3D soccer pitch with PBR turf, grass shear stripes, white pitch markings, and 4-corner floodlights.
-   - Assemble 11 procedural card pedestals positioned according to the active formation (4-2-1-3), with illuminated Role++ beacons.
-   - Add `RoomEnvironment` studio lighting, smooth damping controls (`OrbitControls` + lerping), software-WebGL fallback guards, and a collapsible bottom dock HUD.
-   - Add a 3D Pitch toggle button to the `MY_SQUAD` view allowing seamless switching between the 2D tactical board and the 3D stadium view.
-4. **AI Tactical Director Tab Prototype (`src/components/TacticalChatTab.tsx`)**:
-   - Enhance the Tactical Command Tab with an explicit **Model Selector** (`gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`), tactical persona filters, and live token latency/routing telemetry.
-   - Verify push-to-talk integration with `gemini-3.5-transcribe` and Live Audio HUD integration with `gemini-3.8-live`.
-5. **Verification & Build Validation**:
-   - Run `lint_applet` (`tsc --noEmit`) to verify strict type correctness.
-   - Run `compile_applet` to confirm the production bundle compiles with 0 errors.
+1. **Verify Server Endpoints in `server.ts`**:
+   - Ensure `/api/gemini/chat` properly supports the model router with `gemini-3.1-flash-lite`, `gemini-3.8-flash` (with `{ tools: [{ googleSearch: {} }] }` and grounding metadata extraction), and `gemini-4-argon` (`ThinkingLevel.HIGH`).
+   - Ensure `/api/gemini/transcribe` accurately routes base64 audio to `gemini-3.5-transcribe`.
+2. **Synchronize Tactical Command Tab & Assistant Drawer**:
+   - Update `TacticalChatTab.tsx` and `AntigravityMcpAndChatDrawer.tsx` to provide a unified experience: model switcher buttons (`gemini-3.1-flash-lite`, `gemini-3.8-flash + Search`, `gemini-4-argon`, and `AUTO`), role persona selection, and live token latency/source telemetry.
+   - Wire push-to-talk microphone button (`gemini-3.5-transcribe`) directly to the chat input in both views.
+   - Display grounded search citations cleanly with clickable web links.
+3. **Audio Dictation across Key App Forms**:
+   - Confirm `PushToTalkButton` works across the chat input, Investment Tracker, Club Sync Modal, and Google Docs note creator.
+4. **Verification & Build Validation**:
+   - Run `lint_applet` (`tsc --noEmit`) to verify zero type errors.
+   - Run `compile_applet` to confirm the production build compiles cleanly.

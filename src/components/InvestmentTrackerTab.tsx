@@ -20,6 +20,7 @@ import {
   ArrowUpRight,
   Flame,
   ShieldCheck,
+  FileSpreadsheet,
 } from 'lucide-react';
 
 export interface ConsoleInvestmentPosition {
@@ -56,6 +57,7 @@ interface InvestmentTrackerTabProps {
   onRemoveInvestment: (id: string) => void;
   catalogPlayers: FC27ConsolePlayer[];
   clubContextForAi: Record<string, unknown>;
+  onNavigateToTab?: (tabId: string) => void;
 }
 
 const DEFAULT_TRANSFER_ALERTS: GeminiTransferAlert[] = [
@@ -114,6 +116,7 @@ export const InvestmentTrackerTab: React.FC<InvestmentTrackerTabProps> = ({
   onUpdateInvestmentStatus,
   onRemoveInvestment,
   clubContextForAi,
+  onNavigateToTab,
 }) => {
   // New Acquisition Form State
   const [playerName, setPlayerName] = useState<string>('Geoffrey Kondogbia');
@@ -330,13 +333,26 @@ export const InvestmentTrackerTab: React.FC<InvestmentTrackerTabProps> = ({
                 Log Player Acquisition & Flip Target
               </h3>
             </div>
-            <PushToTalkButton
-              compact
-              label="Dictate Trade"
-              onTranscript={(text) => {
-                setPlayerName(text);
-              }}
-            />
+            <div className="flex items-center gap-2">
+              {onNavigateToTab && (
+                <button
+                  type="button"
+                  onClick={() => onNavigateToTab('WORKSPACE_HUB')}
+                  className="px-2.5 py-1.5 rounded-lg bg-[#00ff87]/15 hover:bg-[#00ff87]/25 border border-[#00ff87]/30 text-[#00ff87] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  title="Open in Google Sheets"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  <span>Google Sheets</span>
+                </button>
+              )}
+              <PushToTalkButton
+                compact
+                label="Dictate Trade"
+                onTranscript={(text) => {
+                  setPlayerName(text);
+                }}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
