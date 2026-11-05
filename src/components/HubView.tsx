@@ -76,11 +76,11 @@ export const HubView: React.FC<HubViewProps> = ({
       case 'FLASH_38_PRIORITY':
         return { name: 'Gemini 3.8 Flash', tag: 'WORKHORSE', icon: 'bolt' };
       case 'SPEED_LITE_35':
-        return { name: 'Gemini 3.1 Flash-Lite', tag: 'SUB-200MS SPEED', icon: 'speed' };
+        return { name: 'Gemini 3.5 Flash-Lite', tag: 'SUB-200MS SPEED', icon: 'speed' };
       case 'ARGON_MATH':
         return { name: 'Gemini 3.8 Flash (Cost Guardrail)', tag: 'COST PROTECTED', icon: 'shield' };
       default:
-        return { name: 'Gemini Auto-Router', tag: '3.8 FLASH + 3.1 LITE', icon: 'auto_awesome' };
+        return { name: 'Gemini Auto-Router', tag: '3.8 FLASH + 3.5 LITE', icon: 'auto_awesome' };
     }
   };
 

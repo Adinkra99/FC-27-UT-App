@@ -144,13 +144,13 @@ function resolveSmartModelRoute(
 
   if (overrideMode === 'TIER_1_LITE') {
     return {
-      model: 'gemini-3.1-flash-lite',
-      tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Manual Override)',
+      model: 'gemini-3.5-flash-lite',
+      tierLabel: 'Tier 1 · gemini-3.5-flash-lite (Manual Override)',
       useSearch: false,
       useHighThinking: false,
       routingReason:
-        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~150-300ms TTFT, lowest token cost).',
-      costBenchmarkSummary: 'Lowest Cost (1x) · Sub-300ms Latency',
+        'Manual override to Tier 1 Ultra-Fast/Ultra-Cheap model (~150-250ms TTFT, lowest token cost).',
+      costBenchmarkSummary: 'Lowest Cost (1x) · Sub-200ms Latency',
     };
   }
 
@@ -1168,7 +1168,7 @@ Return valid JSON adhering to:
         decision,
         activeCommander: {
           workhorse: 'gemini-3.8-flash',
-          speed: 'gemini-3.1-flash-lite',
+          speed: 'gemini-3.5-flash-lite',
           audio: 'gemini-3.5-transcribe',
           complexMath: 'gemini-3.8-flash (Guardrail Active)',
         },

@@ -502,7 +502,7 @@ export const ClubSyncHubModal: React.FC<ClubSyncHubModalProps> = ({
                 },
                 {
                   id: 'SPEED_LITE_35',
-                  title: 'Gemini 3.1 Flash-Lite (Speed Priority)',
+                  title: 'Gemini 3.5 Flash-Lite (Speed Priority)',
                   badge: 'SUB-200MS',
                   desc: 'High-throughput, minimal token cost workhorse for quick price-bin queries, single SBC card additions, and routine market telemetry.',
                   icon: 'speed',
