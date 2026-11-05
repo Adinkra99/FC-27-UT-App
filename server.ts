@@ -112,7 +112,7 @@ export type RoutingOverrideMode =
   | 'TIER_2_FLASH_SEARCH';
 
 interface ResolvedRouteDecision {
-  model: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash';
+  model: 'gemini-3.5-flash-lite' | 'gemini-3.1-flash-lite' | 'gemini-3.8-flash';
   tierLabel: string;
   useSearch: boolean;
   useHighThinking: boolean;
@@ -198,14 +198,41 @@ function resolveSmartModelRoute(
     };
   }
 
+  const requiresHighIntelligence =
+    lower.includes('synthesize') ||
+    lower.includes('synthesis') ||
+    lower.includes('optimize') ||
+    lower.includes('arbitrage') ||
+    lower.includes('quad-action') ||
+    lower.includes('evolution') ||
+    lower.includes('branching') ||
+    lower.includes('chemistry') ||
+    lower.includes('121 rule') ||
+    lower.includes('item score') ||
+    lower.includes('accelerate') ||
+    lower.includes('role++') ||
+    queryText.length > 140;
+
+  if (requiresHighIntelligence) {
+    return {
+      model: 'gemini-3.8-flash',
+      tierLabel: 'Tier 2 · gemini-3.8-flash (Shifted for Higher Intelligence)',
+      useSearch: false,
+      useHighThinking: false,
+      routingReason:
+        'Shifted to Gemini 3.8 Flash: High-complexity multi-constraint or tactical calculation detected.',
+      costBenchmarkSummary: 'High Intelligence · Tactical Reasoning',
+    };
+  }
+
   return {
-    model: 'gemini-3.8-flash',
-    tierLabel: 'Tier 2 · gemini-3.8-flash (Auto-Routed)',
+    model: 'gemini-3.5-flash-lite',
+    tierLabel: 'Tier 1 · gemini-3.5-flash-lite (Default Fast Baseline)',
     useSearch: false,
     useHighThinking: false,
     routingReason:
-      'Auto-routed to Gemini 3.8 Flash for fast, cost-effective reasoning with zero high-cost model invocation.',
-    costBenchmarkSummary: 'Cost Protected · Gemini 3.8 Flash',
+      'Standard prompt handled by default gemini-3.5-flash-lite for instant response and ultra-low token cost.',
+    costBenchmarkSummary: 'Ultra-Low Cost (1x) · High Speed Baseline',
   };
 }
 
