@@ -183,6 +183,7 @@ export const SQUAD_AUTHENTIC_BASE_STATS: Record<string, PlayerStats> = {
   'Ryan Gravenberch': { pac: 76, sho: 76, pas: 81, dri: 83, def: 80, phy: 80 },
   'Dominik Szoboszlai': { pac: 82, sho: 83, pas: 86, dri: 84, def: 74, phy: 77 },
   'Christos Tzolis': { pac: 84, sho: 82, pas: 81, dri: 85, def: 41, phy: 74 },
+  'Kristoffer Solis': { pac: 84, sho: 82, pas: 81, dri: 85, def: 41, phy: 74 },
   'Bradley Barcola': { pac: 92, sho: 76, pas: 78, dri: 84, def: 39, phy: 67 },
   'Nicole Anyomi': { pac: 91, sho: 83, pas: 75, dri: 85, def: 56, phy: 84 },
   'Bukayo Saka': { pac: 85, sho: 82, pas: 85, dri: 87, def: 60, phy: 70 },
@@ -263,9 +264,17 @@ export const VERIFIED_PLAYER_RECOMMENDATIONS: Record<string, Partial<PlayerChemR
     optimalStyle: 'HUNTER',
     alternativeStyle: 'ENGINE',
     whyOptimal:
-      'As the central link in 4-2-1-3 (Wide Playmaker / CAM), Tzolis has 84 Pace, 82 Shooting, and 85 Dribbling. Hunter boosts Pace to 92 and Shooting to 88 (Finishing 90+), making his edge-of-the-box finesses and late box runs lethal.',
+      'As the creative spark on the left / CAM, Tzolis has 84 Pace, 82 Shooting, and 85 Dribbling. Hunter boosts Pace to 92 and Shooting to 88 (Finishing 90+), making his edge-of-the-box finesses and cutting inside into the box lethal.',
     whyAlternative:
       'Engine provides +6 Passing (87) and +6 Dribbling (91) for silky tight-space agility and pinpoint through-balls.',
+  },
+  'Kristoffer Solis': {
+    optimalStyle: 'HUNTER',
+    alternativeStyle: 'ENGINE',
+    whyOptimal:
+      'Playing on the Left Wing in Kit\'s 4-2-4 system for Arsenal (signed this summer from Club Brugge), Solis has 84 Pace, 82 Shooting, 81 Passing, and 85 Dribbling. Hunter surges his Pace to 92 and Shooting to 88, allowing his Inside Forward++ role to cut in from the left flank and finish with clinical accuracy into the far top corner.',
+    whyAlternative:
+      'Engine boosts Pace to 88, Passing to 87, and Dribbling to 91, maximizing his crossing delivery to Nicole Anyomi and Alexander Isak.',
   },
   'Bradley Barcola': {
     optimalStyle: 'FINISHER',
