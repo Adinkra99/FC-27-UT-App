@@ -855,48 +855,93 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
       )}
 
           {/* BENCH & RESERVES SECTION (GROUNDED FROM GOOGLE DOC "Kits Ultimate Team 5/11/26") */}
-          <div className="bg-[#111827] border border-slate-800 rounded-xl p-4 mt-3">
-            <div className="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
-              <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[#00ff87]" />
-                Kit's Verified Bench & Reserves ({bench.length} Options)
-              </span>
-              <span className="text-[10px] font-mono text-slate-400">
-                Click any sub to swap into selected slot ({selectedSlot})
+          <div id="bench-reserves-section" className="bg-[#111827] border border-slate-800 rounded-xl p-4 mt-3 space-y-3">
+            {/* SWAP CONFIRMATION NOTIFICATION BANNER */}
+            {swapFeedbackMsg && (
+              <div className="bg-[#00ff87]/15 border border-[#00ff87] text-[#00ff87] p-3 rounded-lg text-xs font-mono font-bold flex items-center gap-2">
+                <Check className="w-4 h-4 shrink-0 text-[#00ff87]" />
+                <span>{swapFeedbackMsg}</span>
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center justify-between border-b border-slate-800/80 pb-2.5 gap-2">
+              <div>
+                <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#00ff87]" />
+                  Kit's Verified Bench & Reserves ({bench.length} Options)
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  Target Starting Slot: <span className="text-[#00ff87] font-bold">{selectedSlotData?.label} ({selectedSlot})</span> · Currently: <span className="text-white font-semibold">{selectedSlotData?.player.name}</span>
+                </span>
+              </div>
+
+              <span className="text-[10px] font-mono bg-slate-900 border border-slate-700 text-amber-400 px-2 py-0.5 rounded">
+                1-Click Starting XI Swap Active
               </span>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1.5">
-              {bench.map((benchPlayer) => (
-                <button
-                  key={benchPlayer.id}
-                  type="button"
-                  onClick={() => {
-                    if (!selectedSlotData) return;
-                    const oldPlayer = selectedSlotData.player;
-                    setSquad((prev) =>
-                      prev.map((slotItem) =>
-                        slotItem.slot === selectedSlot
-                          ? { ...slotItem, player: benchPlayer }
-                          : slotItem
-                      )
-                    );
-                    setBench((prev) => [
-                      ...prev.filter((b) => b.id !== benchPlayer.id),
-                      oldPlayer,
-                    ]);
-                  }}
-                  className="p-1.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-[#00ff87] hover:bg-slate-900 transition-all text-center group cursor-pointer"
-                  title={`Swap ${benchPlayer.name} into ${selectedSlot}`}
-                >
-                  <div className="text-[8px] font-mono text-slate-400 uppercase">{benchPlayer.position}</div>
-                  <div className="text-xs font-extrabold text-white group-hover:text-[#00ff87]">
-                    {benchPlayer.rating}
+
+            {/* BENCH CARDS GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-[460px] overflow-y-auto pr-1">
+              {bench.map((benchPlayer) => {
+                const isMatchingPosition =
+                  (selectedSlot === 'LST' || selectedSlot === 'RST') && benchPlayer.position === 'ST';
+                return (
+                  <div
+                    key={benchPlayer.id}
+                    className={`p-2.5 rounded-xl border transition-all flex flex-col justify-between space-y-2 ${
+                      isMatchingPosition
+                        ? 'bg-slate-900/90 border-[#00ff87]/60 ring-1 ring-[#00ff87]/30 shadow-md shadow-[#00ff87]/10'
+                        : 'bg-slate-950/80 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-base font-black text-white">{benchPlayer.rating}</span>
+                          <span className="text-xs font-bold text-white truncate max-w-[110px]">
+                            {benchPlayer.name}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">{benchPlayer.club} · {benchPlayer.nation}</div>
+                      </div>
+
+                      <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-slate-900 text-amber-400 border border-slate-700">
+                        {benchPlayer.position}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-slate-800/60">
+                      <span>{benchPlayer.consolePrice.toLocaleString()} Coins</span>
+                      {isMatchingPosition && (
+                        <span className="text-[#00ff87] font-bold">Natural Fit</span>
+                      )}
+                    </div>
+
+                    {/* TWO ACTION BUTTONS: SWAP OR EXPLORE */}
+                    <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleSwapPlayer(benchPlayer, selectedSlot)}
+                        className="py-1.5 px-2 bg-[#00ff87] hover:bg-[#00e67a] text-slate-950 font-black text-[11px] rounded-lg transition-colors flex items-center justify-center gap-1 shadow-sm"
+                        title={`Swap ${benchPlayer.name} into ${selectedSlot}`}
+                      >
+                        <ArrowLeftRight className="w-3 h-3" />
+                        <span>Swap {selectedSlot}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setModalPlayer(benchPlayer.name)}
+                        className="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-[11px] rounded-lg transition-colors flex items-center justify-center gap-1"
+                        title={`Explore bio, in-game stats, and PlayStyles for ${benchPlayer.name}`}
+                      >
+                        <Eye className="w-3 h-3 text-[#00ff87]" />
+                        <span>Bio & Stats</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-[9px] font-semibold text-slate-300 truncate max-w-[55px] mx-auto">
-                    {benchPlayer.name.split(' ').pop()}
-                  </div>
-                </button>
-              ))}
+                );
+              })}
             </div>
           </div>
     </div>
@@ -946,6 +991,26 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
                   <span className="text-slate-400">
                     Console: {selectedSlotData.player.consolePrice.toLocaleString()} Coins
                   </span>
+                </div>
+
+                {/* EXPLORE BIO & SWAP ACTIONS */}
+                <div className="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setModalPlayer(selectedSlotData.player.name)}
+                    className="py-2 px-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#00ff87] text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-[#00ff87]" />
+                    <span>Explore Bio & 29 Stats</span>
+                  </button>
+
+                  <a
+                    href="#bench-reserves-section"
+                    className="py-2 px-2.5 bg-[#00ff87]/10 hover:bg-[#00ff87]/20 border border-[#00ff87]/30 text-[#00ff87] font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-1.5 text-center"
+                  >
+                    <ArrowLeftRight className="w-3.5 h-3.5" />
+                    <span>Swap with Bench Sub</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -1097,6 +1162,22 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
         }}
         onAskTacticalAi={(query) => onSimulateInTactics('FUTBIN Tactical Upgrade Scouter', query)}
       />
+
+      {/* FULL PLAYER PROFILE & 29 IN-GAME STATS MODAL */}
+      {modalPlayer && (
+        <PlayerDetailModal
+          playerIdentifier={modalPlayer}
+          onClose={() => setModalPlayer(null)}
+          onSwapRequest={(playerName) => {
+            const benchCard = bench.find((b) => b.name === playerName || b.name.includes(playerName));
+            if (benchCard) {
+              handleSwapPlayer(benchCard, selectedSlot);
+            }
+            setModalPlayer(null);
+          }}
+          swapTargetSlot={selectedSlot}
+        />
+      )}
     </div>
   );
 };
