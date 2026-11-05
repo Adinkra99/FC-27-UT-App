@@ -62,6 +62,9 @@ const DynamicDatabaseView = React.lazy(() =>
 const ClubSyncHubModal = React.lazy(() =>
   import('./components/ClubSyncHubModal').then((m) => ({ default: m.ClubSyncHubModal }))
 );
+const FormationsTab = React.lazy(() =>
+  import('./components/FormationsTab').then((m) => ({ default: m.FormationsTab }))
+);
 import {
   Shield,
   TrendingUp,
@@ -98,6 +101,7 @@ import type { User } from 'firebase/auth';
 type PrincipalDomain = 'MENUS' | 'GAMEPLAY';
 type ActiveTab =
   | 'MY_SQUAD'
+  | 'FORMATIONS'
   | 'DYNAMIC_DATABASE'
   | 'CLUB_SYNC'
   | 'DUAL_SBCS'
@@ -142,6 +146,7 @@ export function App() {
 
   const [principalDomain, setPrincipalDomain] = useState<PrincipalDomain>('MENUS');
   const [activeTab, setActiveTab] = useState<ActiveTab>('MY_SQUAD');
+  const [activeFormation, setActiveFormation] = useState<string>('4-2-4');
   const [simulatedEvoName, setSimulatedEvoName] = useState<string | null>(null);
   const [screenPadTickerOpen, setScreenPadTickerOpen] = useState<boolean>(true);
 
@@ -1007,7 +1012,8 @@ export function App() {
                 {shellTab === 'squad' && (
                   <>
                     {[
-                      { id: 'MY_SQUAD', label: 'Tactical Pitch (4-2-1-3)', icon: 'sports_soccer' },
+                      { id: 'MY_SQUAD', label: 'Squad (4-2-4)', icon: 'sports_soccer' },
+                      { id: 'FORMATIONS', label: 'Formations (4-2-4)', icon: 'grid_view' },
                       { id: 'DYNAMIC_DATABASE', label: 'FUTBIN & Chem Lab', icon: 'database' },
                       { id: 'EVOLUTIONS', label: 'Evolutions Matrix', icon: 'alt_route' },
                       { id: 'GAMEPLAY_LAB', label: 'Gameplay Synthesis', icon: 'bolt' },
@@ -1164,6 +1170,19 @@ export function App() {
               onNavigateToTab={(tabId) => setActiveTab(tabId as ActiveTab)}
               onSimulateInTactics={handleRunSmartAdvisor}
               simulatedTargetName={simulatedEvoName}
+            />
+          )}
+
+          {/* TAB: FORMATIONS & CHEMISTRY STYLE OPTIMIZER LAB (4-2-4 ACTIVE SETUP) */}
+          {activeTab === 'FORMATIONS' && (
+            <FormationsTab
+              activeFormationId={activeFormation}
+              onApplyFormation={(formationId) => {
+                setActiveFormation(formationId);
+                setCloudStatusBanner(`Applied ${formationId} formation to active team!`);
+              }}
+              onSimulateInTactics={handleRunSmartAdvisor}
+              userCoins={coins}
             />
           )}
 

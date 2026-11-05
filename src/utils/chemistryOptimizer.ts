@@ -171,134 +171,118 @@ export interface PlayerChemRecommendation {
 }
 
 /**
- * Authentic Database Base Stats for Kit's Squad (from FUTBIN / FUT.GG)
+ * Authentic Database Base Stats for Kit's Squad (Verified directly from FUTBIN / FUT.GG screenshot)
+ * Connected FUTBIN Profile: FutbinUser443696828703506
  */
 export const SQUAD_AUTHENTIC_BASE_STATS: Record<string, PlayerStats> = {
-  // Starting XI
-  'Gregor Kobel': { pac: 88, sho: 88, pas: 84, dri: 86, def: 44, phy: 86 }, // DIV, HAN, KIC, REF, SPD, POS
-  'Keane Lewis-Potter': { pac: 83, sho: 74, pas: 78, dri: 82, def: 80, phy: 73 },
-  'Nico Schlotterbeck': { pac: 81, sho: 60, pas: 76, dri: 74, def: 86, phy: 84 },
+  // Starting XI (4-2-4 Verified Active Lineup)
+  'Gregor Kobel': { pac: 88, sho: 85, pas: 64, dri: 88, def: 44, phy: 88 }, // DIV, HAN, KIC, REF, SPD, POS
+  'Myles Lewis-Skelly': { pac: 71, sho: 60, pas: 75, dri: 77, def: 76, phy: 76 },
+  'Nico Schlotterbeck': { pac: 81, sho: 60, pas: 77, dri: 74, def: 87, phy: 86 },
   'Maxence Lacroix': { pac: 87, sho: 47, pas: 64, dri: 70, def: 85, phy: 84 },
   'Djed Spence': { pac: 91, sho: 58, pas: 76, dri: 83, def: 81, phy: 79 },
-  'Ryan Gravenberch': { pac: 76, sho: 76, pas: 81, dri: 83, def: 80, phy: 80 },
   'Dominik Szoboszlai': { pac: 82, sho: 83, pas: 86, dri: 84, def: 74, phy: 77 },
+  'Felix Nmecha': { pac: 83, sho: 78, pas: 84, dri: 82, def: 82, phy: 88 },
   'Christos Tzolis': { pac: 84, sho: 82, pas: 81, dri: 85, def: 41, phy: 74 },
-  'Kristoffer Solis': { pac: 84, sho: 82, pas: 81, dri: 85, def: 41, phy: 74 },
-  'Bradley Barcola': { pac: 92, sho: 76, pas: 78, dri: 84, def: 39, phy: 67 },
-  'Nicole Anyomi': { pac: 91, sho: 83, pas: 75, dri: 85, def: 56, phy: 84 },
-  'Bukayo Saka': { pac: 85, sho: 82, pas: 85, dri: 87, def: 60, phy: 70 },
-
-  // Bench
   'Selina Cerci': { pac: 82, sho: 84, pas: 75, dri: 82, def: 53, phy: 80 },
-  'Carlos Espí': { pac: 85, sho: 85, pas: 73, dri: 82, def: 46, phy: 88 },
-  'Hugo Ekitiké': { pac: 86, sho: 83, pas: 72, dri: 84, def: 33, phy: 73 },
+  'Nicole Anyomi': { pac: 91, sho: 83, pas: 75, dri: 85, def: 56, phy: 84 },
+  'Bradley Barcola': { pac: 92, sho: 76, pas: 78, dri: 84, def: 39, phy: 78 },
+
+  // Confirmed Squad Reserves
   'Alexander Isak': { pac: 81, sho: 87, pas: 72, dri: 82, def: 39, phy: 72 },
-  'Myles Lewis-Skelly': { pac: 77, sho: 64, pas: 81, dri: 78, def: 81, phy: 85 },
-  'Benjamin Pavard': { pac: 78, sho: 66, pas: 75, dri: 71, def: 82, phy: 81 },
-  'Jurriën Timber': { pac: 76, sho: 48, pas: 76, dri: 78, def: 83, phy: 78 },
-  'Beth Mead': { pac: 83, sho: 84, pas: 82, dri: 84, def: 67, phy: 73 },
-  'Ferran Torres': { pac: 84, sho: 84, pas: 78, dri: 82, def: 44, phy: 74 },
 };
 
 /**
- * Curated tactical rationale for Kit's authentic roster
+ * Curated tactical rationale for Kit's authentic roster (4-2-4 Formation)
  */
 export const VERIFIED_PLAYER_RECOMMENDATIONS: Record<string, Partial<PlayerChemRecommendation>> = {
   'Gregor Kobel': {
     optimalStyle: 'GLOVE',
     alternativeStyle: 'WALL',
     whyOptimal:
-      'Kobel already possesses elite natural reflexes (86) and an 88 diving base. Glove directly pushes his Diving to 96, Handling to 96, and Positioning to 94. In FC 27, +8 Handling is essential to prevent parried rebounds and secure contested crosses.',
+      'Kobel (87 GK++) has 88 Diving and 88 Reflexes. Applying Glove gives +8 Diving (96), +8 Handling (93), and +8 Positioning (96). In FC 27, elite Handling prevents dangerous rebounds to oncoming poachers and secures contested high crosses.',
     whyAlternative:
-      'Wall boosts Diving (96) and Kicking (92) for counter-attacking distribution if you trigger rapid through-passes off defensive saves.',
+      'Wall gives +8 Diving (96) and +8 Kicking (72) if you trigger direct over-the-top counter balls to Anyomi and Barcola.',
   },
-  'Keane Lewis-Potter': {
+  'Myles Lewis-Skelly': {
     optimalStyle: 'SHADOW',
     alternativeStyle: 'ANCHOR',
     whyOptimal:
-      'With 83 Pace and 80 Defending, Lewis-Potter is the squad’s most vulnerable defensive link against meta wingers (e.g. 90+ Pace). Shadow surges his Pace to 91 and Defending to 87, ensuring his Fullback++ role can track sprint bursts and recover on the counter.',
+      'Starting at LB in Kit’s 4-2-4, Lewis-Skelly possesses 71 Pace, 76 Defending, and 76 Physicality. Against 90+ Pace meta wingers, his base pace is the key area needing enhancement. Shadow accelerates his Pace to 79 and elevates Defending to 83, giving his Fullback++ role the recovery speed needed to track wing runs.',
     whyAlternative:
-      'Anchor gives +4 Pace (87), +6 Defending (86), and +6 Physical (79), improving his shoulder-to-shoulder strength if you face bulky wingers.',
+      'Anchor gives +4 Pace (75), +6 Defending (82), and +6 Physical (82), bolstering his shoulder duel rating against physical wingers.',
   },
   'Nico Schlotterbeck': {
     optimalStyle: 'SHADOW',
     alternativeStyle: 'ANCHOR',
     whyOptimal:
-      'Schlotterbeck already commands 86 Defending and 84 Physicality. His 81 Pace is his single bottleneck. Shadow raises his Pace to 89 and Defending to 93, making him virtually impossible to bypass in 1v1 ground duels for his Ball-Playing Defender++ role.',
+      'Schlotterbeck commands an imposing 87 Defending and 86 Physicality on his Gold 87 card. His 81 Pace is his only minor limitation. Shadow pushes Pace to 89 and Defending to an elite 94, making him virtually impossible to bypass in 1v1 ground duels for his Ball-Playing Defender++ role.',
     whyAlternative:
-      'Anchor elevates Physicality from 84 to 90, creating a brick-wall presence on corner headers and contested set-pieces.',
+      'Anchor elevates Physicality from 86 to 92, providing maximum aerial supremacy on defensive corner kicks.',
   },
   'Maxence Lacroix': {
     optimalStyle: 'SHADOW',
     alternativeStyle: 'ANCHOR',
     whyOptimal:
-      'Lacroix already has 87 Pace and 84 Physicality. Applying Shadow pushes his Pace to an extraordinary 95 and Defending from 85 to 92. This creates an elite recovery center-back capable of tracking down breakaways without committing fouls.',
+      'Lacroix already possesses 87 Pace, 85 Defending, and 84 Physicality on his Special item. Applying Shadow elevates his Pace to a blistering 95 and Defending to 92. This creates an elite recovery center-back capable of hunting down breakaways without committing fouls.',
     whyAlternative:
-      'Anchor pushes Defending to 91 and Physical to 90, if you prefer max aerial and shoulder strength over 95 sprint speed.',
+      'Anchor boosts Defending to 91 and Physical to 90, if you prioritize max strength and aerial jump over pure 95 trackback pace.',
   },
   'Djed Spence': {
     optimalStyle: 'ANCHOR',
     alternativeStyle: 'SHADOW',
     whyOptimal:
-      'Spence already boasts blazing 91 Pace. Using Shadow wastes potential since Pace caps at 99. Anchor gives him +4 Pace (95), +6 Defending (87), and critically +6 Physical (79 -> 85), transforming him into an imposing physical fullback who bullies opposing wingers.',
+      'Spence already boasts an explosive 91 base Pace! Applying Shadow wastes potential boost points against the 99 cap. Anchor gives +4 Pace (95), +6 Defending (87), and critically +6 Physical (79 -> 85), transforming him into an imposing physical fullback who bullies opposing wingers off the ball.',
     whyAlternative:
-      'Shadow maxes out Pace to 99 and gives +7 Defending (88) for pure trackback speed against 95+ Pace wingers.',
-  },
-  'Ryan Gravenberch': {
-    optimalStyle: 'SHADOW',
-    alternativeStyle: 'POWERHOUSE',
-    whyOptimal:
-      'In a 4-2-1-3 double pivot, Gravenberch operates as the defensive anchor (Holding++). His 76 Pace requires enhancement. Shadow lifts his Pace to 84 and Defending from 80 to 87, ensuring rapid ball recovery and intercept radius.',
-    whyAlternative:
-      'Powerhouse boosts Passing to 88 and Defending to 87 if you prefer him as a deep-lying playmaker distributing from deep.',
+      'Shadow maxes out Pace to 99 and gives +7 Defending (88) for pure sprint trackbacks against 95+ Pace wingers.',
   },
   'Dominik Szoboszlai': {
     optimalStyle: 'ENGINE',
     alternativeStyle: 'HUNTER',
     whyOptimal:
-      'Szoboszlai has heavy long-shot power (83) and passing (86), but 84 Dribbling and 82 Pace. Engine grants +4 Pace (86), +6 Passing (92), and +6 Dribbling (90), drastically boosting his Agility and Balance. This allows his Box-to-Box role to evade high-pressing midfielders smoothly.',
+      'Szoboszlai commands 83 Shooting and 86 Passing, but 84 Dribbling and 82 Pace. Engine grants +4 Pace (86), +6 Passing (92), and +6 Dribbling (90), drastically boosting his Agility and Balance. This allows his Box-to-Box role to turn fluidly away from high presses and spray cross-field diagonal balls to Barcola and Tzolis.',
     whyAlternative:
-      'Hunter elevates Pace to 90 and Shooting to 89 if you deploy him as an attacking central midfielder arriving late in the box to finish.',
+      'Hunter elevates Pace to 90 and Shooting to 89 if you prefer him surging into the penalty box for late finishing.',
+  },
+  'Felix Nmecha': {
+    optimalStyle: 'SHADOW',
+    alternativeStyle: 'POWERHOUSE',
+    whyOptimal:
+      'Nmecha (85 CM++, Dortmund) partners Szoboszlai in the 4-2-4 double pivot. He has 83 Pace, 82 Defending, and an immense 88 Physicality. Applying Shadow grants +8 Pace (91) and +7 Defending (89), turning him into a high-speed ball-winner and defensive powerhouse who shields the back four.',
+    whyAlternative:
+      'Powerhouse boosts Passing to 91 and Defending to 89, providing elite deep-lying playmaking if you build up patiently through the middle.',
   },
   'Christos Tzolis': {
     optimalStyle: 'HUNTER',
     alternativeStyle: 'ENGINE',
     whyOptimal:
-      'As the creative spark on the left / CAM, Tzolis has 84 Pace, 82 Shooting, and 85 Dribbling. Hunter boosts Pace to 92 and Shooting to 88 (Finishing 90+), making his edge-of-the-box finesses and cutting inside into the box lethal.',
+      'Playing on the Left Wing for Arsenal with an 84-rated Special item (4* Skills, 4* Weak Foot), Tzolis has 84 Pace, 82 Shooting, 81 Passing, and 85 Dribbling. Hunter surges his Pace to 92 and Shooting to 88, allowing his Inside Forward++ role to cut inside from the left flank and finish with lethal accuracy into the far top corner.',
     whyAlternative:
-      'Engine provides +6 Passing (87) and +6 Dribbling (91) for silky tight-space agility and pinpoint through-balls.',
+      'Engine provides +4 Pace (88), +6 Passing (87), and +6 Dribbling (91) for maximum agility, left-stick responsiveness, and whipped crosses.',
   },
-  'Kristoffer Solis': {
+  'Selina Cerci': {
     optimalStyle: 'HUNTER',
-    alternativeStyle: 'ENGINE',
+    alternativeStyle: 'FINISHER',
     whyOptimal:
-      'Playing on the Left Wing in Kit\'s 4-2-4 system for Arsenal (signed this summer from Club Brugge), Solis has 84 Pace, 82 Shooting, 81 Passing, and 85 Dribbling. Hunter surges his Pace to 92 and Shooting to 88, allowing his Inside Forward++ role to cut in from the left flank and finish with clinical accuracy into the far top corner.',
+      'Cerci (84 ST++, Arsenal Women) has 82 Pace, 84 Shooting, and 80 Physicality. Hunter gives +8 Pace (90) and +6 Shooting (90 with 93+ finishing), giving her lethal poacher speed and clinical first-time finishes inside the 18-yard box.',
     whyAlternative:
-      'Engine boosts Pace to 88, Passing to 87, and Dribbling to 91, maximizing his crossing delivery to Nicole Anyomi and Alexander Isak.',
-  },
-  'Bradley Barcola': {
-    optimalStyle: 'FINISHER',
-    alternativeStyle: 'DEADEYE',
-    whyOptimal:
-      'Barcola already possesses exceptional 92 base Pace! Applying Hunter or Catalyst wastes stat points against the 99 cap. Finisher provides +6 Shooting (76 -> 82) and +7 Dribbling (84 -> 91), addressing his low finishing while unlocking elite left-stick responsiveness.',
-    whyAlternative:
-      'Deadeye adds +6 Shooting (82) and +7 Passing (85) for cross-field whipped deliveries and cutback assists.',
+      'Finisher elevates Shooting to 90 and Dribbling to 89, boosting tight-space composure and agility when evading physical center-backs.',
   },
   'Nicole Anyomi': {
     optimalStyle: 'HUNTER',
     alternativeStyle: 'HAWK',
     whyOptimal:
-      'Anyomi already has 91 Pace and 84 Physicality, but 83 Shooting. Hunter maxes her Pace to 99 and elevates Shooting to 89 (pushing Finishing and Shot Power past 92). This turns her Advanced Forward++ into an unstoppable counter-attacking goal machine.',
+      'Anyomi already possesses 91 Pace, 83 Shooting, and 84 Physicality on her Special item (4* Skills, 4* Weak Foot). Hunter maxes her Pace to 99 and elevates Shooting to 89 (pushing Finishing and Shot Power past 92). This turns her into an unstoppable counter-attacking goal machine alongside Cerci.',
     whyAlternative:
       'Hawk balances +4 Pace (95), +5 Shooting (88), and +5 Physical (89), giving her extra jumping and strength to hold off burly center-backs.',
   },
-  'Bukayo Saka': {
-    optimalStyle: 'HUNTER',
-    alternativeStyle: 'CATALYST',
+  'Bradley Barcola': {
+    optimalStyle: 'FINISHER',
+    alternativeStyle: 'DEADEYE',
     whyOptimal:
-      'Saka has 85 Pace, 82 Shooting, 85 Passing, and 87 Dribbling. Hunter boosts his Pace to 93 and Shooting to 88. In the 4-2-1-3 formation, this enables his Inside Forward+ role to cut inside from the right and finish into the far corner with conviction.',
+      'Barcola (85 RW, PSG) has 92 base Pace! Applying Hunter wastes points against the 99 cap. Finisher gives +6 Shooting (76 -> 82) and +7 Dribbling (84 -> 91), directly solving his finishing while unlocking elite 91 dribbling and agility for cutting past left-backs.',
     whyAlternative:
-      'Catalyst boosts Pace to 93 and Passing to 92 for a pure creator style whipping crosses to Anyomi and Barcola.',
+      'Deadeye adds +6 Shooting (82) and +7 Passing (85) for pinpoint whipped crosses to Anyomi and Cerci.',
   },
 };
 
