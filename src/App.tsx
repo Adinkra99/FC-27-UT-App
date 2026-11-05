@@ -29,20 +29,39 @@ import {
   logoutUser,
   syncClubStateToFirestore,
 } from './services/firebaseAndDriveService';
-import { InteractiveMarketChart } from './components/InteractiveMarketChart';
-import { GameplaySynthesisView } from './components/GameplaySynthesisView';
-import { LiveEvolutionsView } from './components/LiveEvolutionsView';
-import {
-  AntigravityMcpAndChatDrawer,
-  RoutingTelemetryReceipt,
-} from './components/AntigravityMcpAndChatDrawer';
-import { InvestmentTrackerTab, ConsoleInvestmentPosition } from './components/InvestmentTrackerTab';
-import { TacticalChatTab } from './components/TacticalChatTab';
 import { SquadTrackerView } from './components/SquadTrackerView';
-import { GoogleWorkspaceHub } from './components/GoogleWorkspaceHub';
-import { DynamicDatabaseView } from './components/DynamicDatabaseView';
 import { HubView } from './components/HubView';
-import { ClubSyncHubModal } from './components/ClubSyncHubModal';
+import type { RoutingTelemetryReceipt } from './components/AntigravityMcpAndChatDrawer';
+import type { ConsoleInvestmentPosition } from './components/InvestmentTrackerTab';
+
+// Dynamic Code-Splitting: Lazy load heavy non-initial views into separate async bundles
+const InteractiveMarketChart = React.lazy(() =>
+  import('./components/InteractiveMarketChart').then((m) => ({ default: m.InteractiveMarketChart }))
+);
+const GameplaySynthesisView = React.lazy(() =>
+  import('./components/GameplaySynthesisView').then((m) => ({ default: m.GameplaySynthesisView }))
+);
+const LiveEvolutionsView = React.lazy(() =>
+  import('./components/LiveEvolutionsView').then((m) => ({ default: m.LiveEvolutionsView }))
+);
+const AntigravityMcpAndChatDrawer = React.lazy(() =>
+  import('./components/AntigravityMcpAndChatDrawer').then((m) => ({ default: m.AntigravityMcpAndChatDrawer }))
+);
+const InvestmentTrackerTab = React.lazy(() =>
+  import('./components/InvestmentTrackerTab').then((m) => ({ default: m.InvestmentTrackerTab }))
+);
+const TacticalChatTab = React.lazy(() =>
+  import('./components/TacticalChatTab').then((m) => ({ default: m.TacticalChatTab }))
+);
+const GoogleWorkspaceHub = React.lazy(() =>
+  import('./components/GoogleWorkspaceHub').then((m) => ({ default: m.GoogleWorkspaceHub }))
+);
+const DynamicDatabaseView = React.lazy(() =>
+  import('./components/DynamicDatabaseView').then((m) => ({ default: m.DynamicDatabaseView }))
+);
+const ClubSyncHubModal = React.lazy(() =>
+  import('./components/ClubSyncHubModal').then((m) => ({ default: m.ClubSyncHubModal }))
+);
 import {
   Shield,
   TrendingUp,
@@ -1127,6 +1146,14 @@ export function App() {
             </div>
           )}
 
+          <React.Suspense
+          fallback={
+            <div className="py-20 flex flex-col items-center justify-center space-y-3 bg-slate-900/40 border border-slate-800 rounded-xl">
+              <div className="w-8 h-8 border-2 border-[#00ff87] border-t-transparent rounded-full animate-spin" />
+              <div className="text-xs font-mono text-[#00ff87]">Loading Feature Module (Async Chunk)...</div>
+            </div>
+          }
+        >
           {/* TAB 0: DYNAMIC SQUAD TRACKER, PITCH 11 & UPGRADE SIMULATOR */}
           {activeTab === 'MY_SQUAD' && (
             <SquadTrackerView
@@ -2231,6 +2258,7 @@ export function App() {
               onNavigateToTab={(tabId) => setActiveTab(tabId as ActiveTab)}
             />
           )}
+        </React.Suspense>
 
           {/* TAB 5: DOMAIN 2 — GAMEPLAY SYNTHESIS LAB, 31 ROLES++ & BRANCHING EVOLUTIONS */}
           {activeTab === 'GAMEPLAY_LAB' && (
@@ -2784,7 +2812,7 @@ export function App() {
       )}
 
       {/* MODAL 3: Dedicated Cannons n Pecks Dynamic Ingestion & Multi-Model Intelligence Commander Hub */}
-      <ClubSyncHubModal
+      <React.Suspense fallback={null}><ClubSyncHubModal
         isOpen={showSyncHubModal}
         onClose={() => setShowSyncHubModal(false)}
         coins={coins}
@@ -2805,6 +2833,7 @@ export function App() {
         activeModelRoute={activeModelRoute}
         onChangeModelRoute={(route) => setActiveModelRoute(route)}
       />
+      </React.Suspense>
     </div>
   );
 }

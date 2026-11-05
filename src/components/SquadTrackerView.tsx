@@ -5,7 +5,15 @@ import {
   FC27_BRANCHING_EVOLUTIONS,
 } from '../data/fc27ConsoleData';
 import { TemporalAnchor } from '../utils/timeGrounding';
-import { ThreePitchVisualizer } from './ThreePitchVisualizer';
+import {
+  saveRosterToIndexedDb,
+  loadRosterFromIndexedDb,
+} from '../utils/indexedDbRosterCache';
+import { FutbinUpgradeExplorer } from './FutbinUpgradeExplorer';
+
+const ThreePitchVisualizer = React.lazy(() =>
+  import('./ThreePitchVisualizer').then((m) => ({ default: m.ThreePitchVisualizer }))
+);
 import {
   Shield,
   Zap,
@@ -382,6 +390,39 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
   // Selected player slot to inspect or swap
   const [selectedSlot, setSelectedSlot] = useState<string>('LB');
   const [pitchViewMode, setPitchViewMode] = useState<'2D_TACTICAL' | '3D_STADIUM'>('2D_TACTICAL');
+  const [offlineCachedTime, setOfflineCachedTime] = useState<string | null>(null);
+
+  // Load from IndexedDB on initial mount for instant offline reliability
+  React.useEffect(() => {
+    let isMounted = true;
+    loadRosterFromIndexedDb().then((cached) => {
+      if (isMounted && cached && Array.isArray(cached.squad) && cached.squad.length === 11) {
+        setSquad(cached.squad);
+        if (Array.isArray(cached.bench) && cached.bench.length > 0) {
+          setBench(cached.bench);
+        }
+        setOfflineCachedTime(cached.lastSyncedTimestamp || 'Offline Cache Active');
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Save to IndexedDB whenever squad or bench mutates
+  React.useEffect(() => {
+    if (squad.length > 0) {
+      saveRosterToIndexedDb(squad, bench).then(() => {
+        setOfflineCachedTime(
+          new Date().toLocaleTimeString('en-GB', {
+            timeZone: 'Europe/London',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        );
+      });
+    }
+  }, [squad, bench]);
 
   // Simulation test upgrade candidates:
   const simulationCandidates = [
@@ -465,6 +506,24 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="text-left">
+              <div className="text-[10px] text-slate-400">IndexedDB Offline Shield</div>
+              <div className="text-xs font-mono text-emerald-400 font-bold">
+                {offlineCachedTime ? `Synced ${offlineCachedTime}` : 'Active (Local DB)'}
+              </div>
+            </div>
+          </div>
+          <div className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="text-left">
+              <div className="text-[10px] text-slate-400">IndexedDB Offline Shield</div>
+              <div className="text-xs font-mono text-emerald-400 font-bold">
+                {offlineCachedTime ? `Synced ${offlineCachedTime}` : 'Active (Local DB)'}
+              </div>
+            </div>
+          </div>
           <div className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-right">
             <div className="text-[11px] text-slate-400">Total Squad Chemistry</div>
             <div className="text-lg font-bold font-mono text-[#00ff87]">
@@ -525,18 +584,29 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
           </div>
 
           {pitchViewMode === '3D_STADIUM' ? (
-            <ThreePitchVisualizer
-              squad={squad}
-              selectedSlot={selectedSlot}
-              weakestSlot={[...squad].sort((a, b) => a.player.rating - b.player.rating)[0]?.slot || 'LB'}
-              onSelectPlayer={(slot) => setSelectedSlot(slot)}
-              onRunTacticalAdvice={(p) =>
-                onSimulateInTactics(
-                  '3D Tactical Card Upgrade Analysis',
-                  `Analyze Xbox Series S upgrade options for ${p} in my Starting XI.`
-                )
+            <React.Suspense
+              fallback={
+                <div className="min-h-[520px] bg-slate-950 border border-slate-800 rounded-xl flex flex-col items-center justify-center p-8 space-y-3">
+                  <div className="w-8 h-8 border-2 border-[#00ff87] border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs font-mono text-[#00ff87]">
+                    Loading 3D Three.js Pitch Engine (Code-Split Chunk)...
+                  </span>
+                </div>
               }
-            />
+            >
+              <ThreePitchVisualizer
+                squad={squad}
+                selectedSlot={selectedSlot}
+                weakestSlot={[...squad].sort((a, b) => a.player.rating - b.player.rating)[0]?.slot || 'LB'}
+                onSelectPlayer={(slot) => setSelectedSlot(slot)}
+                onRunTacticalAdvice={(p) =>
+                  onSimulateInTactics(
+                    '3D Tactical Card Upgrade Analysis',
+                    `Analyze Xbox Series S upgrade options for ${p} in my Starting XI.`
+                  )
+                }
+              />
+            </React.Suspense>
           ) : (
             <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5 flex flex-col justify-between relative overflow-hidden min-h-[640px]">
               {/* Pitch Markings Overlay */}
@@ -967,6 +1037,23 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* FUTBIN PLAYER UPGRADE & TACTICAL EXPLORER */}
+      <FutbinUpgradeExplorer
+        squad={squad}
+        bench={bench}
+        selectedSlot={selectedSlot}
+        onSelectSlot={(slot) => setSelectedSlot(slot)}
+        onSwapPlayer={(slot, newPlayer) => {
+          if (!selectedSlotData) return;
+          const oldStarter = selectedSlotData.player;
+          setSquad((prev) =>
+            prev.map((item) => (item.slot === slot ? { ...item, player: newPlayer } : item))
+          );
+          setBench((prev) => [...prev.filter((b) => b.id !== newPlayer.id), oldStarter]);
+        }}
+        onAskTacticalAi={(query) => onSimulateInTactics('FUTBIN Tactical Upgrade Scouter', query)}
+      />
     </div>
   );
 };
