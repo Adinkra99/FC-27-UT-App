@@ -313,7 +313,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                       <span className="font-mono font-bold">
                         {attributes.acceleration}
                         {showBoostedStats && chemBoost.boosts.pac > 0 && (
-                          <span className="text-[#00ff87] ml-1">-> {Math.min(99, attributes.acceleration + chemBoost.boosts.pac)}</span>
+                          <span className="text-[#00ff87] ml-1">➔ {Math.min(99, attributes.acceleration + chemBoost.boosts.pac)}</span>
                         )}
                       </span>
                     </div>
@@ -328,7 +328,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                       <span className="font-mono font-bold">
                         {attributes.sprintSpeed}
                         {showBoostedStats && chemBoost.boosts.pac > 0 && (
-                          <span className="text-[#00ff87] ml-1">-> {Math.min(99, attributes.sprintSpeed + chemBoost.boosts.pac)}</span>
+                          <span className="text-[#00ff87] ml-1">➔ {Math.min(99, attributes.sprintSpeed + chemBoost.boosts.pac)}</span>
                         )}
                       </span>
                     </div>
@@ -366,7 +366,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                         <span className="font-mono font-bold">
                           {s.val}
                           {showBoostedStats && chemBoost.boosts.sho > 0 && (
-                            <span className="text-[#00ff87] ml-1">-> {Math.min(99, s.val + chemBoost.boosts.sho)}</span>
+                            <span className="text-[#00ff87] ml-1">➔ {Math.min(99, s.val + chemBoost.boosts.sho)}</span>
                           )}
                         </span>
                       </div>
@@ -405,7 +405,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                         <span className="font-mono font-bold">
                           {s.val}
                           {showBoostedStats && chemBoost.boosts.pas > 0 && (
-                            <span className="text-[#00ff87] ml-1">-> {Math.min(99, s.val + chemBoost.boosts.pas)}</span>
+                            <span className="text-[#00ff87] ml-1">➔ {Math.min(99, s.val + chemBoost.boosts.pas)}</span>
                           )}
                         </span>
                       </div>
@@ -444,7 +444,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                         <span className="font-mono font-bold">
                           {s.val}
                           {showBoostedStats && chemBoost.boosts.dri > 0 && (
-                            <span className="text-[#00ff87] ml-1">-> {Math.min(99, s.val + chemBoost.boosts.dri)}</span>
+                            <span className="text-[#00ff87] ml-1">➔ {Math.min(99, s.val + chemBoost.boosts.dri)}</span>
                           )}
                         </span>
                       </div>
@@ -482,7 +482,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                         <span className="font-mono font-bold">
                           {s.val}
                           {showBoostedStats && chemBoost.boosts.def > 0 && (
-                            <span className="text-[#00ff87] ml-1">-> {Math.min(99, s.val + chemBoost.boosts.def)}</span>
+                            <span className="text-[#00ff87] ml-1">➔ {Math.min(99, s.val + chemBoost.boosts.def)}</span>
                           )}
                         </span>
                       </div>
@@ -519,7 +519,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                         <span className="font-mono font-bold">
                           {s.val}
                           {showBoostedStats && chemBoost.boosts.phy > 0 && (
-                            <span className="text-[#00ff87] ml-1">-> {Math.min(99, s.val + chemBoost.boosts.phy)}</span>
+                            <span className="text-[#00ff87] ml-1">➔ {Math.min(99, s.val + chemBoost.boosts.phy)}</span>
                           )}
                         </span>
                       </div>
