@@ -1132,7 +1132,7 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
                     onClick={() =>
                       onSimulateInTactics(
                         `Squad Upgrade Simulation: ${activeSim.name}`,
-                        `Audit swapping ${selectedSlotData.player.name} (${selectedSlotData.player.rating} OVR) with ${activeSim.name} in slot ${selectedSlot}. My verified budget is 35,000 Xbox Series S coins. Calculate exact chemistry delta, 5% EA tax break-even if selling the replaced player, and Role++ tactical compatibility with Rodri in 4-2-1-3.`
+                        `Audit swapping ${selectedSlotData.player.name} (${selectedSlotData.player.rating} OVR) with ${activeSim.name} in slot ${selectedSlot}. My verified budget is 44,000 Xbox Series S coins. Calculate exact chemistry delta, 5% EA tax break-even if selling the replaced player, and Role++ tactical compatibility with Rodri in 4-2-1-3.`
                       )
                     }
                     className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs rounded-lg transition-colors"

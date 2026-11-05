@@ -78,7 +78,7 @@ STRICT TEMPORAL, CONSOLE & ZERO-HALLUCINATION GROUNDING (T = 0):
 4. ZERO-GUESSING PERSONAL CLUB LAW:
    - Never hallucinate, predict, or fill in gaps about the user's personal Ultimate Team (such as Gallery Level, cards they own, SBC Duplicate Storage, FIFA Points, Rivals Division, Daily SP, or Club Name).
    - If a personal club field is null, empty ([]), or marked "BLANK", treat it strictly as unknown/blank ("—"). Do NOT assume the user owns any card unless it is explicitly listed in their synced clubContext.
-   - Respect the user's exact confirmed Xbox Series S Coin balance (currently 35,000 Coins unless updated by the user).
+   - Respect the user's exact confirmed Xbox Series S Coin balance (currently 44,000 Coins unless updated by the user).
 5. ANTI-AUTOREGRESSIVE TRANSFER & EDITION LAW (FC 27 ONLY):
    - Override historical pre-training frequency bias completely. Ground strictly in EA Sports FC 27 Ultimate Team (2026/27 season) verified via FotMob and FUTBIN FC 27 Console.
    - For example, in 2026/27, Rodri plays for FC Barcelona (LaLiga EA Sports, Spain), Kylian Mbappé plays for Real Madrid, etc.
@@ -98,7 +98,7 @@ FC 27 CORE MECHANICS:
 
 OUTPUT FORMAT:
 - Executive Summary (1-2 crisp sentences).
-- Tactical Solution / Math Breakdown (clean bulleted breakdown with tabular numbers, respecting 35,000 Coins and keeping unknown club fields blank).`;
+- Tactical Solution / Math Breakdown (clean bulleted breakdown with tabular numbers, respecting 44,000 Coins and keeping unknown club fields blank).`;
 }
 
 /**
@@ -264,7 +264,7 @@ async function startServer() {
 Verify and summarize the current live state across our 4 pillars for ${focusTopic || 'EA Sports FC 27 Xbox Series S'}:
 1. Google Antigravity 2.0 Desktop App Firmware (v2.25 capabilities including built-in generative_ui skill at C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md, /browser + Chrome DevTools MCP, /schedule cron hooks).
 2. EA Sports FC 27 Xbox Series S Title Update #3.1 & Live Tuning #4 meta impact on 31 Roles++, PlayStyles+ (3 cap), and AcceleRATE 2.0.
-3. FUTBIN FC 27 Console (Xbox Series S) 18:00 UK Content Drop, Holographic arbitrage (1.25x Regular <=87 / 1.50x Pristine >=88), and Streamlined SBCs under a 35,000 Coin budget.
+3. FUTBIN FC 27 Console (Xbox Series S) 18:00 UK Content Drop, Holographic arbitrage (1.25x Regular <=87 / 1.50x Pristine >=88), and Streamlined SBCs under a 44,000 Coin budget.
 4. FotMob 2026/27 Season verified squad transfers (e.g., Rodri at FC Barcelona). Never reference FC 24/25/26.`;
 
       const ai = getAiClient();
@@ -375,7 +375,7 @@ Format your response cleanly:
    * 1c. Dynamic Live Evolutions Discovery & Scouter Endpoint (/api/gemini/fetch-live-evolutions)
    * Uses gemini-3.8-flash with googleSearch tool grounded at British Time T=0 to search
    * for currently active EA Sports FC 27 Ultimate Team Evolutions on Console (Xbox Series S),
-   * evaluating Free vs. Paid (against user's 35,000 Coin budget), branching pathways,
+   * evaluating Free vs. Paid (against user's 44,000 Coin budget), branching pathways,
    * 3 PlayStyles+ hard cap compliance, and 31 Roles++ additions.
    */
   app.post('/api/gemini/fetch-live-evolutions', async (req, res) => {
@@ -813,7 +813,7 @@ Hugo Ekitiké is a **6'2" (189 cm)** striker with **Controlled Lengthy** AcceleR
         ];
       } else {
         fallbackText = `### 🎯 FC 27 Tactical Command · Squad Grounding
-Grounded to your verified **4-2-4 Starting XI** and **35,000 Coin balance** on Xbox Series S:
+Grounded to your verified **4-2-4 Starting XI** and **44,000 Coin balance** on Xbox Series S:
 • **Attack**: Tzolis (84 LW, Hunter), Cerci (84 LST, Hunter), Anyomi (85 RST, Hunter), Barcola (85 RW, Finisher)
 • **Midfield Double Pivot**: Szoboszlai (86 LCM, Engine), Nmecha (85 RCM, Shadow)
 • **Defense**: Lewis-Skelly (78 LB, Shadow), Schlotterbeck (87 LCB, Shadow), Lacroix (84 RCB, Shadow), Spence (84 RB, Anchor)
@@ -851,7 +851,7 @@ Ask me about any player's chemistry style, 29 in-game stats, or bench substituti
     const startMs = performance.now();
     try {
       const { clientT0, userCoins, activeInvestments, analysisTier, clubContext } = req.body || {};
-      const resolvedCoins = typeof userCoins === 'number' ? userCoins : 35000;
+      const resolvedCoins = typeof userCoins === 'number' ? userCoins : 44000;
       const ai = getAiClient();
 
       let modelToUse: 'gemini-3.5-flash-lite' | 'gemini-3.8-flash' =
@@ -926,7 +926,7 @@ Provide:
     const startMs = performance.now();
     try {
       const { clientT0, userCoins, clubContext } = req.body || {};
-      const resolvedCoins = typeof userCoins === 'number' ? userCoins : 35000;
+      const resolvedCoins = typeof userCoins === 'number' ? userCoins : 44000;
       const ai = getAiClient();
 
       const prompt = `At British Time T=0 (${clientT0 || 'October 2026 — Ultimate Scream Team 1'}):

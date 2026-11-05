@@ -61,11 +61,11 @@ const PERSONA_CONFIG: Record<
     title: 'Pro Console Tactical Director & Squad Analyst',
     subtitle: '31 Roles++ · AcceleRATE 2.0 · 33/33 Chemistry · Starting XI Upgrade Deltas',
     roleInstruction:
-      'Act as an authoritative Pro Console Director of Football for EA Sports FC 27 Ultimate Team (Xbox Series S). Analyze the user\'s squad, 31 Roles++, and 35,000 Coin budget. Recommend exact Ultimate Scream Team 1 starters (e.g., 86 Kondogbia, 86 Tolisso, 85 Lukeba) and free Objectives (87 Jill Scott CB/CDM/CM, 87 Verón CM) without guessing any blank club fields.',
+      'Act as an authoritative Pro Console Director of Football for EA Sports FC 27 Ultimate Team (Xbox Series S). Analyze the user\'s squad, 31 Roles++, and 44,000 Coin budget. Recommend exact Ultimate Scream Team 1 starters (e.g., 86 Kondogbia, 86 Tolisso, 85 Lukeba) and free Objectives (87 Jill Scott CB/CDM/CM, 87 Verón CM) without guessing any blank club fields.',
     starterPrompts: [
-      'How do I fit Free Objective 87 Jill Scott (CB/CDM/CM) and 87 Verón (CM) into a 4-2-1-3 with 35k coins?',
+      'How do I fit Free Objective 87 Jill Scott (CB/CDM/CM) and 87 Verón (CM) into a 4-2-1-3 with 44k coins?',
       'Which Ultimate Scream Team 1 midfielder is better under 35k on Xbox Series S: 86 Kondogbia, 86 Çalhanoğlu, or 86 Tolisso?',
-      'Give me a full Pro Console Quad-Action review of my club with my confirmed 35,000 Coins.',
+      'Give me a full Pro Console Quad-Action review of my club with my confirmed 44,000 Coins.',
     ],
   },
   SBC_EVO_RANKER: {
@@ -80,7 +80,7 @@ const PERSONA_CONFIG: Record<
     ],
   },
   CONSOLE_MARKET_TRADER: {
-    title: 'Xbox Series S Market & 35k Investment Specialist',
+    title: 'Xbox Series S Market & 44k Investment Specialist',
     subtitle: '5% EA Tax Guard · Discard Floor Flips · 18:00 UK Content Drop Arbitrage',
     roleInstruction:
       'Act as an elite Xbox Series S Transfer Market Analyst for EA Sports FC 27. Focus strictly on console cross-play pricing, 5% EA Tax break-even math, Ultimate Scream Team 1 discard-floor flips (85 Alonso, 85 Chong, 85 El Mala, 86 Vobian), and 18:00 UK fodder spikes.',
@@ -145,7 +145,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
       role: 'model',
       timestamp: t0Anchor.britishFullFormatted,
       personaUsed: 'DIRECTOR_OF_FOOTBALL',
-      text: `Tactical Command Online at T=0 (${t0Anchor.britishFullFormatted}).\n\nI am calibrated to your **35,000 Xbox Series S Coin balance** and verified **4-2-4 Starting XI** (Kobel, Lewis-Skelly, Schlotterbeck, Lacroix, Spence, Szoboszlai, Nmecha, Tzolis, Cerci, Anyomi, Barcola).\n\nSelect a specialist role, model tier, or toggle **Offline Edge AI Mode** below for 100% internet-free execution right on your Intel Iris Xe chip.`,
+      text: `Tactical Command Online at T=0 (${t0Anchor.britishFullFormatted}).\n\nI am calibrated to your **44,000 Xbox Series S Coin balance** and verified **4-2-4 Starting XI** (Kobel, Lewis-Skelly, Schlotterbeck, Lacroix, Spence, Szoboszlai, Nmecha, Tzolis, Cerci, Anyomi, Barcola).\n\nSelect a specialist role, model tier, or toggle **Offline Edge AI Mode** below for 100% internet-free execution right on your Intel Iris Xe chip.`,
       telemetry: {
         tierLabel: 'System Ready · High-Efficiency Smart Router (gemini-3.5-flash-lite / gemini-3.8-flash)',
         modelUsed: 'gemini-3.8-flash',
@@ -642,7 +642,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Ask about Ultimate Scream Team 1, Top 5 Player vs Upgrade SBCs, 87 Jill Scott Objective, or 35k flips..."
+            placeholder="Ask about Ultimate Scream Team 1, Top 5 Player vs Upgrade SBCs, 87 Jill Scott Objective, or 44k flips..."
             className="flex-1 min-w-[220px] px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-[#00ff87]"
           />
           <button

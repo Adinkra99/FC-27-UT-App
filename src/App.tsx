@@ -151,7 +151,7 @@ export function App() {
   const [screenPadTickerOpen, setScreenPadTickerOpen] = useState<boolean>(true);
 
   // 3. PERSONAL CLUB STATE: Cannons n Pecks (Est. Sep 2009 · 17 Yrs). Strict Zero-Guessing: Unconfirmed metrics start BLANK (null / '—')
-  const [coins, setCoins] = useState<number | null>(null);
+  const [coins, setCoins] = useState<number | null>(44000);
   const [clubName, setClubName] = useState<string | null>('Cannons n Pecks');
   const [clubEstablished, setClubEstablished] = useState<string>('September 2009');
   const [clubAgeYears, setClubAgeYears] = useState<number>(17);
@@ -240,8 +240,8 @@ export function App() {
           const data = await loadClubStateFromFirestore();
           if (data) {
             if (typeof data.coins === 'number' || data.coins === null) {
-              setCoins(data.coins ?? 35000);
-              setDraftCoins(data.coins !== null && data.coins !== undefined ? String(data.coins) : '');
+              setCoins(data.coins ?? 44000);
+              setDraftCoins(data.coins !== null && data.coins !== undefined ? String(data.coins) : '44000');
             }
             if (typeof data.clubName === 'string' || data.clubName === null) {
               setClubName(data.clubName ?? null);
@@ -2504,9 +2504,10 @@ export function App() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-2 pt-1">
+            <div className="grid grid-cols-4 gap-2 pt-1">
               {[
-                { label: '35,000 (Start)', val: 35000 },
+                { label: '44,000 (Current)', val: 44000 },
+                { label: '35,000 (Base)', val: 35000 },
                 { label: '500,000', val: 500000 },
                 { label: '1.42M (Apex)', val: 1420000 },
               ].map((preset) => (
