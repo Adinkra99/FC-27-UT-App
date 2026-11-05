@@ -188,8 +188,19 @@ export const SQUAD_AUTHENTIC_BASE_STATS: Record<string, PlayerStats> = {
   'Nicole Anyomi': { pac: 91, sho: 83, pas: 75, dri: 85, def: 56, phy: 84 },
   'Bradley Barcola': { pac: 92, sho: 76, pas: 78, dri: 84, def: 39, phy: 78 },
 
-  // Confirmed Squad Reserves
+  // Confirmed 12 Bench & Reserve Cards (Verified from FUTBIN @Adinkra3399)
+  'Keane Lewis-Potter': { pac: 81, sho: 74, pas: 78, dri: 82, def: 76, phy: 70 },
   'Alexander Isak': { pac: 81, sho: 87, pas: 72, dri: 82, def: 39, phy: 72 },
+  'Hugo Ekitiké': { pac: 86, sho: 83, pas: 72, dri: 84, def: 33, phy: 73 },
+  'Beth Mead': { pac: 83, sho: 84, pas: 82, dri: 84, def: 57, phy: 73 },
+  'Fikayo Tomori': { pac: 85, sho: 48, pas: 66, dri: 68, def: 85, phy: 81 },
+  'Carlos Espí': { pac: 85, sho: 85, pas: 73, dri: 82, def: 46, phy: 88 },
+  'Jamal Musiala': { pac: 84, sho: 79, pas: 81, dri: 90, def: 62, phy: 65 },
+  'Elliot Anderson': { pac: 81, sho: 74, pas: 82, dri: 84, def: 82, phy: 84 },
+  'Bukayo Saka': { pac: 86, sho: 83, pas: 82, dri: 87, def: 65, phy: 76 },
+  'Benjamin Pavard': { pac: 70, sho: 60, pas: 72, dri: 71, def: 82, phy: 78 },
+  'Ryan Gravenberch': { pac: 76, sho: 76, pas: 81, dri: 83, def: 80, phy: 80 },
+  'Jurriën Timber': { pac: 81, sho: 50, pas: 76, dri: 81, def: 83, phy: 80 },
 };
 
 /**
@@ -283,6 +294,88 @@ export const VERIFIED_PLAYER_RECOMMENDATIONS: Record<string, Partial<PlayerChemR
       'Barcola (85 RW, PSG) has 92 base Pace! Applying Hunter wastes points against the 99 cap. Finisher gives +6 Shooting (76 -> 82) and +7 Dribbling (84 -> 91), directly solving his finishing while unlocking elite 91 dribbling and agility for cutting past left-backs.',
     whyAlternative:
       'Deadeye adds +6 Shooting (82) and +7 Passing (85) for pinpoint whipped crosses to Anyomi and Cerci.',
+  },
+
+  // Bench & Reserves Curated Recommendations
+  'Keane Lewis-Potter': {
+    optimalStyle: 'SHADOW',
+    alternativeStyle: 'ANCHOR',
+    whyOptimal:
+      'His 81 Special LB item has 81 Pace and 76 Defending. Shadow surges his Pace to 89 and Defending to 83, making him a reliable defensive fullback replacement.',
+    whyAlternative:
+      'Anchor gives +4 Pace (85), +6 Defending (82), and +6 Physical (76) for stronger aerial presence.',
+  },
+  'Alexander Isak': {
+    optimalStyle: 'HUNTER',
+    alternativeStyle: 'ENGINE',
+    whyOptimal:
+      'Isak (86 ST, Newcastle) has 81 Pace and 87 Shooting with 5-star weak foot. Hunter accelerates his Pace to 89 and maxes his Finishing past 93.',
+    whyAlternative:
+      'Engine lifts Pace to 85, Passing to 78, and Dribbling to 88, boosting his balance and turning radius.',
+  },
+  'Hugo Ekitiké': {
+    optimalStyle: 'HUNTER',
+    alternativeStyle: 'FINISHER',
+    whyOptimal:
+      'Ekitiké (85 ST, Frankfurt) has 86 Pace and 83 Shooting. Hunter lifts Pace to 94 and Shooting to 89 for lethal counter-attacking runs.',
+    whyAlternative:
+      'Finisher pushes Shooting to 89 and Dribbling to 91 for tight-box maneuverability.',
+  },
+  'Jamal Musiala': {
+    optimalStyle: 'HUNTER',
+    alternativeStyle: 'DEADEYE',
+    whyOptimal:
+      'Musiala (87 CAM, Bayern Munich) commands 90 Dribbling and 5-star skills. Hunter boosts his 84 Pace to 92 and 79 Shooting to 85, transforming him into an elite attacking midfielder.',
+    whyAlternative:
+      'Deadeye elevates Shooting to 85 and Passing to 88 for surgical assists.',
+  },
+  'Fikayo Tomori': {
+    optimalStyle: 'SHADOW',
+    alternativeStyle: 'ANCHOR',
+    whyOptimal:
+      'Tomori (85 CB, AC Milan) has 85 Pace and 85 Defending. Shadow lifts his Pace to 93 and Defending to 92, creating an elite recovery defender.',
+    whyAlternative:
+      'Anchor provides +4 Pace (89), +6 Defending (91), and +6 Physical (87) for maximum shoulder duels.',
+  },
+  'Elliot Anderson': {
+    optimalStyle: 'SHADOW',
+    alternativeStyle: 'POWERHOUSE',
+    whyOptimal:
+      'Anderson (86 Special CDM, Nottingham Forest) has 81 Pace, 82 Defending, and 84 Physical. Shadow surges his Pace to 89 and Defending to 89, providing elite ball recovery.',
+    whyAlternative:
+      'Powerhouse elevates Passing to 89 and Defending to 89 for deep playmaking.',
+  },
+  'Bukayo Saka': {
+    optimalStyle: 'HUNTER',
+    alternativeStyle: 'CATALYST',
+    whyOptimal:
+      'Saka (87 RW, Arsenal) has 86 Pace, 83 Shooting, and 87 Dribbling. Hunter boosts Pace to 94 and Shooting to 89 for cutting inside and finishing into the top corner.',
+    whyAlternative:
+      'Catalyst boosts Pace to 94 and Passing to 89 for pinpoint crossing.',
+  },
+  'Carlos Espí': {
+    optimalStyle: 'HUNTER',
+    alternativeStyle: 'HAWK',
+    whyOptimal:
+      'Espí (85 Special ST, Levante) has 85 Pace, 85 Shooting, and 88 Physicality. Hunter pushes Pace to 93 and Shooting to 91, maximizing his target-man dominance.',
+    whyAlternative:
+      'Hawk boosts Pace to 89, Shooting to 90, and Physical to 93 for maximum aerial supremacy.',
+  },
+  'Ryan Gravenberch': {
+    optimalStyle: 'SHADOW',
+    alternativeStyle: 'POWERHOUSE',
+    whyOptimal:
+      'Gravenberch (85 CDM, Liverpool) has 76 Pace and 80 Defending. Shadow lifts his Pace to 84 and Defending to 87, solidifying his holding pivot presence.',
+    whyAlternative:
+      'Powerhouse lifts Passing to 88 and Defending to 87 for distributing from deep.',
+  },
+  'Jurriën Timber': {
+    optimalStyle: 'ANCHOR',
+    alternativeStyle: 'SHADOW',
+    whyOptimal:
+      'Timber (84 RB, Arsenal) has 81 Pace, 83 Defending, and 80 Physicality. Anchor boosts Pace to 85, Defending to 89, and Physical to 86 for robust containment.',
+    whyAlternative:
+      'Shadow pushes Pace to 89 and Defending to 90 for tracking pure sprint wingers.',
   },
 };
 

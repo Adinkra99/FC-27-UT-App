@@ -9,9 +9,10 @@ description: Consistently use FUTBIN (futbin.com) and FUT.GG (fut.gg) as dynamic
 When researching player upgrades, stat thresholds, chemistry style boosts, PlayStyles, and tactical Role++ synergies for Kit's EA Sports FC 27 Ultimate Team, use live lookups on FUTBIN and FUT.GG via the `/browser` subagent.
 
 ## Connected Identity & Grounded Team
-- **EA / FUTBIN Account**: `FutbinUser443696828703506`
+- **EA / FUTBIN Account**: `Adinkra3399` (FUTBIN profile & EA Account Linked)
 - **Active Formation**: 4-2-4 (High-Tempo Press)
 - **Active Starting XI**: Kobel (87 GK), Lewis-Skelly (78 LB), Schlotterbeck (87 LCB), Lacroix (84 RCB), Spence (84 RB), Szoboszlai (86 LCM), Nmecha (85 RCM), Tzolis (84 LW), Cerci (84 LST), Anyomi (85 RST), Barcola (85 RW).
+- **Active Bench (12)**: Lewis-Potter (81), Isak (86), Ekitiké (85), Mead (84), Tomori (85), Espí (85), Musiala (87), Anderson (86), Saka (87), Pavard (80), Gravenberch (85), Timber (84).
 
 ## Dynamic Exploration Protocol
 1. Launch the `/browser` subagent to query exact player pages on `futbin.com` or `fut.gg/players/`.
