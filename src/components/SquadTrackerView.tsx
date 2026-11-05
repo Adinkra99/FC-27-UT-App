@@ -64,77 +64,78 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
   onSimulateInTactics,
   simulatedTargetName,
 }) => {
-  // Default verified starting XI (4-2-1-3 formation grounded in 2026/27 stars)
+
+  // Kit's authentic Starting XI verified directly from Google Doc "Kits Ultimate Team 5/11/26"
   const [squad, setSquad] = useState<SquadPosition[]>([
     {
       slot: 'GK',
       label: 'GK',
       rolePlusPlus: 'Goalkeeper (Defend++)',
       player: {
-        id: 'gk-alisson',
-        name: 'Alisson',
-        rating: 89,
-        club: 'Liverpool',
-        league: 'Premier League',
-        nation: 'Brazil',
+        id: 'gk-kobel',
+        name: 'Gregor Kobel',
+        rating: 87,
+        club: 'Borussia Dortmund',
+        league: 'Bundesliga',
+        nation: 'Switzerland',
         position: 'GK',
-        rarity: 'Pristine Holographic',
+        rarity: 'Regular Holographic',
         consolePrice: 19500,
-        itemScore: 133.5,
+        itemScore: 108.75,
       },
       chemPoints: 3,
     },
     {
       slot: 'LB',
       label: 'Left Back',
-      rolePlusPlus: 'Falseback (Support++)',
+      rolePlusPlus: 'Fullback (Defend++)',
       player: {
-        id: 'lb-davies',
-        name: 'A. Davies',
-        rating: 84,
-        club: 'FC Bayern München',
-        league: 'Bundesliga',
-        nation: 'Canada',
+        id: 'lb-lewis-potter',
+        name: 'Keane Lewis-Potter',
+        rating: 83,
+        club: 'Brentford',
+        league: 'Premier League',
+        nation: 'England',
         position: 'LB',
         rarity: 'Gold',
-        consolePrice: 11000,
-        itemScore: 84,
+        consolePrice: 3800,
+        itemScore: 83,
       },
       chemPoints: 3,
     },
     {
       slot: 'LCB',
       label: 'Left Centre-Back',
-      rolePlusPlus: 'Defender (Defend++)',
+      rolePlusPlus: 'Ball-Playing Defender (Defend++)',
       player: {
-        id: 'lcb-gomez',
-        name: 'J. Gomez',
-        rating: 79,
-        club: 'Liverpool',
-        league: 'Premier League',
-        nation: 'England',
+        id: 'lcb-schlotterbeck',
+        name: 'Nico Schlotterbeck',
+        rating: 87,
+        club: 'Borussia Dortmund',
+        league: 'Bundesliga',
+        nation: 'Germany',
         position: 'CB',
-        rarity: 'Gold',
-        consolePrice: 1400,
-        itemScore: 79,
+        rarity: 'Regular Holographic',
+        consolePrice: 24500,
+        itemScore: 108.75,
       },
       chemPoints: 3,
     },
     {
       slot: 'RCB',
       label: 'Right Centre-Back',
-      rolePlusPlus: 'Stopper (Defend++)',
+      rolePlusPlus: 'Defender (Defend++)',
       player: {
-        id: 'rcb-martinez',
-        name: 'Iñigo Martínez',
-        rating: 80,
-        club: 'FC Barcelona',
-        league: 'La Liga',
-        nation: 'Spain',
+        id: 'rcb-lacroix',
+        name: 'Maxence Lacroix',
+        rating: 84,
+        club: 'Crystal Palace',
+        league: 'Premier League',
+        nation: 'France',
         position: 'CB',
         rarity: 'Gold',
-        consolePrice: 1100,
-        itemScore: 80,
+        consolePrice: 7500,
+        itemScore: 84,
       },
       chemPoints: 3,
     },
@@ -143,16 +144,16 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
       label: 'Right Back',
       rolePlusPlus: 'Fullback (Defend++)',
       player: {
-        id: 'rb-kounde',
-        name: 'J. Koundé',
-        rating: 85,
-        club: 'FC Barcelona',
-        league: 'La Liga',
-        nation: 'France',
+        id: 'rb-spence',
+        name: 'Djed Spence',
+        rating: 84,
+        club: 'Tottenham Hotspur',
+        league: 'Premier League',
+        nation: 'England',
         position: 'RB',
-        rarity: 'Regular Holographic',
-        consolePrice: 14000,
-        itemScore: 106.25,
+        rarity: 'Gold',
+        consolePrice: 5200,
+        itemScore: 84,
       },
       chemPoints: 3,
     },
@@ -161,52 +162,52 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
       label: 'Left CDM',
       rolePlusPlus: 'Holding (Defend++)',
       player: {
-        id: 'ldm-rodri',
-        name: 'Rodri',
-        rating: 91,
-        club: 'FC Barcelona',
-        league: 'La Liga',
-        nation: 'Spain',
+        id: 'ldm-gravenberch',
+        name: 'Ryan Gravenberch',
+        rating: 85,
+        club: 'Liverpool',
+        league: 'Premier League',
+        nation: 'Netherlands',
         position: 'CDM',
-        rarity: 'Pristine Holographic',
-        consolePrice: 42000,
-        itemScore: 136.5,
+        rarity: 'Regular Holographic',
+        consolePrice: 18000,
+        itemScore: 106.25,
       },
       chemPoints: 3,
     },
     {
       slot: 'RDM',
       label: 'Right CDM',
-      rolePlusPlus: 'Deep-Lying Playmaker (Build-Up++)',
+      rolePlusPlus: 'Box-to-Box (Support++)',
       player: {
         id: 'rdm-szoboszlai',
-        name: 'Szoboszlai (Scream)',
-        rating: 88,
+        name: 'Dominik Szoboszlai',
+        rating: 86,
         club: 'Liverpool',
         league: 'Premier League',
         nation: 'Hungary',
         position: 'CM',
-        rarity: 'Ultimate Scream',
-        consolePrice: 110000,
-        itemScore: 132,
+        rarity: 'Regular Holographic',
+        consolePrice: 26000,
+        itemScore: 107.5,
       },
       chemPoints: 3,
     },
     {
       slot: 'CAM',
       label: 'Attacking Midfielder',
-      rolePlusPlus: 'Shadow Striker (Attack++)',
+      rolePlusPlus: 'Wide Playmaker (Attack++)',
       player: {
-        id: 'cam-pedri',
-        name: 'Pedri',
-        rating: 87,
-        club: 'FC Barcelona',
-        league: 'La Liga',
-        nation: 'Spain',
-        position: 'CM',
-        rarity: 'Regular Holographic',
-        consolePrice: 13500,
-        itemScore: 108.75,
+        id: 'cam-tzolis',
+        name: 'Christos Tzolis',
+        rating: 84,
+        club: 'Club Brugge',
+        league: 'Jupiler Pro League',
+        nation: 'Greece',
+        position: 'CAM',
+        rarity: 'Gold',
+        consolePrice: 4200,
+        itemScore: 84,
       },
       chemPoints: 3,
     },
@@ -215,59 +216,171 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
       label: 'Left Winger',
       rolePlusPlus: 'Inside Forward (Attack++)',
       player: {
-        id: 'lw-leao',
-        name: 'Rafael Leão',
-        rating: 86,
-        club: 'AC Milan',
-        league: 'Serie A Enilive',
-        nation: 'Portugal',
+        id: 'lw-barcola',
+        name: 'Bradley Barcola',
+        rating: 85,
+        club: 'Paris Saint-Germain',
+        league: "Ligue 1 McDonald's",
+        nation: 'France',
         position: 'LW',
-        rarity: 'Gold',
-        consolePrice: 16000,
-        itemScore: 86,
+        rarity: 'Regular Holographic',
+        consolePrice: 18500,
+        itemScore: 106.25,
       },
       chemPoints: 3,
     },
     {
       slot: 'ST',
       label: 'Striker',
-      rolePlusPlus: 'Poacher (Attack++)',
+      rolePlusPlus: 'Advanced Forward (Attack++)',
       player: {
-        id: 'st-mbappe',
-        name: 'Kylian Mbappé',
-        rating: 91,
-        club: 'Real Madrid',
-        league: 'La Liga',
-        nation: 'France',
+        id: 'st-anyomi',
+        name: 'Nicole Anyomi',
+        rating: 85,
+        club: 'Eintracht Frankfurt',
+        league: 'Google Pixel Frauen-Bundesliga',
+        nation: 'Germany',
         position: 'ST',
-        rarity: 'Pristine Holographic',
-        consolePrice: 850000,
-        itemScore: 136.5,
+        rarity: 'Regular Holographic',
+        consolePrice: 14500,
+        itemScore: 106.25,
       },
       chemPoints: 3,
     },
     {
       slot: 'RW',
       label: 'Right Winger',
-      rolePlusPlus: 'Winger (Attack++)',
+      rolePlusPlus: 'Inside Forward (Attack++)',
       player: {
-        id: 'rw-raphinha',
-        name: 'Raphinha (Scream)',
-        rating: 90,
-        club: 'FC Barcelona',
-        league: 'La Liga',
-        nation: 'Brazil',
+        id: 'rw-saka',
+        name: 'Bukayo Saka',
+        rating: 87,
+        club: 'Arsenal',
+        league: 'Premier League',
+        nation: 'England',
         position: 'RW',
-        rarity: 'Ultimate Scream',
-        consolePrice: 420000,
-        itemScore: 135,
+        rarity: 'Regular Holographic',
+        consolePrice: 31000,
+        itemScore: 108.75,
       },
       chemPoints: 3,
     },
   ]);
 
+  // Kit's authentic Bench & Reserves verified directly from Google Doc "Kits Ultimate Team 5/11/26"
+  const [bench, setBench] = useState<SquadPlayerCard[]>([
+    {
+      id: 'bench-cerci',
+      name: 'Selina Cerci',
+      rating: 84,
+      club: 'TSG Hoffenheim',
+      league: 'Google Pixel Frauen-Bundesliga',
+      nation: 'Germany',
+      position: 'ST',
+      rarity: 'Gold',
+      consolePrice: 4000,
+      itemScore: 84,
+    },
+    {
+      id: 'bench-espi',
+      name: 'Carlos Espí',
+      rating: 85,
+      club: 'Levante',
+      league: 'La Liga',
+      nation: 'Spain',
+      position: 'ST',
+      rarity: 'Regular Holographic',
+      consolePrice: 12000,
+      itemScore: 106.25,
+    },
+    {
+      id: 'bench-ekitike',
+      name: 'Hugo Ekitiké',
+      rating: 85,
+      club: 'Eintracht Frankfurt',
+      league: 'Bundesliga',
+      nation: 'France',
+      position: 'ST',
+      rarity: 'Regular Holographic',
+      consolePrice: 13500,
+      itemScore: 106.25,
+    },
+    {
+      id: 'bench-isak',
+      name: 'Alexander Isak',
+      rating: 86,
+      club: 'Newcastle United',
+      league: 'Premier League',
+      nation: 'Sweden',
+      position: 'ST',
+      rarity: 'Regular Holographic',
+      consolePrice: 22000,
+      itemScore: 107.5,
+    },
+    {
+      id: 'bench-lewis-skelly',
+      name: 'Myles Lewis-Skelly',
+      rating: 85,
+      club: 'Arsenal',
+      league: 'Premier League',
+      nation: 'England',
+      position: 'LB',
+      rarity: 'Regular Holographic',
+      consolePrice: 15000,
+      itemScore: 106.25,
+    },
+    {
+      id: 'bench-pavard',
+      name: 'Benjamin Pavard',
+      rating: 83,
+      club: 'Inter Milan',
+      league: 'Serie A',
+      nation: 'France',
+      position: 'CB',
+      rarity: 'Gold',
+      consolePrice: 3200,
+      itemScore: 83,
+    },
+    {
+      id: 'bench-timber',
+      name: 'Jurriën Timber',
+      rating: 84,
+      club: 'Arsenal',
+      league: 'Premier League',
+      nation: 'Netherlands',
+      position: 'RB',
+      rarity: 'Gold',
+      consolePrice: 6500,
+      itemScore: 84,
+    },
+    {
+      id: 'bench-mead',
+      name: 'Beth Mead',
+      rating: 84,
+      club: 'Arsenal',
+      league: "Barclays Women's Super League",
+      nation: 'England',
+      position: 'RM',
+      rarity: 'Gold',
+      consolePrice: 4500,
+      itemScore: 84,
+    },
+    {
+      id: 'bench-torres',
+      name: 'Ferran Torres',
+      rating: 84,
+      club: 'FC Barcelona',
+      league: 'La Liga',
+      nation: 'Spain',
+      position: 'ST',
+      rarity: 'Gold',
+      consolePrice: 5000,
+      itemScore: 84,
+    },
+  ]);
+
   // Selected player slot to inspect or swap
-  const [selectedSlot, setSelectedSlot] = useState<string>('LCB');
+  const [selectedSlot, setSelectedSlot] = useState<string>('LB');
   const [pitchViewMode, setPitchViewMode] = useState<'2D_TACTICAL' | '3D_STADIUM'>('2D_TACTICAL');
 
   // Simulation test upgrade candidates:
@@ -415,7 +528,7 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
             <ThreePitchVisualizer
               squad={squad}
               selectedSlot={selectedSlot}
-              weakestSlot="LCB"
+              weakestSlot={[...squad].sort((a, b) => a.player.rating - b.player.rating)[0]?.slot || 'LB'}
               onSelectPlayer={(slot) => setSelectedSlot(slot)}
               onRunTacticalAdvice={(p) =>
                 onSimulateInTactics(
@@ -555,7 +668,8 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
               {['LB', 'LCB', 'RCB', 'RB'].map((slotKey) => {
                 const pos = squad.find((s) => s.slot === slotKey)!;
                 const isSelected = selectedSlot === slotKey;
-                const isWeakest = slotKey === 'LCB'; // Gomez 79 is lowest rated in XI
+                const weakestSlot = [...squad].sort((a, b) => a.player.rating - b.player.rating)[0]?.slot || 'LB';
+                const isWeakest = slotKey === weakestSlot;
                 return (
                   <button
                     key={slotKey}
@@ -626,6 +740,52 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
           </div>
         </div>
       )}
+
+          {/* BENCH & RESERVES SECTION (GROUNDED FROM GOOGLE DOC "Kits Ultimate Team 5/11/26") */}
+          <div className="bg-[#111827] border border-slate-800 rounded-xl p-4 mt-3">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
+              <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-[#00ff87]" />
+                Kit's Verified Bench & Reserves ({bench.length} Options)
+              </span>
+              <span className="text-[10px] font-mono text-slate-400">
+                Click any sub to swap into selected slot ({selectedSlot})
+              </span>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1.5">
+              {bench.map((benchPlayer) => (
+                <button
+                  key={benchPlayer.id}
+                  type="button"
+                  onClick={() => {
+                    if (!selectedSlotData) return;
+                    const oldPlayer = selectedSlotData.player;
+                    setSquad((prev) =>
+                      prev.map((slotItem) =>
+                        slotItem.slot === selectedSlot
+                          ? { ...slotItem, player: benchPlayer }
+                          : slotItem
+                      )
+                    );
+                    setBench((prev) => [
+                      ...prev.filter((b) => b.id !== benchPlayer.id),
+                      oldPlayer,
+                    ]);
+                  }}
+                  className="p-1.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-[#00ff87] hover:bg-slate-900 transition-all text-center group cursor-pointer"
+                  title={`Swap ${benchPlayer.name} into ${selectedSlot}`}
+                >
+                  <div className="text-[8px] font-mono text-slate-400 uppercase">{benchPlayer.position}</div>
+                  <div className="text-xs font-extrabold text-white group-hover:text-[#00ff87]">
+                    {benchPlayer.rating}
+                  </div>
+                  <div className="text-[9px] font-semibold text-slate-300 truncate max-w-[55px] mx-auto">
+                    {benchPlayer.name.split(' ').pop()}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
     </div>
 
         {/* RIGHT COLUMN: SLOT AUDIT + LIVE SBC/EVO SIMULATION BENCH (COL-SPAN 5) */}

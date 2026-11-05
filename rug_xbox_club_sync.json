@@ -1,42 +1,153 @@
 {
   "clubName": "RUG",
   "platform": "Xbox Series S (Console Shared Market)",
-  "squadRating": 85,
-  "chemistry": "28/33",
-  "primaryFormation": "4-2-4",
+  "sourceDoc": "Kits Ultimate Team 5/11/26 (Google Docs: 16TZXHjTDpdtV-BqDThV8NMJGKNkKA-8NCVVMEQIgSEg)",
+  "syncedAt": "2026-11-05T18:11:00Z",
   "coins": 40000,
   "fifaPoints": 3000,
   "startingXI": [
-    { "position": "GK", "name": "Gregor Kobel", "rating": 87, "rarity": "Gold", "club": "Borussia Dortmund", "league": "Bundesliga", "nation": "Switzerland", "role": "GK++", "chem": 2 },
-    { "position": "LB", "name": "Myles Lewis-Skelly", "rating": 85, "rarity": "Active Evolution", "club": "Arsenal", "league": "Premier League", "nation": "England", "role": "LB+", "chem": 3 },
-    { "position": "LCB", "name": "Nico Schlotterbeck", "rating": 87, "rarity": "Gold", "club": "Borussia Dortmund", "league": "Bundesliga", "nation": "Germany", "role": "CB++", "chem": 3 },
-    { "position": "RCB", "name": "Antonio Rüdiger", "rating": 83, "rarity": "Gold", "club": "Real Madrid", "league": "LaLiga EA Sports", "nation": "Germany", "role": "CB+", "chem": 2 },
-    { "position": "RB", "name": "Jurriën Timber", "rating": 84, "rarity": "Gold", "club": "Arsenal", "league": "Premier League", "nation": "Netherlands", "role": "RB+", "playStylePlus": ["Jockey+"], "chem": 2 },
-    { "position": "LCM", "name": "Elliot Anderson", "rating": 85, "rarity": "Special", "club": "Manchester City", "league": "Premier League", "nation": "England", "role": "CM++", "chem": 3 },
-    { "position": "RCM", "name": "Felix Nmecha", "rating": 85, "rarity": "Gold", "club": "Borussia Dortmund", "league": "Bundesliga", "nation": "Germany", "role": "CM++", "chem": 3 },
-    { "position": "LW", "name": "Nicole Anyomi", "rating": 85, "rarity": "Special", "club": "London City Lionesses", "league": "Barclays WSL", "nation": "Germany", "role": "LW++", "chem": 2 },
-    { "position": "LST", "name": "Selina Cerci", "rating": 84, "rarity": "Special", "club": "Arsenal", "league": "Barclays WSL", "nation": "Germany", "role": "ST++", "chem": 3 },
-    { "position": "RST", "name": "Carlos Espí", "rating": 85, "rarity": "Future Stars", "club": "Levante UD", "league": "LaLiga EA Sports", "nation": "Spain", "role": "ST+", "chem": 2 },
-    { "position": "RW", "name": "Bukayo Saka", "rating": 87, "rarity": "Gold", "club": "Arsenal", "league": "Premier League", "nation": "England", "role": "RW++", "playStylePlus": ["Whipped Pass+"], "chem": 3 }
+    {
+      "position": "GK",
+      "name": "Gregor Kobel",
+      "rating": 87,
+      "role": "GK",
+      "faceStats": { "div": 88, "han": 88, "kic": 84, "ref": 86, "spe": 44, "pos": 86 }
+    },
+    {
+      "position": "LB",
+      "name": "Keane Lewis-Potter",
+      "rating": 83,
+      "role": "Fullback++",
+      "faceStats": { "pac": 83, "sho": 74, "pas": 78, "dri": 82, "def": 80, "phy": 73 }
+    },
+    {
+      "position": "LCB",
+      "name": "Nico Schlotterbeck",
+      "rating": 87,
+      "role": "Ball-Playing Defender++",
+      "faceStats": { "pac": 81, "sho": 60, "pas": 76, "dri": 74, "def": 86, "phy": 84 }
+    },
+    {
+      "position": "RCB",
+      "name": "Maxence Lacroix",
+      "rating": 84,
+      "role": "Defender++",
+      "faceStats": { "pac": 87, "sho": 47, "pas": 64, "dri": 70, "def": 85, "phy": 84 }
+    },
+    {
+      "position": "RB",
+      "name": "Djed Spence",
+      "rating": 84,
+      "role": "Fullback++",
+      "faceStats": { "pac": 91, "sho": 58, "pas": 76, "dri": 83, "def": 81, "phy": 79 }
+    },
+    {
+      "position": "CM",
+      "name": "Dominik Szoboszlai",
+      "rating": 86,
+      "role": "Box-to-Box",
+      "faceStats": { "pac": 82, "sho": 83, "pas": 86, "dri": 84, "def": 74, "phy": 77 }
+    },
+    {
+      "position": "LW",
+      "name": "Christos Tzolis",
+      "rating": 84,
+      "role": "Wide Playmaker++",
+      "faceStats": { "pac": 84, "sho": 82, "pas": 81, "dri": 85, "def": 41, "phy": 74 }
+    },
+    {
+      "position": "RW",
+      "name": "Bradley Barcola",
+      "rating": 85,
+      "role": "Inside Forward+",
+      "faceStats": { "pac": 92, "sho": 76, "pas": 78, "dri": 84, "def": 39, "phy": 67 }
+    },
+    {
+      "position": "ST",
+      "name": "Selina Cerci",
+      "rating": 84,
+      "role": "False 9++",
+      "faceStats": { "pac": 82, "sho": 84, "pas": 75, "dri": 82, "def": 53, "phy": 80 }
+    },
+    {
+      "position": "ST",
+      "name": "Nicole Anyomi",
+      "rating": 85,
+      "role": "Advanced Forward++",
+      "faceStats": { "pac": 91, "sho": 83, "pas": 75, "dri": 85, "def": 56, "phy": 84 }
+    }
   ],
   "reservesAndBinder": [
-    { "position": "CAM", "name": "Jamal Musiala", "rating": 87, "club": "Bayern Munich", "league": "Bundesliga" },
-    { "position": "LW", "name": "Lauren Hemp", "rating": 87, "club": "Manchester City", "league": "Barclays WSL" },
-    { "position": "RW", "name": "Chloe Kelly", "rating": 86, "club": "Arsenal", "league": "Barclays WSL" },
-    { "position": "CM", "name": "Scott McTominay", "rating": 86, "club": "Napoli", "league": "Serie A" },
-    { "position": "CDM", "name": "Ryan Gravenberch", "rating": 85, "club": "Liverpool", "league": "Premier League" },
-    { "position": "CAM", "name": "Fermín López", "rating": 85, "club": "FC Barcelona", "league": "LaLiga EA Sports" },
-    { "position": "ST", "name": "Serhou Guirassy", "rating": 85, "club": "Borussia Dortmund", "league": "Bundesliga" },
-    { "position": "CB", "name": "Ibrahima Konaté", "rating": 84, "club": "Liverpool", "league": "Premier League" },
-    { "position": "CDM", "name": "Lena Oberdorf", "rating": 84, "club": "Bayern Munich", "league": "GPFBL" },
-    { "position": "CAM", "name": "Kenan Yıldız", "rating": 84, "club": "Juventus", "league": "Serie A" },
-    { "position": "CB", "name": "Aymeric Laporte", "rating": 84, "club": "Athletic Club", "league": "LaLiga EA Sports" },
-    { "position": "RB", "name": "Denzel Dumfries", "rating": 83, "club": "Real Madrid", "league": "LaLiga EA Sports" },
-    { "position": "CB", "name": "Maxence Lacroix", "rating": 82, "club": "Chelsea", "league": "Premier League" },
-    { "position": "ST", "name": "Moise Kean", "rating": 82, "club": "Fiorentina", "league": "Serie A" },
-    { "position": "LW", "name": "Anthony Gordon", "rating": 82, "club": "FC Barcelona", "league": "LaLiga EA Sports" },
-    { "position": "LW", "name": "Pedro Neto", "rating": 81, "club": "Chelsea", "league": "Premier League" },
-    { "position": "CB", "name": "Fikayo Tomori", "rating": 80, "club": "AC Milan", "league": "Serie A" }
+    {
+      "position": "RW / LB",
+      "name": "Bukayo Saka",
+      "rating": 87,
+      "role": "Winger / Wingback",
+      "faceStats": { "pac": 85, "sho": 82, "pas": 85, "dri": 87, "def": 60, "phy": 70 }
+    },
+    {
+      "position": "CDM",
+      "name": "Ryan Gravenberch",
+      "rating": 85,
+      "role": "Holding Midfielder",
+      "faceStats": { "pac": 76, "sho": 76, "pas": 81, "dri": 83, "def": 80, "phy": 80 }
+    },
+    {
+      "position": "ST",
+      "name": "Carlos Espí",
+      "rating": 85,
+      "role": "Target Forward",
+      "faceStats": { "pac": 85, "sho": 85, "pas": 73, "dri": 82, "def": 46, "phy": 88 }
+    },
+    {
+      "position": "ST",
+      "name": "Hugo Ekitiké",
+      "rating": 85,
+      "role": "Advanced Forward",
+      "faceStats": { "pac": 86, "sho": 83, "pas": 72, "dri": 84, "def": 33, "phy": 73 }
+    },
+    {
+      "position": "ST",
+      "name": "Alexander Isak",
+      "rating": 86,
+      "role": "Poacher",
+      "faceStats": { "pac": 81, "sho": 87, "pas": 72, "dri": 82, "def": 39, "phy": 72 }
+    },
+    {
+      "position": "LB",
+      "name": "Myles Lewis-Skelly",
+      "rating": 85,
+      "role": "Inverted Fullback",
+      "faceStats": { "pac": 77, "sho": 64, "pas": 81, "dri": 78, "def": 81, "phy": 85 }
+    },
+    {
+      "position": "CB",
+      "name": "Benjamin Pavard",
+      "rating": 83,
+      "role": "Stopper",
+      "faceStats": { "pac": 78, "sho": 66, "pas": 75, "dri": 71, "def": 82, "phy": 81 }
+    },
+    {
+      "position": "RB",
+      "name": "Jurriën Timber",
+      "rating": 84,
+      "role": "Fullback",
+      "faceStats": { "pac": 76, "sho": 48, "pas": 76, "dri": 78, "def": 83, "phy": 78 }
+    },
+    {
+      "position": "RM",
+      "name": "Beth Mead",
+      "rating": 84,
+      "role": "Wide Playmaker",
+      "faceStats": { "pac": 83, "sho": 84, "pas": 82, "dri": 84, "def": 67, "phy": 73 }
+    },
+    {
+      "position": "ST",
+      "name": "Ferran Torres",
+      "rating": 84,
+      "role": "Inside Forward",
+      "faceStats": { "pac": 84, "sho": 84, "pas": 78, "dri": 82, "def": 44, "phy": 74 }
+    }
   ],
   "sbcDuplicateStorage": []
 }
