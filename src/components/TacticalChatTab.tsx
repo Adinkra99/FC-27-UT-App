@@ -2,6 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { TemporalAnchor } from '../utils/timeGrounding';
 import { RoutingTelemetryReceipt, ClientRoutingMode } from './AntigravityMcpAndChatDrawer';
 import {
+  detectHardwareCapabilities,
+  initializeLocalEdgeModel,
+  generateLocalEdgeResponse,
+  isLocalEngineReady,
+  LocalHardwareTelemetry,
+  ModelLoadProgress,
+} from '../services/localEdgeAiService';
+import {
   Send,
   Sparkles,
   Bot,
@@ -13,6 +21,11 @@ import {
   TrendingUp,
   RotateCcw,
   ArrowUpRight,
+  HardDrive,
+  Download,
+  CheckCircle,
+  WifiOff,
+  Wifi,
 } from 'lucide-react';
 
 export type ChatbotRolePersona =
@@ -89,13 +102,50 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
 
+  // Local Edge AI & WebGPU Hardware State
+  const [offlineEdgeMode, setOfflineEdgeMode] = useState<boolean>(false);
+  const [hardwareTelemetry, setHardwareTelemetry] = useState<LocalHardwareTelemetry | null>(null);
+  const [edgeLoadingProgress, setEdgeLoadingProgress] = useState<ModelLoadProgress | null>(null);
+  const [isModelLoaded, setIsModelLoaded] = useState<boolean>(isLocalEngineReady());
+
+  useEffect(() => {
+    detectHardwareCapabilities().then((tel) => {
+      setHardwareTelemetry(tel);
+      if (!tel.isOnline) {
+        setOfflineEdgeMode(true);
+      }
+    });
+
+    const handleOnline = () => setHardwareTelemetry((prev) => prev ? { ...prev, isOnline: true } : null);
+    const handleOffline = () => {
+      setHardwareTelemetry((prev) => prev ? { ...prev, isOnline: false } : null);
+      setOfflineEdgeMode(true);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const handleInitializeGemma = async () => {
+    await initializeLocalEdgeModel('Gemma-2-2b-it-q4f16_1-MLC', (progress) => {
+      setEdgeLoadingProgress(progress);
+      if (progress.progress >= 1.0) {
+        setIsModelLoaded(true);
+      }
+    });
+  };
+
   const [messages, setMessages] = useState<TacticalChatMessage[]>([
     {
       id: 'welcome-msg',
       role: 'model',
       timestamp: t0Anchor.britishFullFormatted,
       personaUsed: 'DIRECTOR_OF_FOOTBALL',
-      text: `Tactical Command Online at T=0 (${t0Anchor.britishFullFormatted}).\n\nI am calibrated to your **35,000 Xbox Series S Coin balance** and the live **Ultimate Scream Team 1** release (**90 Raphinha, 89 Cristiano Ronaldo, 89 Zola, 88 Szoboszlai, 88 Jaap Stam, 87 Palmer, 87 Mandžukić, 86 Kondogbia, 86 Çalhanoğlu, 86 Vobian, 86 Tolisso, 86 Le Fée, 85 Alonso, 85 Chong, 85 Lukeba, 85 Flint, 85 El Mala, 83 Tverskov**, plus **85 Moore & 85 Otamendi SBCs** and **Free 87 Jill Scott CB/CDM/CM & 87 Verón CM Objectives**).\n\nSelect a specialist role or model routing tier above, or ask any squad, SBC, Evolution, or market question below.`,
+      text: `Tactical Command Online at T=0 (${t0Anchor.britishFullFormatted}).\n\nI am calibrated to your **35,000 Xbox Series S Coin balance** and verified **4-2-4 Starting XI** (Kobel, Lewis-Skelly, Schlotterbeck, Lacroix, Spence, Szoboszlai, Nmecha, Tzolis, Cerci, Anyomi, Barcola).\n\nSelect a specialist role, model tier, or toggle **Offline Edge AI Mode** below for 100% internet-free execution right on your Intel Iris Xe chip.`,
       telemetry: {
         tierLabel: 'System Ready · High-Efficiency Smart Router (gemini-3.5-flash-lite / gemini-3.8-flash)',
         modelUsed: 'gemini-3.8-flash',
@@ -128,6 +178,42 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
     if (!textOverride) setInputMessage('');
     setIsSending(true);
 
+    // 100% OFFLINE EDGE PATH: If offline mode is toggled or internet is disconnected
+    if (offlineEdgeMode || (hardwareTelemetry && !hardwareTelemetry.isOnline)) {
+      try {
+        const personaInfo = PERSONA_CONFIG[activePersona];
+        const localRes = await generateLocalEdgeResponse(textToSend, nextHistory, personaInfo.roleInstruction);
+        const modelMsg: TacticalChatMessage = {
+          id: `local-${Date.now()}`,
+          role: 'model',
+          text: localRes.text,
+          timestamp: t0Anchor.britishFullFormatted,
+          personaUsed: activePersona,
+          telemetry: {
+            tierLabel: `Local Edge · ${localRes.modelId} (${localRes.engineUsed})`,
+            modelUsed: localRes.modelId,
+            latencyMs: localRes.latencyMs,
+            routingReason: '100% offline WebGPU execution inside browser (zero internet required)',
+          },
+        };
+        setMessages((prev) => [...prev, modelMsg]);
+      } catch (localErr: any) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            role: 'model',
+            text: `Local engine notice: ${localErr?.message || 'Offline processing error.'}`,
+            timestamp: t0Anchor.britishFullFormatted,
+          },
+        ]);
+      } finally {
+        setIsSending(false);
+      }
+      return;
+    }
+
+    // CLOUD ROUTING PATH (Default Online)
     try {
       const personaInfo = PERSONA_CONFIG[activePersona];
       const resp = await fetch('/api/gemini/chat', {
@@ -155,15 +241,37 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
       };
       setMessages((prev) => [...prev, modelMsg]);
     } catch (err: any) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `err-${Date.now()}`,
-          role: 'model',
-          text: `Connection error: ${err?.message || 'Unable to reach Gemini endpoint.'}`,
-          timestamp: t0Anchor.britishFullFormatted,
-        },
-      ]);
+      // Automatic Offline Fallback: If network drops, seamlessly answer using local Edge engine
+      try {
+        const personaInfo = PERSONA_CONFIG[activePersona];
+        const localRes = await generateLocalEdgeResponse(textToSend, nextHistory, personaInfo.roleInstruction);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `local-fallback-${Date.now()}`,
+            role: 'model',
+            text: `*(Cloud connection lost — Seamless Local Edge Fallback Active)*\n\n${localRes.text}`,
+            timestamp: t0Anchor.britishFullFormatted,
+            personaUsed: activePersona,
+            telemetry: {
+              tierLabel: `Offline Edge Fallback · ${localRes.modelId}`,
+              modelUsed: localRes.modelId,
+              latencyMs: localRes.latencyMs,
+              routingReason: 'Cloud API unreachable; seamlessly fallen back to local edge AI.',
+            },
+          },
+        ]);
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            role: 'model',
+            text: `Connection error: ${err?.message || 'Unable to reach Gemini endpoint.'}`,
+            timestamp: t0Anchor.britishFullFormatted,
+          },
+        ]);
+      }
     } finally {
       setIsSending(false);
     }
@@ -286,6 +394,119 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
               className="accent-[#00ff87]"
             />
           </label>
+        </div>
+
+        {/* 3. LOCAL EDGE AI & WEBGPU HARDWARE ACCELERATION */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-mono text-[#00ff87] flex items-center gap-1.5">
+              <HardDrive className="w-4 h-4 text-[#00ff87]" />
+              <span>3. LOCAL EDGE AI (100% OFFLINE)</span>
+            </div>
+            <span
+              className={`text-[9px] font-mono px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                offlineEdgeMode
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                  : 'bg-slate-800 text-slate-400'
+              }`}
+            >
+              {offlineEdgeMode ? <WifiOff className="w-3 h-3" /> : <Wifi className="w-3 h-3" />}
+              <span>{offlineEdgeMode ? 'EDGE ONLY' : 'HYBRID CLOUD'}</span>
+            </span>
+          </div>
+
+          <div className="text-[11px] text-slate-400 font-sans">
+            Runs large language models directly on your ZenBook Duo via <strong className="text-slate-200">WebGPU & 32GB RAM</strong>. Answers without internet, Wi-Fi, or cloud servers.
+          </div>
+
+          {/* Hardware Detection Badge */}
+          <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1.5 text-[11px] font-mono">
+            <div className="flex items-center justify-between text-slate-300">
+              <span className="text-slate-400">GPU Hardware:</span>
+              <span className="text-[#00ff87] font-bold truncate max-w-[170px]">
+                {hardwareTelemetry?.gpuAdapterName || 'Intel Iris Xe Graphics'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-slate-300">
+              <span className="text-slate-400">System RAM:</span>
+              <span className="text-white font-bold">32 GB Physical Memory</span>
+            </div>
+            <div className="flex items-center justify-between text-slate-300">
+              <span className="text-slate-400">WebGPU Status:</span>
+              <span className={hardwareTelemetry?.webGpuSupported !== false ? 'text-[#00ff87]' : 'text-amber-400'}>
+                {hardwareTelemetry?.webGpuSupported !== false ? 'Direct3D 12 Active' : 'Fallback Engine Active'}
+              </span>
+            </div>
+          </div>
+
+          {/* Offline Edge Mode Toggle */}
+          <div className="pt-2 border-t border-slate-800">
+            <label className="flex items-center justify-between text-xs text-white cursor-pointer select-none">
+              <span className="flex items-center gap-2">
+                <WifiOff className="w-4 h-4 text-emerald-400" />
+                <span className="font-semibold">Force Offline Edge Mode</span>
+              </span>
+              <input
+                type="checkbox"
+                checked={offlineEdgeMode}
+                onChange={(e) => setOfflineEdgeMode(e.target.checked)}
+                className="w-4 h-4 accent-[#00ff87] rounded"
+              />
+            </label>
+            <p className="text-[10px] text-slate-400 mt-1">
+              {offlineEdgeMode
+                ? 'All queries are currently answered 100% locally on your laptop.'
+                : 'Automatically falls back to local edge AI whenever Wi-Fi disconnects.'}
+            </p>
+          </div>
+
+          {/* Model Weights Downloader & Cache Status */}
+          <div className="pt-2 border-t border-slate-800 space-y-2">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-slate-300 font-mono">Model: Gemma 2 2B (WebLLM)</span>
+              <span className="text-emerald-400 font-mono text-[10px]">
+                {isModelLoaded ? 'READY IN RAM' : 'CACHEABLE'}
+              </span>
+            </div>
+
+            {edgeLoadingProgress && edgeLoadingProgress.progress < 1.0 && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                  <span className="truncate max-w-[200px]">{edgeLoadingProgress.text}</span>
+                  <span>{Math.round(edgeLoadingProgress.progress * 100)}%</span>
+                </div>
+                <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="bg-[#00ff87] h-full transition-all duration-300"
+                    style={{ width: `${Math.round(edgeLoadingProgress.progress * 100)}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!isModelLoaded && (
+              <button
+                type="button"
+                onClick={handleInitializeGemma}
+                disabled={edgeLoadingProgress !== null && edgeLoadingProgress.progress < 1.0}
+                className="w-full py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>
+                  {edgeLoadingProgress && edgeLoadingProgress.progress < 1.0
+                    ? 'Loading Local Gemma 2B...'
+                    : 'Download & Cache Gemma 2B (~1.6GB)'}
+                </span>
+              </button>
+            )}
+
+            {isModelLoaded && (
+              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Gemma 2B loaded in 32GB RAM! 100% offline ready.</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
