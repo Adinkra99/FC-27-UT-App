@@ -667,6 +667,7 @@ ${resolvedQuery}`;
    */
   app.post('/api/gemini/chat', async (req, res) => {
     const startMs = performance.now();
+    let lastUserMessage = '';
     try {
       const {
         messages,
@@ -678,7 +679,7 @@ ${resolvedQuery}`;
         clientT0,
       } = req.body || {};
 
-      const lastUserMessage = Array.isArray(messages) && messages.length > 0
+      lastUserMessage = Array.isArray(messages) && messages.length > 0
         ? String(messages[messages.length - 1]?.text || '')
         : String(messages || '');
 
