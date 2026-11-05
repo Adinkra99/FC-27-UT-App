@@ -1180,7 +1180,7 @@ Return valid JSON adhering to:
       appType: 'spa',
     });
     app.use(vite.middlewares);
-    app.use('*', async (req, res, next) => {
+    app.get('*', async (req, res, next) => {
       const url = req.originalUrl;
       try {
         let template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
