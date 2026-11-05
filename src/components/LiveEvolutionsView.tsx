@@ -847,7 +847,7 @@ export const LiveEvolutionsView: React.FC<LiveEvolutionsViewProps> = ({
                     className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-[#00ff87] font-bold rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Run Deep AI Audit (Gemini 4 Argon)</span>
+                    <span>Run Deep AI Audit (Gemini 3.8 Flash)</span>
                   </button>
                 </div>
               </div>

@@ -296,7 +296,7 @@ export const InteractiveMarketChart: React.FC<InteractiveMarketChartProps> = ({
           >
             <Sparkles className="w-4 h-4 text-amber-400" />
             <span>
-              {isAnalyzingTrend ? 'Running Argon High-Thinking...' : 'Analyze Chart with Gemini 4 Argon'}
+              {isAnalyzingTrend ? 'Running Trend Analysis...' : 'Analyze Chart with Gemini 3.8 Flash'}
             </span>
           </button>
         </div>

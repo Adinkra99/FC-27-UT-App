@@ -5,8 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { WebSocketServer } from 'ws';
-import { GoogleGenAI, LiveServerMessage, Modality, ThinkingLevel, Type } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel, Type } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,6 +83,12 @@ STRICT TEMPORAL, CONSOLE & ZERO-HALLUCINATION GROUNDING (T = 0):
    - Override historical pre-training frequency bias completely. Ground strictly in EA Sports FC 27 Ultimate Team (2026/27 season) verified via FotMob and FUTBIN FC 27 Console.
    - For example, in 2026/27, Rodri plays for FC Barcelona (LaLiga EA Sports, Spain), Kylian Mbappé plays for Real Madrid, etc.
    - NEVER reference or fall back to FC 24, FC 25, or FC 26 ratings, stats, or prices. If a datum cannot be verified for EA Sports FC 27 on Xbox Series S, leave it blank ("— [Unverified for FC 27 Xbox Series S]").
+6. STRICT ZERO-FABRICATION & ANTI-SIMULATION LAW:
+   - Never fabricate, invent, or simulate cards, player ratings, prices, or market data.
+   - If data is lacking, missing, or unverified, explicitly state: "Lacking verified data [Unverified for FC 27 Xbox Series S]" rather than generating placeholders or simulated estimates.
+7. COST GUARDRAIL (GEMINI 4 ARGON STRICTLY PROHIBITED):
+   - Gemini 4 Argon is strictly forbidden and blocked across the entire system to prevent excessive API costs.
+   - Never suggest, instruct, or route requests to Gemini 4 Argon. All deep analysis, market forecasting, and tactical reasoning must run on cost-efficient Gemini 3.8 Flash.
 
 FC 27 CORE MECHANICS:
 - Dual-Mode SBCs: Streamlined SBCs use cumulative "Item Score" (Base Bronze/Silver/Gold with no Common/Rare split; Regular Holographic <=87 = 1.25x Score; Pristine Holographic >=88 = 1.50x Score). Puzzle SBCs require 11 players and up to 33/33 chemistry.
@@ -93,23 +98,21 @@ FC 27 CORE MECHANICS:
 
 OUTPUT FORMAT:
 - Executive Summary (1-2 crisp sentences).
-- Tactical Solution / Math Breakdown (clean bulleted breakdown with tabular numbers, respecting 35,000 Coins and keeping unknown club fields blank).
-- Direct Action Items (1, 2, 3...).
-- Net Financials (Xbox Series S Coins spent, 5% EA tax accounted for).`;
+- Tactical Solution / Math Breakdown (clean bulleted breakdown with tabular numbers, respecting 35,000 Coins and keeping unknown club fields blank).`;
 }
 
 /**
- * 5-Tier Smart Model Router Classifier
- * Factors in task complexity, required live web grounding, latency, benchmarks, and token cost.
+ * Smart Model Router Classifier with Strict Cost Guardrails
+ * Factors in required live web grounding, latency, benchmarks, and token cost.
+ * EXPLICIT COST GUARDRAIL: gemini-4-argon is blocked for cost preservation.
  */
 export type RoutingOverrideMode =
   | 'AUTO'
   | 'TIER_1_LITE'
-  | 'TIER_2_FLASH_SEARCH'
-  | 'TIER_3_ARGON_HIGH';
+  | 'TIER_2_FLASH_SEARCH';
 
 interface ResolvedRouteDecision {
-  model: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon';
+  model: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash';
   tierLabel: string;
   useSearch: boolean;
   useHighThinking: boolean;
@@ -119,9 +122,26 @@ interface ResolvedRouteDecision {
 
 function resolveSmartModelRoute(
   queryText: string,
-  overrideMode: RoutingOverrideMode = 'AUTO',
+  overrideMode: string = 'AUTO',
   useSearchGroundingPref: boolean = true
 ): ResolvedRouteDecision {
+  // EXPLICIT COST GUARDRAIL: Intercept any attempt to invoke gemini-4-argon or TIER_3_ARGON_HIGH
+  if (
+    overrideMode === 'TIER_3_ARGON_HIGH' ||
+    overrideMode.includes('ARGON') ||
+    overrideMode.includes('gemini-4')
+  ) {
+    return {
+      model: 'gemini-3.8-flash',
+      tierLabel: 'Cost Guardrail · Routed to gemini-3.8-flash (Argon 4 Blocked)',
+      useSearch: useSearchGroundingPref,
+      useHighThinking: false,
+      routingReason:
+        'Cost Guardrail Active: Gemini 4 Argon is explicitly forbidden to prevent high API token costs. Successfully routed to cost-efficient Gemini 3.8 Flash.',
+      costBenchmarkSummary: 'Cost Protected · High-Efficiency Gemini 3.8 Flash',
+    };
+  }
+
   if (overrideMode === 'TIER_1_LITE') {
     return {
       model: 'gemini-3.1-flash-lite',
@@ -146,33 +166,8 @@ function resolveSmartModelRoute(
     };
   }
 
-  if (overrideMode === 'TIER_3_ARGON_HIGH') {
-    return {
-      model: 'gemini-4-argon',
-      tierLabel: 'Tier 3 · gemini-4-argon [ThinkingLevel.HIGH] (Manual Override)',
-      useSearch: false,
-      useHighThinking: true,
-      routingReason:
-        'Manual override to Tier 3 Frontier Multi-Constraint Reasoning (~2.5s-5.5s, 15x cost, top STEM/strategy benchmark).',
-      costBenchmarkSummary: 'Premium Reasoning (15x) · ThinkingLevel.HIGH',
-    };
-  }
-
-  // AUTO Mode: Classify query complexity, need for live T=0 search, vs multi-branch reasoning
+  // AUTO Mode: Use gemini-3.8-flash (with search if needed) or gemini-3.1-flash-lite
   const lower = queryText.toLowerCase();
-
-  const needsDeepMultiConstraintReasoning =
-    lower.includes('branch a') ||
-    lower.includes('branch b') ||
-    lower.includes('evolution chain') ||
-    lower.includes('synthesize') ||
-    lower.includes('synthesis') ||
-    lower.includes('optimize') ||
-    lower.includes('quad-action') ||
-    lower.includes('portfolio') ||
-    lower.includes('arbitrage') ||
-    queryText.length > 180;
-
   const needsLiveWebVerification =
     lower.includes('price') ||
     lower.includes('xbox') ||
@@ -191,18 +186,6 @@ function resolveSmartModelRoute(
     lower.includes('current') ||
     lower.includes('live');
 
-  if (needsDeepMultiConstraintReasoning && !lower.includes('verify price only')) {
-    return {
-      model: 'gemini-4-argon',
-      tierLabel: 'Tier 3 · gemini-4-argon (Auto-Routed · ThinkingLevel.HIGH)',
-      useSearch: false,
-      useHighThinking: true,
-      routingReason:
-        'Auto-routed to Tier 3 (Gemini 4 Argon HIGH): Multi-constraint tactical/financial optimization detected (35k Xbox Series S budget / Evolution branching / Role++ synthesis).',
-      costBenchmarkSummary: 'Tier 3 Frontier Reasoning · ThinkingLevel.HIGH',
-    };
-  }
-
   if (needsLiveWebVerification && useSearchGroundingPref) {
     return {
       model: 'gemini-3.8-flash',
@@ -210,19 +193,19 @@ function resolveSmartModelRoute(
       useSearch: true,
       useHighThinking: false,
       routingReason:
-        'Auto-routed to Tier 2 (Gemini 3.8 Flash + Search): Live T=0 FC 27 Xbox Series S market/Ultimate Scream/SBC verification required.',
-      costBenchmarkSummary: 'Tier 2 Balanced (~3x Cost) · Live Search Grounded',
+        'Auto-routed to Tier 2 (Gemini 3.8 Flash + Google Search): Grounded live web verification needed.',
+      costBenchmarkSummary: 'Cost Protected · Live Web Search Grounded',
     };
   }
 
   return {
-    model: 'gemini-3.1-flash-lite',
-    tierLabel: 'Tier 1 · gemini-3.1-flash-lite (Auto-Routed · Ultra-Fast)',
+    model: 'gemini-3.8-flash',
+    tierLabel: 'Tier 2 · gemini-3.8-flash (Auto-Routed)',
     useSearch: false,
     useHighThinking: false,
     routingReason:
-      'Auto-routed to Tier 1 (Gemini 3.1 Flash Lite): Single-step FC 27 mechanics lookup or structured parsing. Delivers sub-300ms latency at minimal token cost.',
-    costBenchmarkSummary: 'Tier 1 Ultra-Low Cost (1x) · Sub-300ms Target',
+      'Auto-routed to Gemini 3.8 Flash for fast, cost-effective reasoning with zero high-cost model invocation.',
+    costBenchmarkSummary: 'Cost Protected · Gemini 3.8 Flash',
   };
 }
 
@@ -679,7 +662,8 @@ ${resolvedQuery}`;
         if (selectedModel === 'gemini-3.5-flash-lite' || selectedModel === 'gemini-3.1-flash-lite')
           effectiveOverride = 'TIER_1_LITE';
         else if (selectedModel === 'gemini-3.8-flash') effectiveOverride = 'TIER_2_FLASH_SEARCH';
-        else if (selectedModel === 'gemini-4-argon') effectiveOverride = 'TIER_3_ARGON_HIGH';
+        // Cost Guardrail: gemini-4-argon is blocked
+        else if (selectedModel === 'gemini-4-argon') effectiveOverride = 'TIER_2_FLASH_SEARCH';
       }
 
       const route = resolveSmartModelRoute(
@@ -769,7 +753,7 @@ ${resolvedQuery}`;
       const resolvedCoins = typeof userCoins === 'number' ? userCoins : 35000;
       const ai = getAiClient();
 
-      let modelToUse: 'gemini-3.5-flash-lite' | 'gemini-3.8-flash' | 'gemini-4-argon' =
+      let modelToUse: 'gemini-3.5-flash-lite' | 'gemini-3.8-flash' =
         'gemini-3.8-flash';
       let tierLabel = 'Tier 2 · gemini-3.8-flash + Google Search';
       let routingReason =
@@ -778,13 +762,7 @@ ${resolvedQuery}`;
         systemInstruction: getCoreSystemInstruction(clientT0),
       };
 
-      if (analysisTier === 'ARGON_DEEP') {
-        modelToUse = 'gemini-4-argon';
-        tierLabel = 'Tier 3 · gemini-4-argon (ThinkingLevel.HIGH)';
-        routingReason =
-          'Deep multi-constraint portfolio risk & exit window forecast with 5% EA Tax protection.';
-        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
-      } else if (analysisTier === 'LITE_FAST') {
+      if (analysisTier === 'LITE_FAST') {
         modelToUse = 'gemini-3.5-flash-lite';
         tierLabel = 'Tier 1 · gemini-3.5-flash-lite (Fast Check)';
         routingReason = 'Sub-350ms fast market & 5% EA tax audit.';
@@ -910,7 +888,7 @@ Split your analysis into:
       const ai = getAiClient();
 
       const response = await ai.models.generateContent({
-        model: 'gemini-4-argon',
+        model: 'gemini-3.8-flash',
         contents: `[ANTIGRAVITY v2.25 GENERATIVE_UI SKILL INVOCATION]
 Skill Path: C:\\Users\\Kit\\.gemini\\antigravity\\builtin\\skills\\generative_ui\\SKILL.md
 User Xbox Series S Club Context (DO NOT GUESS BLANK/NULL FIELDS): ${JSON.stringify(
@@ -979,11 +957,11 @@ User Prompt: ${
         widget: parsedWidget,
         rawText: response.text,
         routingTelemetry: {
-          tierLabel: 'Tier 3 · gemini-4-argon (Generative UI Skill · Thinking HIGH)',
-          modelUsed: 'gemini-4-argon',
+          tierLabel: 'Tier 2 · gemini-3.8-flash (Generative UI · High-Efficiency)',
+          modelUsed: 'gemini-3.8-flash',
           latencyMs,
           routingReason:
-            'Routed to Tier 3 (Gemini 4 Argon + JSON Schema) to synthesize an interactive Antigravity v2.25 generative_ui widget.',
+            'Routed to Gemini 3.8 Flash (JSON Schema) to synthesize an interactive Antigravity v2.25 generative_ui widget cost-effectively.',
           costBenchmarkSummary: 'Tier 3 Structured GenUI Synthesis',
         },
       });
@@ -1165,7 +1143,7 @@ Return valid JSON adhering to:
           workhorse: 'gemini-3.8-flash',
           speed: 'gemini-3.1-flash-lite',
           audio: 'gemini-3.5-transcribe',
-          complexMath: 'gemini-4-argon',
+          complexMath: 'gemini-3.8-flash (Guardrail Active)',
         },
         t0: buildServerT0Context(),
       });
@@ -1177,10 +1155,11 @@ Return valid JSON adhering to:
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa',
+      appType: 'custom',
     });
     app.use(vite.middlewares);
-    app.get('*', async (req, res, next) => {
+    app.use(async (req, res, next) => {
+      if (req.originalUrl.startsWith('/api')) return next();
       const url = req.originalUrl;
       try {
         let template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
@@ -1201,95 +1180,8 @@ Return valid JSON adhering to:
 
   const httpServer = createHttpServer(app);
 
-  // 7. Real-Time Voice Conversation Bridge via Gemini Live API (gemini-3.8-live)
-  const wss = new WebSocketServer({ server: httpServer, path: '/live' });
 
-  wss.on('connection', async (clientWs) => {
-    let sessionPromise: Promise<any> | null = null;
-    try {
-      const ai = getAiClient();
-      sessionPromise = ai.live.connect({
-        model: 'gemini-3.8-live',
-        config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
-          },
-          systemInstruction: getCoreSystemInstruction(),
-        },
-        callbacks: {
-          onmessage: (message: LiveServerMessage) => {
-            const parts = message.serverContent?.modelTurn?.parts;
-            if (Array.isArray(parts)) {
-              for (const part of parts) {
-                if (part.inlineData?.data && clientWs.readyState === clientWs.OPEN) {
-                  clientWs.send(JSON.stringify({ audio: part.inlineData.data }));
-                }
-                if (part.text && clientWs.readyState === clientWs.OPEN) {
-                  clientWs.send(JSON.stringify({ transcript: `AI: ${part.text}` }));
-                }
-              }
-            }
-            if (message.serverContent?.interrupted && clientWs.readyState === clientWs.OPEN) {
-              clientWs.send(JSON.stringify({ interrupted: true }));
-            }
-          },
-          onerror: (err: any) => {
-            if (clientWs.readyState === clientWs.OPEN) {
-              clientWs.send(
-                JSON.stringify({ error: err?.message || 'Gemini Live stream error.' })
-              );
-            }
-          },
-        },
-      });
-
-      clientWs.on('message', (rawData) => {
-        if (!sessionPromise) return;
-        sessionPromise
-          .then((session) => {
-            try {
-              const parsed = JSON.parse(rawData.toString());
-              if (parsed.audio) {
-                session.sendRealtimeInput({
-                  audio: { data: parsed.audio, mimeType: 'audio/pcm;rate=16000' },
-                });
-              } else if (parsed.text) {
-                session.sendRealtimeInput({
-                  text: parsed.text,
-                });
-              }
-            } catch (e) {
-              console.error('Error forwarding message to Live session:', e);
-            }
-          })
-          .catch((e) => {
-            console.error('Live session connection error:', e);
-          });
-      });
-
-      clientWs.on('close', () => {
-        if (sessionPromise) {
-          sessionPromise
-            .then((session) => {
-              try {
-                session.close();
-              } catch {
-                // ignore
-              }
-            })
-            .catch(() => {});
-        }
-      });
-    } catch (err: any) {
-      console.error('Failed to initialize gemini-3.8-live session:', err);
-      if (clientWs.readyState === clientWs.OPEN) {
-        clientWs.send(JSON.stringify({ error: err?.message || 'Live API failed to connect.' }));
-      }
-    }
-  });
-
-  httpServer.listen(PORT, '0.0.0.0', () => {
+      httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`FC 27 UT App (Xbox Series S Console Edition) listening on http://0.0.0.0:${PORT}`);
   });
 }

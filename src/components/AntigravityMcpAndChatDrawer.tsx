@@ -22,7 +22,7 @@ export type ClientRoutingMode =
   | 'AUTO'
   | 'TIER_1_LITE'
   | 'TIER_2_FLASH_SEARCH'
-  | 'TIER_3_ARGON_HIGH';
+  
 
 export interface RoutingTelemetryReceipt {
   tierLabel: string;
@@ -578,43 +578,13 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
             </thead>
             <tbody className="divide-y divide-slate-800/70 font-mono text-slate-300">
               <tr>
-                <td className="py-2 pr-3 font-bold text-[#00ff87]">
-                  Tier 0 · Local TypeScript Math
-                </td>
-                <td className="py-2 px-3 tabular-nums">0.2ms – 2.0ms</td>
-                <td className="py-2 px-3 text-[#00ff87]">$0.00 (0 Tokens)</td>
-                <td className="py-2 pl-3 font-sans">
-                  5% EA Tax, Streamlined SBC Item Score (1.25x/1.50x Holo), 33/33 Chem, AcceleRATE 2.0, Isolated vs. Synthesized Stat math.
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-3 font-bold text-white">
-                  Tier 1 · gemini-3.1-flash-lite
-                </td>
-                <td className="py-2 px-3 tabular-nums">~180ms – 350ms</td>
-                <td className="py-2 px-3 text-[#00ff87]">1x (Ultra-Low)</td>
-                <td className="py-2 pl-3 font-sans">
-                  Fast single-step FC 27 mechanics lookups, JSON/Paletools field normalization, and quick UI filter classification.
-                </td>
-              </tr>
-              <tr>
                 <td className="py-2 pr-3 font-bold text-amber-400">
-                  Tier 2 · gemini-3.8-flash + Search
+                  Cost Guardrail (Argon Blocked)
                 </td>
-                <td className="py-2 px-3 tabular-nums">~450ms – 950ms</td>
-                <td className="py-2 px-3 text-amber-400">~3x (Balanced)</td>
-                <td className="py-2 pl-3 font-sans">
-                  Live T=0 FUTBIN FC 27 Xbox Series S price verification, FotMob 2026/27 transfer checks (Rodri @ FC Barcelona), 18:00 UK drops.
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-3 font-bold text-[#00ff87]">
-                  Tier 3 · gemini-4-argon (HIGH)
-                </td>
-                <td className="py-2 px-3 tabular-nums">~2,200ms – 5,500ms</td>
-                <td className="py-2 px-3 text-slate-300">~15x (Premium)</td>
-                <td className="py-2 pl-3 font-sans">
-                  Complex multi-branch Evolution trade-offs, 35,000 Coin Xbox Series S squad/SBC optimization, and Antigravity v2.25 generative_ui widgets.
+                <td className="py-2 px-3 tabular-nums">N/A (Blocked)</td>
+                <td className="py-2 px-3 text-emerald-400">Cost Protected</td>
+                <td className="py-2 pl-3 font-sans text-slate-300">
+                  Gemini 4 Argon is explicitly forbidden for cost reasons. All deep tasks route safely to Gemini 3.8 Flash.
                 </td>
               </tr>
               <tr>
@@ -820,7 +790,7 @@ export const AntigravityMcpAndChatDrawer: React.FC<AntigravityMcpAndChatDrawerPr
                 { id: 'AUTO', label: 'AUTO (Smart Router)' },
                 { id: 'TIER_1_LITE', label: 'Tier 1: 3.5 Flash Lite' },
                 { id: 'TIER_2_FLASH_SEARCH', label: 'Tier 2: 3.8 Flash + Search' },
-                { id: 'TIER_3_ARGON_HIGH', label: 'Tier 3: 4 Argon HIGH' },
+                
               ].map((m) => (
                 <button
                   key={m.id}

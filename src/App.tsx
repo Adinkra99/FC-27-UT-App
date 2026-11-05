@@ -36,8 +36,6 @@ import {
   AntigravityMcpAndChatDrawer,
   RoutingTelemetryReceipt,
 } from './components/AntigravityMcpAndChatDrawer';
-import { LiveAudioHud } from './components/LiveAudioHud';
-import { PushToTalkButton } from './components/PushToTalkButton';
 import { InvestmentTrackerTab, ConsoleInvestmentPosition } from './components/InvestmentTrackerTab';
 import { TacticalChatTab } from './components/TacticalChatTab';
 import { SquadTrackerView } from './components/SquadTrackerView';
@@ -893,8 +891,7 @@ export function App() {
 
           {/* Right Currency & User Profile Pill */}
           <div className="flex items-center gap-space-xs flex-shrink-0">
-            <LiveAudioHud clubCoins={coins} t0Formatted={t0Anchor.britishFullFormatted} />
-
+            
             <button
               type="button"
               onClick={() => setShowCoinQuickModal(true)}
@@ -1274,12 +1271,7 @@ export function App() {
                       placeholder="Add a player you own (unverified stats stay —)..."
                       className="flex-1 min-w-[180px] px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-[#00ff87] min-h-[38px]"
                     />
-                    <PushToTalkButton
-                      compact
-                      label="Mic"
-                      onTranscript={(text) => setNewCustomPlayerName(text)}
-                    />
-                    <button
+                                        <button
                       type="button"
                       onClick={handleAddCustomClubPlayer}
                       className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white rounded-lg flex items-center gap-1 whitespace-nowrap shrink-0 min-h-[38px]"
@@ -1553,7 +1545,7 @@ export function App() {
                   >
                     <Sparkles className="w-4 h-4" />
                     <span>
-                      {isThinkingAdvisor ? 'Routing to Argon HIGH...' : 'Analyze Selected SBC'}
+                      {isThinkingAdvisor ? 'Routing to Flash...' : 'Analyze Selected SBC'}
                     </span>
                   </button>
                 </div>

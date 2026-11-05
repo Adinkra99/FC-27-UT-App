@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TemporalAnchor } from '../utils/timeGrounding';
-import { PushToTalkButton } from './PushToTalkButton';
 import { RoutingTelemetryReceipt, ClientRoutingMode } from './AntigravityMcpAndChatDrawer';
 import {
   Send,
@@ -98,7 +97,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
       personaUsed: 'DIRECTOR_OF_FOOTBALL',
       text: `Tactical Command Online at T=0 (${t0Anchor.britishFullFormatted}).\n\nI am calibrated to your **35,000 Xbox Series S Coin balance** and the live **Ultimate Scream Team 1** release (**90 Raphinha, 89 Cristiano Ronaldo, 89 Zola, 88 Szoboszlai, 88 Jaap Stam, 87 Palmer, 87 Mandžukić, 86 Kondogbia, 86 Çalhanoğlu, 86 Vobian, 86 Tolisso, 86 Le Fée, 85 Alonso, 85 Chong, 85 Lukeba, 85 Flint, 85 El Mala, 83 Tverskov**, plus **85 Moore & 85 Otamendi SBCs** and **Free 87 Jill Scott CB/CDM/CM & 87 Verón CM Objectives**).\n\nSelect a specialist role or model routing tier above, or ask any squad, SBC, Evolution, or market question below.`,
       telemetry: {
-        tierLabel: 'System Ready · 3-Tier Smart Router (gemini-3.1-flash-lite / 3.8-flash / 4-argon)',
+        tierLabel: 'System Ready · High-Efficiency Smart Router (gemini-3.1-flash-lite / gemini-3.8-flash)',
         modelUsed: 'gemini-3.8-flash',
         latencyMs: 1,
         routingReason: 'Multi-turn conversation thread initialized with zero-guessing club state.',
@@ -227,7 +226,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
               <div className="font-bold text-[#00ff87]">AUTO (Dynamic Complexity Router)</div>
               <div className="text-[11px] text-slate-400 font-sans mt-0.5">
                 Routes fast checks to 3.1-flash-lite, live web queries to 3.8-flash + Search, and
-                complex multi-constraint puzzles to 4-argon.
+                complex multi-constraint tactical queries to cost-efficient 3.8-flash.
               </div>
             </button>
 
@@ -267,23 +266,15 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
               </div>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setRoutingMode('TIER_3_ARGON_HIGH')}
-              className={`w-full text-left p-2.5 rounded-lg border font-mono ${
-                routingMode === 'TIER_3_ARGON_HIGH'
-                  ? 'bg-[#00ff87]/15 border-[#00ff87] text-white'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
-              }`}
-            >
-              <div className="font-bold flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-purple-400" />
-                <span>Deep Reasoning · gemini-4-argon (HIGH)</span>
+            <div className="w-full text-left p-2.5 rounded-lg border border-amber-500/30 bg-amber-500/10 font-mono">
+              <div className="font-bold text-amber-400 flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-amber-400" />
+                <span>Cost Guardrail Active (Gemini 4 Argon Banned)</span>
               </div>
-              <div className="text-[11px] text-slate-400 font-sans mt-0.5">
-                ~2.5s–4.8s · ~15x cost · Complex squad chemistry & portfolio optimization.
+              <div className="text-[11px] text-slate-300 font-sans mt-0.5">
+                Gemini 4 Argon is explicitly forbidden to prevent high API token fees. All deep reasoning runs on cost-efficient Gemini 3.8 Flash.
               </div>
-            </button>
+            </div>
           </div>
 
           <label className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-300 cursor-pointer">
@@ -421,13 +412,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
           }}
           className="p-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center gap-2"
         >
-          <PushToTalkButton
-            label="Voice"
-            onTranscript={(transcript) => {
-              setInputMessage((prev) => (prev ? `${prev} ${transcript}` : transcript));
-            }}
-          />
-          <input
+                    <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}

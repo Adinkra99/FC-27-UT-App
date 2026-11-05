@@ -6,7 +6,6 @@ import {
 } from '../data/fc27ConsoleData';
 import { calculateEaTaxMetrics } from '../utils/fc27DeterministicEngine';
 import { TemporalAnchor } from '../utils/timeGrounding';
-import { PushToTalkButton } from './PushToTalkButton';
 import { RoutingTelemetryReceipt } from './AntigravityMcpAndChatDrawer';
 import {
   TrendingUp,
@@ -135,7 +134,7 @@ export const InvestmentTrackerTab: React.FC<InvestmentTrackerTabProps> = ({
   const [aiMarketSummary, setAiMarketSummary] = useState<string | null>(null);
   const [isAnalyzingMarket, setIsAnalyzingMarket] = useState<boolean>(false);
   const [marketAnalysisMode, setMarketAnalysisMode] = useState<
-    'FLASH_SEARCH' | 'ARGON_DEEP' | 'LITE_FAST'
+    'FLASH_SEARCH' | 'LITE_FAST'
   >('FLASH_SEARCH');
   const [lastTelemetry, setLastTelemetry] = useState<RoutingTelemetryReceipt | null>(null);
   const [groundingSources, setGroundingSources] = useState<{ title: string; uri: string }[]>([]);
@@ -345,14 +344,7 @@ export const InvestmentTrackerTab: React.FC<InvestmentTrackerTabProps> = ({
                   <span>Google Sheets</span>
                 </button>
               )}
-              <PushToTalkButton
-                compact
-                label="Dictate Trade"
-                onTranscript={(text) => {
-                  setPlayerName(text);
-                }}
-              />
-            </div>
+                          </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -498,10 +490,7 @@ export const InvestmentTrackerTab: React.FC<InvestmentTrackerTabProps> = ({
                 <option value="FLASH_SEARCH">
                   Tier 2: gemini-3.8-flash + Google Search (Live Web)
                 </option>
-                <option value="ARGON_DEEP">
-                  Tier 3: gemini-4-argon (Deep Portfolio Forecast)
-                </option>
-                <option value="LITE_FAST">
+                                <option value="LITE_FAST">
                   Tier 1: gemini-3.5-flash-lite (Fast Check)
                 </option>
               </select>
@@ -761,12 +750,7 @@ export const InvestmentTrackerTab: React.FC<InvestmentTrackerTabProps> = ({
                 className="pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white w-56"
               />
             </div>
-            <PushToTalkButton
-              compact
-              label="Voice Search"
-              onTranscript={(text) => setPromoSearchFilter(text)}
-            />
-            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
               <button
                 type="button"
                 onClick={() => setPromoBudgetFilter('ALL')}

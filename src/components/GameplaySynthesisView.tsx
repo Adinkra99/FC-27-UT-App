@@ -92,7 +92,7 @@ export const GameplaySynthesisView: React.FC<GameplaySynthesisViewProps> = ({
         >
           <Sparkles className="w-4 h-4" />
           <span>
-            {isThinking ? 'Synthesizing with Argon HIGH...' : 'Deep Gameplay Audit (Gemini 4 Argon)'}
+            {isThinking ? 'Synthesizing with Flash...' : 'Deep Gameplay Audit (Gemini 3.8 Flash)'}
           </span>
         </button>
       </div>

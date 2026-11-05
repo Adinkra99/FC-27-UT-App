@@ -509,9 +509,9 @@ export const ClubSyncHubModal: React.FC<ClubSyncHubModalProps> = ({
                 },
                 {
                   id: 'ARGON_MATH',
-                  title: 'Gemini 4 Argon (Code Execution / Complex Math)',
-                  badge: 'THINKING LEVEL HIGH',
-                  desc: 'Frontier reasoning engine with Python sandbox execution for multi-variable squad rating optimization (121 rule) and budget constraints.',
+                  title: 'Gemini 3.8 Flash (Cost Guardrail Active)',
+                  badge: 'COST PROTECTED',
+                  desc: 'Cost Guardrail Active: Gemini 4 Argon is explicitly forbidden to prevent high API token fees. Multi-variable reasoning executes efficiently on Gemini 3.8 Flash.',
                   icon: 'calculate',
                 },
               ].map((m) => (
