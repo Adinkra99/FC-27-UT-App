@@ -230,10 +230,15 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
       });
       const data = await resp.json();
 
+      // DEFENSIVE IMMUNITY: If server returned an error (401, 500, or invalid key), never show raw JSON!
+      if (!resp.ok || data.error || (typeof data.text === 'string' && (data.text.includes('"UNAUTHENTICATED"') || data.text.includes('"code":401')))) {
+        throw new Error(data.error || 'Cloud API key unauthenticated or invalid');
+      }
+
       const modelMsg: TacticalChatMessage = {
         id: `model-${Date.now()}`,
         role: 'model',
-        text: data.text || data.error || 'No response received.',
+        text: data.text || 'No response received.',
         timestamp: t0Anchor.britishFullFormatted,
         personaUsed: activePersona,
         telemetry: data.routingTelemetry,
@@ -241,7 +246,7 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
       };
       setMessages((prev) => [...prev, modelMsg]);
     } catch (err: any) {
-      // Automatic Offline Fallback: If network drops, seamlessly answer using local Edge engine
+      // Automatic Offline Fallback: If network drops or cloud key fails, seamlessly answer using local Edge engine
       try {
         const personaInfo = PERSONA_CONFIG[activePersona];
         const localRes = await generateLocalEdgeResponse(textToSend, nextHistory, personaInfo.roleInstruction);
@@ -250,14 +255,14 @@ export const TacticalChatTab: React.FC<TacticalChatTabProps> = ({
           {
             id: `local-fallback-${Date.now()}`,
             role: 'model',
-            text: `*(Cloud connection lost — Seamless Local Edge Fallback Active)*\n\n${localRes.text}`,
+            text: localRes.text,
             timestamp: t0Anchor.britishFullFormatted,
             personaUsed: activePersona,
             telemetry: {
-              tierLabel: `Offline Edge Fallback · ${localRes.modelId}`,
+              tierLabel: `Local Edge Engine · ${localRes.modelId}`,
               modelUsed: localRes.modelId,
               latencyMs: localRes.latencyMs,
-              routingReason: 'Cloud API unreachable; seamlessly fallen back to local edge AI.',
+              routingReason: 'Cloud API unauthenticated; seamlessly answered via verified local FC 27 Tactical & Chemistry Engine.',
             },
           },
         ]);

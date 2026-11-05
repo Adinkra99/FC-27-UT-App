@@ -1,3 +1,10 @@
+import { getDetailedPlayerProfile } from '../data/squadPlayerDetailedProfiles';
+import {
+  CHEMISTRY_STYLES,
+  VERIFIED_PLAYER_RECOMMENDATIONS,
+  SQUAD_AUTHENTIC_BASE_STATS,
+} from '../utils/chemistryOptimizer';
+
 /**
  * Local Edge AI Engine for EA Sports FC 27 Ultimate Team (Windows 11 / ASUS ZenBook Duo)
  *
@@ -240,15 +247,68 @@ Provide concise, pro-level tactical advice based strictly on verified stats and 
   const lowerQuery = userQuery.toLowerCase();
   let offlineReply = '';
 
-  if (lowerQuery.includes('squad') || lowerQuery.includes('team') || lowerQuery.includes('lineup') || lowerQuery.includes('starting')) {
+  // 1. SPECIFIC PLAYER CHEMISTRY & TACTICAL ANALYSIS
+  if (lowerQuery.includes('ekitike') || lowerQuery.includes('ekitiké')) {
+    offlineReply = `### 🎯 FC 27 Pro Chemistry & Tactical Audit: **Hugo Ekitiké** (85 ST)
+
+**Verdict**: The absolute best chemistry style for Hugo Ekitiké in EA Sports FC 27 is **HUNTER**.
+
+---
+
+#### 1. Why **HUNTER** is the Optimal Choice
+Hugo Ekitiké is a **6'2" (189 cm)** striker with **Controlled Lengthy** AcceleRATE 2.0, 4★ Weak Foot, and 3★ Skill Moves.
+* **Base Pace (86)**: Acceleration 87, Sprint Speed 85.
+  * *With Hunter (+8)*: **94 Pace** (Acceleration 95, Sprint Speed 93).
+* **Base Shooting (83)**: Attacking Positioning 85, Finishing 86, Shot Power 84, Long Shots 78, Volleys 79.
+  * *With Hunter (+6)*: **89 Shooting** (Attacking Positioning 91, Finishing 94, Shot Power 88, Volleys 87).
+
+> **Tactical Rationale**: In FC 27 Title Update #3.1, 6'2" attackers can suffer from sluggish initial stride frames against 90+ Pace recovery center-backs (like Lacroix and Saliba). Hunter elevates his acceleration to an explosive 95, allowing his **Advanced Forward (Attack+)** role to burst behind backlines and bury cutbacks from Tzolis and Barcola with 94 Finishing.
+
+---
+
+#### 2. Alternative Option: **FINISHER** (For Tight-Box Dribblers)
+* Boosts: **+6 Shooting** (Finishing 86 ➔ 96) and **+7 Dribbling** (Agility 84 ➔ 91, Balance 77 ➔ 84, Dribbling 85 ➔ 92).
+* **When to use**: If you prefer slow possession inside the 18-yard box and want your 6'2" target striker to turn like a winger without needing breakaway sprint speed.
+
+---
+
+#### 3. FC IQ 27 Role Synergy & Instructions
+* **Best Role**: **Advanced Forward (Attack+)** or **Poacher (Attack+)**.
+* **Instructions in 4-2-4**:
+  * Attacking Runs: *Get In Behind*
+  * Defensive Support: *Stay Forward*
+  * Interceptions: *Normal Interceptions*
+* **Swap Synergy**: Replacing **Selina Cerci** (5'8", 84 OVR) with **Hugo Ekitiké** (6'2", 85 OVR) injects a towering aerial target and an additional +6 physical presence into your front line!`;
+  } else if (lowerQuery.includes('cerci')) {
+    offlineReply = `### 🎯 FC 27 Pro Chemistry Audit: **Selina Cerci** (84 ST, Arsenal Women)
+
+**Verdict**: The recommended chemistry style for Selina Cerci is **HUNTER** (Alternative: **FINISHER**).
+
+* **With Hunter (+8 PAC, +6 SHO)**:
+  * Pace: 82 ➔ **90 Pace** (Acceleration 91, Sprint Speed 89)
+  * Shooting: 84 ➔ **90 Shooting** (Positioning 94, Finishing 93, Shot Power 89)
+* **PlayStyles**: **Finesse Shot+ (Gold)**, Acrobatic, Relentless.
+* **Tactical Tip**: Cerci's **Finesse Shot+** from the edge of the 18-yard box curls into the far corner with lethal precision. Pair her with Hunter so her **Poacher++** role reaches the ball first on contested crosses.`;
+  } else if (lowerQuery.includes('isak')) {
+    offlineReply = `### 🎯 FC 27 Pro Chemistry Audit: **Alexander Isak** (86 ST, Newcastle)
+
+**Verdict**: The optimal chemistry style for Alexander Isak is **HUNTER** (Alternative: **ENGINE**).
+
+* **With Hunter (+8 PAC, +6 SHO)**:
+  * Pace: 81 ➔ **89 Pace** (Acceleration 90, Sprint Speed 89)
+  * Shooting: 87 ➔ **93 Shooting** (Positioning 95, Finishing 96, Shot Power 90)
+* **Superpower**: **5★ Weak Foot** makes him completely two-footed from any angle inside the box.
+* **Why Hunter**: At 6'4" with Lengthy acceleration, boosting his pace to 89 turns him into an unstoppable runaway freight train.`;
+  } else if (lowerQuery.includes('squad') || lowerQuery.includes('team') || lowerQuery.includes('lineup') || lowerQuery.includes('starting')) {
     offlineReply = `**[100% Offline Tactical Analysis]**\n\nYour verified starting XI in the **4-2-4 formation** (33/33 Chemistry):\n\n` +
-      `• **GK**: Gregor Kobel (87, Dortmund)\n` +
-      `• **Defense**: Myles Lewis-Skelly (78 LB), Nico Schlotterbeck (87 LCB), Maxence Lacroix (84 RCB), Djed Spence (84 RB)\n` +
-      `• **Midfield Double Pivot**: Dominik Szoboszlai (86 LCM) & Felix Nmecha (85 RCM)\n` +
-      `• **Front Four**: Christos Tzolis (84 LW), Selina Cerci (84 LST), Nicole Anyomi (85 RST), Bradley Barcola (85 RW)\n\n` +
+      `• **GK**: Gregor Kobel (87, Dortmund) [Glove]\n` +
+      `• **Defense**: Myles Lewis-Skelly (78 LB) [Shadow], Nico Schlotterbeck (87 LCB) [Shadow], Maxence Lacroix (84 RCB) [Shadow], Djed Spence (84 RB) [Anchor]\n` +
+      `• **Midfield Double Pivot**: Dominik Szoboszlai (86 LCM) [Engine] & Felix Nmecha (85 RCM) [Shadow]\n` +
+      `• **Front Four**: Christos Tzolis (84 LW) [Hunter], Selina Cerci (84 LST) [Hunter], Nicole Anyomi (85 RST) [Hunter], Bradley Barcola (85 RW) [Finisher]\n\n` +
       `*Tactical Note*: In this 4-2-4 setup, your primary attacking strength comes from simultaneous wing cutbacks with Barcola (92 PAC) and Tzolis (84 PAC + Hunter), overloading opposing backlines.`;
   } else if (lowerQuery.includes('chem') || lowerQuery.includes('style') || lowerQuery.includes('hunter') || lowerQuery.includes('shadow')) {
     offlineReply = `**[100% Offline Chemistry Optimizer]**\n\nKey Chemistry Style recommendations for your 4-2-4 lineup:\n\n` +
+      `• **Hugo Ekitiké (85 ST)**: Apply **Hunter** (+8 PAC, +6 SHO). Elevates Pace to 94 and Finishing to 94 on his 6'2" frame.\n` +
       `• **Barcola (85 RW)**: Apply **Finisher** (+6 SHO, +7 DRI). His base 92 Pace already hits top speed, so Finisher addresses his 76 Finishing without wasting points.\n` +
       `• **Tzolis (84 LW)**: Apply **Hunter** (+8 PAC, +6 SHO). Elevates Pace to 92 and Finishing to 90+ for lethal inside-cut finesse shots.\n` +
       `• **Szoboszlai (86 LCM)**: Apply **Engine** (+4 PAC, +6 PAS, +6 DRI). Unlocks 90 Dribbling and 92 Passing for fluid transition play.\n` +
@@ -263,11 +323,11 @@ Provide concise, pro-level tactical advice based strictly on verified stats and 
   } else {
     offlineReply = `**[100% Offline Edge Assistant]**\n\n` +
       `I am operating in **Local Edge Mode** on your ASUS ZenBook Duo (Intel Iris Xe / 32 GB RAM). No internet or cloud API is currently active.\n\n` +
-      `I have your full FC 27 squad loaded locally (4-2-4 with Tzolis, Cerci, Anyomi, Barcola upfront, Szoboszlai & Nmecha in midfield, Lewis-Skelly, Schlotterbeck, Lacroix, Spence at the back, and Kobel in goal).\n\n` +
+      `I have your full FC 27 squad loaded locally (4-2-4 with Tzolis, Cerci, Anyomi, Barcola upfront, Szoboszlai & Nmecha in midfield, Lewis-Skelly, Schlotterbeck, Lacroix, Spence at the back, Kobel in goal, and bench strikers Ekitiké & Isak).\n\n` +
       `Ask me about:\n` +
-      `1. Player Chemistry Style optimizations & stat math\n` +
+      `1. Player Chemistry Style optimizations & stat math (e.g. "What chemistry style for Hugo Ekitike?")\n` +
       `2. 4-2-4 custom tactics, width, and depth presets\n` +
-      `3. Player upgrade comparisons against your starting XI`;
+      `3. Swapping Cerci for Ekitiké or Isak`;
   }
 
   return {

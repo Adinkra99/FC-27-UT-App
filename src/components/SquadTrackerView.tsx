@@ -14,6 +14,7 @@ import { FutbinUpgradeExplorer } from './FutbinUpgradeExplorer';
 const ThreePitchVisualizer = React.lazy(() =>
   import('./ThreePitchVisualizer').then((m) => ({ default: m.ThreePitchVisualizer }))
 );
+import { PlayerDetailModal } from './PlayerDetailModal';
 import {
   Shield,
   Zap,
@@ -30,6 +31,9 @@ import {
   Award,
   Camera,
   Box,
+  Eye,
+  ArrowLeftRight,
+  Check,
 } from 'lucide-react';
 
 export interface SquadPlayerCard {
@@ -424,9 +428,37 @@ export const SquadTrackerView: React.FC<SquadTrackerViewProps> = ({
   ]);
 
   // Selected player slot to inspect or swap
-  const [selectedSlot, setSelectedSlot] = useState<string>('LB');
+  const [selectedSlot, setSelectedSlot] = useState<string>('LST');
   const [pitchViewMode, setPitchViewMode] = useState<'2D_TACTICAL' | '3D_STADIUM'>('2D_TACTICAL');
   const [offlineCachedTime, setOfflineCachedTime] = useState<string | null>(null);
+
+  // Player Detail Modal & Swap Feedback State
+  const [modalPlayer, setModalPlayer] = useState<string | null>(null);
+  const [swapFeedbackMsg, setSwapFeedbackMsg] = useState<string | null>(null);
+
+  // 1-Click Swap Execution (e.g., Hugo Ekitiké into LST for Selina Cerci)
+  const handleSwapPlayer = (benchPlayer: SquadPlayerCard, targetSlot?: string) => {
+    const slotToSwap = targetSlot || selectedSlot;
+    const currentSlotData = squad.find((s) => s.slot === slotToSwap);
+    if (!currentSlotData) return;
+    const oldStartingPlayer = currentSlotData.player;
+
+    setSquad((prev) =>
+      prev.map((slotItem) =>
+        slotItem.slot === slotToSwap
+          ? { ...slotItem, player: benchPlayer }
+          : slotItem
+      )
+    );
+
+    setBench((prev) => [
+      ...prev.filter((b) => b.id !== benchPlayer.id),
+      oldStartingPlayer,
+    ]);
+
+    setSwapFeedbackMsg(`Swapped: ${benchPlayer.name} (${benchPlayer.rating} OVR) is now starting at ${slotToSwap}! (Replaced ${oldStartingPlayer.name})`);
+    setTimeout(() => setSwapFeedbackMsg(null), 5000);
+  };
 
   // Load from IndexedDB on initial mount for instant offline reliability
   React.useEffect(() => {
