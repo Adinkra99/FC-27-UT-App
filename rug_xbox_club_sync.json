@@ -1,0 +1,42 @@
+{
+  "clubName": "RUG",
+  "platform": "Xbox Series S (Console Shared Market)",
+  "squadRating": 85,
+  "chemistry": "28/33",
+  "primaryFormation": "4-2-4",
+  "coins": 40000,
+  "fifaPoints": 3000,
+  "startingXI": [
+    { "position": "GK", "name": "Gregor Kobel", "rating": 87, "rarity": "Gold", "club": "Borussia Dortmund", "league": "Bundesliga", "nation": "Switzerland", "role": "GK++", "chem": 2 },
+    { "position": "LB", "name": "Myles Lewis-Skelly", "rating": 85, "rarity": "Active Evolution", "club": "Arsenal", "league": "Premier League", "nation": "England", "role": "LB+", "chem": 3 },
+    { "position": "LCB", "name": "Nico Schlotterbeck", "rating": 87, "rarity": "Gold", "club": "Borussia Dortmund", "league": "Bundesliga", "nation": "Germany", "role": "CB++", "chem": 3 },
+    { "position": "RCB", "name": "Antonio Rüdiger", "rating": 83, "rarity": "Gold", "club": "Real Madrid", "league": "LaLiga EA Sports", "nation": "Germany", "role": "CB+", "chem": 2 },
+    { "position": "RB", "name": "Jurriën Timber", "rating": 84, "rarity": "Gold", "club": "Arsenal", "league": "Premier League", "nation": "Netherlands", "role": "RB+", "playStylePlus": ["Jockey+"], "chem": 2 },
+    { "position": "LCM", "name": "Elliot Anderson", "rating": 85, "rarity": "Special", "club": "Manchester City", "league": "Premier League", "nation": "England", "role": "CM++", "chem": 3 },
+    { "position": "RCM", "name": "Felix Nmecha", "rating": 85, "rarity": "Gold", "club": "Borussia Dortmund", "league": "Bundesliga", "nation": "Germany", "role": "CM++", "chem": 3 },
+    { "position": "LW", "name": "Nicole Anyomi", "rating": 85, "rarity": "Special", "club": "London City Lionesses", "league": "Barclays WSL", "nation": "Germany", "role": "LW++", "chem": 2 },
+    { "position": "LST", "name": "Selina Cerci", "rating": 84, "rarity": "Special", "club": "Arsenal", "league": "Barclays WSL", "nation": "Germany", "role": "ST++", "chem": 3 },
+    { "position": "RST", "name": "Carlos Espí", "rating": 85, "rarity": "Future Stars", "club": "Levante UD", "league": "LaLiga EA Sports", "nation": "Spain", "role": "ST+", "chem": 2 },
+    { "position": "RW", "name": "Bukayo Saka", "rating": 87, "rarity": "Gold", "club": "Arsenal", "league": "Premier League", "nation": "England", "role": "RW++", "playStylePlus": ["Whipped Pass+"], "chem": 3 }
+  ],
+  "reservesAndBinder": [
+    { "position": "CAM", "name": "Jamal Musiala", "rating": 87, "club": "Bayern Munich", "league": "Bundesliga" },
+    { "position": "LW", "name": "Lauren Hemp", "rating": 87, "club": "Manchester City", "league": "Barclays WSL" },
+    { "position": "RW", "name": "Chloe Kelly", "rating": 86, "club": "Arsenal", "league": "Barclays WSL" },
+    { "position": "CM", "name": "Scott McTominay", "rating": 86, "club": "Napoli", "league": "Serie A" },
+    { "position": "CDM", "name": "Ryan Gravenberch", "rating": 85, "club": "Liverpool", "league": "Premier League" },
+    { "position": "CAM", "name": "Fermín López", "rating": 85, "club": "FC Barcelona", "league": "LaLiga EA Sports" },
+    { "position": "ST", "name": "Serhou Guirassy", "rating": 85, "club": "Borussia Dortmund", "league": "Bundesliga" },
+    { "position": "CB", "name": "Ibrahima Konaté", "rating": 84, "club": "Liverpool", "league": "Premier League" },
+    { "position": "CDM", "name": "Lena Oberdorf", "rating": 84, "club": "Bayern Munich", "league": "GPFBL" },
+    { "position": "CAM", "name": "Kenan Yıldız", "rating": 84, "club": "Juventus", "league": "Serie A" },
+    { "position": "CB", "name": "Aymeric Laporte", "rating": 84, "club": "Athletic Club", "league": "LaLiga EA Sports" },
+    { "position": "RB", "name": "Denzel Dumfries", "rating": 83, "club": "Real Madrid", "league": "LaLiga EA Sports" },
+    { "position": "CB", "name": "Maxence Lacroix", "rating": 82, "club": "Chelsea", "league": "Premier League" },
+    { "position": "ST", "name": "Moise Kean", "rating": 82, "club": "Fiorentina", "league": "Serie A" },
+    { "position": "LW", "name": "Anthony Gordon", "rating": 82, "club": "FC Barcelona", "league": "LaLiga EA Sports" },
+    { "position": "LW", "name": "Pedro Neto", "rating": 81, "club": "Chelsea", "league": "Premier League" },
+    { "position": "CB", "name": "Fikayo Tomori", "rating": 80, "club": "AC Milan", "league": "Serie A" }
+  ],
+  "sbcDuplicateStorage": []
+}
